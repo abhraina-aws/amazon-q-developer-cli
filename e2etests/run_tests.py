@@ -9,6 +9,7 @@ import time
 import platform
 import re
 import threading
+import os
 from datetime import datetime
 from pathlib import Path
 
@@ -133,14 +134,19 @@ def run_single_cargo_test(feature, test_suite, binary_path="q", quiet=False):
     else:
         print(f"🔄 Running: {feature} with {test_suite}")
         print(f"Command: {' '.join(cmd)}")
+        print(f"Binary: {binary_path}")
     
     # Start rotating animation
     stop_animation = threading.Event()
     animation_thread = threading.Thread(target=show_spinner, args=(stop_animation,))
     animation_thread.start()
     
+    # Set environment variable for the binary path
+    env = dict(os.environ)
+    env['Q_CLI_PATH'] = binary_path
+    
     start_time = time.time()
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    result = subprocess.run(cmd, capture_output=True, text=True, env=env)
     end_time = time.time()
     
     # Stop animation
