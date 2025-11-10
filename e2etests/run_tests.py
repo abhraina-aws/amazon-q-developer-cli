@@ -65,10 +65,57 @@ def parse_features():
 # Default test suite - always required for cargo test
 DEFAULT_TESTSUITE = "sanity"
 
-def parse_test_results(stdout):
+def parse_stderr_by_test(stderr):
+    """Parse stderr and group panic messages by test name"""
+    test_errors = {}
+    if not stderr:
+        return test_errors
+    
+    lines = stderr.split('\n')
+    i = 0
+    
+    while i < len(lines):
+        line = lines[i]
+        
+        # Match panic lines like: thread 'todos::test_todos_command::test_todos_delete_command' panicked
+        if "thread '" in line and "' panicked" in line:
+            # Extract test name from thread name
+            start = line.find("thread '") + 8
+            end = line.find("' panicked")
+            
+            if start > 7 and end > start:
+                thread_name = line[start:end]
+                # Extract just the test function name (last part after ::)
+                test_name = thread_name.split('::')[-1] if '::' in thread_name else thread_name
+                
+                # Capture this panic line and the next line (assertion message)
+                error_lines = [line]
+                i += 1
+                
+                # Capture assertion message line (next line after panic)
+                if i < len(lines) and not lines[i].strip().startswith('note:'):
+                    error_lines.append('❌ ' + lines[i])
+                    i += 1
+                
+                # Capture note line if present
+                if i < len(lines) and lines[i].strip().startswith('note:'):
+                    error_lines.append(lines[i])
+                    i += 1
+                
+                test_errors[test_name] = '\n'.join(error_lines).strip()
+                continue
+        
+        i += 1
+    
+    return test_errors
+
+def parse_test_results(stdout, stderr=""):
     """Parse individual test results from cargo output with their outputs and descriptions"""
     tests = []
     lines = stdout.split('\n')
+    
+    # Parse stderr to get test-specific error messages
+    test_errors = parse_stderr_by_test(stderr)
     
     # Look for test lines followed by result lines
     for i, line in enumerate(lines):
@@ -77,7 +124,9 @@ def parse_test_results(stdout):
         # Look for test declaration lines
         if clean_line.startswith('test ') and ' ...' in clean_line:
             # Extract test name (everything between 'test ' and ' ... ')
-            test_name = clean_line.split(' ... ')[0].replace('test ', '').strip()
+            test_name_raw = clean_line.split(' ... ')[0].replace('test ', '').strip()
+            # Remove any trailing ' ...' if present
+            test_name = test_name_raw.rstrip(' .').strip()
             
             # Look ahead for the result (ok/FAILED) in the next few lines
             status = None
@@ -115,10 +164,18 @@ def parse_test_results(stdout):
                             description = line.split("| Description:")[1].strip()
                             break
                 
+                # For failed tests, append test-specific stderr content
+                full_output = strip_ansi('\n'.join(output_lines))
+                if status == "failed":
+                    # Extract just the test function name for matching
+                    test_func_name = test_name.split('::')[-1] if '::' in test_name else test_name
+                    if test_func_name in test_errors:
+                        full_output += "\n\n=== ASSERTION FAILURE ===\n" + strip_ansi(test_errors[test_func_name])
+                
                 tests.append({
                     "name": test_name,
                     "status": status,
-                    "output": strip_ansi('\n'.join(output_lines)),  # Full output
+                    "output": full_output,
                     "description": description
                 })
     
@@ -155,7 +212,7 @@ def run_single_cargo_test(feature, test_suite, binary_path="q", quiet=False):
     print("\r", end="")  # Clear spinner line
     
     # Parse individual test results
-    individual_tests = parse_test_results(result.stdout)
+    individual_tests = parse_test_results(result.stdout, result.stderr)
     
     if not quiet:
         print(result.stdout)
