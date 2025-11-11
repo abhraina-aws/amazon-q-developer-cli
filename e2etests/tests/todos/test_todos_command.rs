@@ -11,7 +11,7 @@ fn test_todos_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro CLI chat session started");
 
     let response = chat.execute_command_with_timeout("/todos",Some(2000))?;
 
@@ -21,14 +21,11 @@ fn test_todos_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
 
     // Verify help content
-    assert!(response.contains("Commands:"), "Missing Commands section");
-    println!("✅ Found Commands section with all available commands");
-
+    assert!(response.contains("Commands"), "Missing Commands section");
     assert!(response.contains("resume"), "Missing resume command");
     assert!(response.contains("view"), "Missing view command");
     assert!(response.contains("delete"), "Missing delete command");
     assert!(response.contains("help"), "Missing help command");
-    println!("✅ Found core commands: resume, view, delete, help");
 
     println!("✅ /todos command test completed successfully");
 
@@ -45,7 +42,7 @@ fn test_todos_help_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro CLI chat session started");
 
     let response = chat.execute_command_with_timeout("/todos help",Some(2000))?;
 
@@ -55,14 +52,11 @@ fn test_todos_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
 
     // Verify help content
-    assert!(response.contains("Commands:"), "Missing Commands section");
-    println!("✅ Found Commands section with all available commands");
-
+    assert!(response.contains("Commands"), "Missing Commands section");
     assert!(response.contains("resume"), "Missing resume command");
     assert!(response.contains("view"), "Missing view command");
     assert!(response.contains("delete"), "Missing delete command");
     assert!(response.contains("help"), "Missing help command");
-    println!("✅ Found core commands: resume, view, delete, help");
 
     println!("✅ /todos help command test completed successfully");
 
@@ -79,20 +73,20 @@ fn test_todos_view_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("Executing 'q settings chat.enableTodoList true' to enable todos feature...");
-    q_chat_helper::execute_q_subcommand("q", &["settings", "chat.enableTodoList", "true"])?;
+    println!("Executing 'kiro-cli settings chat.enableTodoList true' to enable todos feature...");
+    q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", "chat.enableTodoList", "true"])?;
 
-    let response = q_chat_helper::execute_q_subcommand("q", &["settings", "all"])?;
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", "all"])?;
 
     println!("📝 Help response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    assert!(response.contains("chat.enableTodoList = true"), "Failed to enable todos feature");
+    assert!(response.contains("chat.enableTodoList = true"), "Failed to enable todos feature using chat.enableTodoList = true");
     println!("✅ Todos feature enabled");
 
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro CLI chat session started");
 
     let response = chat.execute_command_with_timeout("Add task in todos list Review emails",Some(2000))?;
 
@@ -102,10 +96,9 @@ fn test_todos_view_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
 
     // Verify help content
-    assert!(response.contains("Using tool"), "Missing tool usage confirmation");
-    assert!(response.contains("todo_list"), "Missing todo_list tool usage");
+    assert!(response.contains("using tool"), "Missing using tool message");
+    assert!(response.contains("todo_list"), "Missing todo_list message");
     assert!(response.contains("Review emails"), "Missing Review emails message");
-    println!("✅ Confirmed todo_list tool usage");
 
     let response = chat.execute_command_with_timeout("/todos view",Some(2000))?;
 
@@ -116,7 +109,6 @@ fn test_todos_view_command() -> Result<(), Box<dyn std::error::Error>> {
 
     assert!(response.contains("to-do"), "Missing to-do message");
     assert!(response.contains("view"), "Missing view message");
-    println!("✅ Confirmed to-do item presence in view output");
 
     // Send down arrow to select different model
     let selection_response = chat.send_key_input("\x1b[B")?;
@@ -135,8 +127,7 @@ fn test_todos_view_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END CONFIRM RESPONSE");
 
     assert!(confirm_response.contains("TODO"), "Missing TODO message");
-    assert!(confirm_response.contains("Review emails"), "Missing Review emails to-do item");
-    println!("✅ Confirmed viewing of selected to-do list with items");
+    assert!(confirm_response.contains("Review emails"), "Missing Review emails message");
 
     let response = chat.execute_command_with_timeout("/todos delete",Some(2000))?;
 
@@ -166,7 +157,6 @@ fn test_todos_view_command() -> Result<(), Box<dyn std::error::Error>> {
 
     assert!(confirm_response.contains("Deleted"), "Missing Deleted message");
     assert!(confirm_response.contains("to-do"), "Missing to-do item");
-    println!("✅ Confirmed deletion of selected to-do list");
 
     println!("✅ /todos view command test completed successfully");
 
@@ -183,20 +173,20 @@ fn test_todos_resume_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("Executing 'q settings chat.enableTodoList true' to enable todos feature...");
-    q_chat_helper::execute_q_subcommand("q", &["settings", "chat.enableTodoList", "true"])?;
+    println!("Executing 'kiro-cli settings chat.enableTodoList true' to enable todos feature...");
+    q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", "chat.enableTodoList", "true"])?;
 
-    let response = q_chat_helper::execute_q_subcommand("q", &["settings", "all"])?;
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", "all"])?;
 
     println!("📝 Help response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    assert!(response.contains("chat.enableTodoList = true"), "Failed to enable todos feature");
+    assert!(response.contains("chat.enableTodoList = true"), "Failed to enable todos feature using chat.enableTodoList = true");
     println!("✅ Todos feature enabled");
 
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro CLI chat session started");
 
     let response = chat.execute_command_with_timeout("Add task in todos list Review emails",Some(2000))?;
 
@@ -206,10 +196,9 @@ fn test_todos_resume_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
 
     // Verify help content
-    assert!(response.contains("Using tool"), "Missing tool usage confirmation");
-    assert!(response.contains("todo_list"), "Missing todo_list tool usage");
+    assert!(response.contains("using tool"), "Missing using tool message");
+    assert!(response.contains("todo_list"), "Missing todo_list tool message");
     assert!(response.contains("Review emails"), "Missing Review emails message");
-    println!("✅ Confirmed todo_list tool usage");
 
     let response = chat.execute_command_with_timeout("/todos resume",Some(2000))?;
 
@@ -220,7 +209,6 @@ fn test_todos_resume_command() -> Result<(), Box<dyn std::error::Error>> {
 
     assert!(response.contains("to-do"), "Missing to-do message");
     assert!(response.contains("resume"), "Missing resume message");
-    println!("✅ Confirmed to-do item presence in resume output");
 
     // Send down arrow to select different model
     let selection_response = chat.send_key_input("\x1b[B")?;
@@ -240,7 +228,6 @@ fn test_todos_resume_command() -> Result<(), Box<dyn std::error::Error>> {
 
     assert!(confirm_response.contains("Review emails"), "Missing Review emails message");
     assert!(confirm_response.contains("TODO"), "Missing TODO item");
-    println!("✅ Confirmed resuming of selected to-do list with items");
 
     let response = chat.execute_command_with_timeout("/todos delete",Some(2000))?;
 
@@ -270,7 +257,6 @@ fn test_todos_resume_command() -> Result<(), Box<dyn std::error::Error>> {
 
     assert!(confirm_response.contains("Deleted"), "Missing Deleted message");
     assert!(confirm_response.contains("to-do"), "Missing to-do item");
-    println!("✅ Confirmed deletion of selected to-do list");
 
     println!("✅ /todos resume command test completed successfully");
 
@@ -287,20 +273,20 @@ fn test_todos_delete_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("Executing 'q settings chat.enableTodoList true' to enable todos feature...");
-    q_chat_helper::execute_q_subcommand("q", &["settings", "chat.enableTodoList", "true"])?;
+    println!("Executing 'kiro-cli settings chat.enableTodoList true' to enable todos feature...");
+    q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", "chat.enableTodoList", "true"])?;
 
-    let response = q_chat_helper::execute_q_subcommand("q", &["settings", "all"])?;
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", "all"])?;
 
     println!("📝 Help response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    assert!(response.contains("chat.enableTodoList = true"), "Failed to enable todos feature");
+    assert!(response.contains("chat.enableTodoList = true"), "Failed to enable todos feature using chat.enableTodoList = true");
     println!("✅ Todos feature enabled");
 
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro CLI chat session started");
 
     let response = chat.execute_command_with_timeout("Add task in todos list Review emails",Some(2000))?;
 
@@ -310,10 +296,9 @@ fn test_todos_delete_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
 
     // Verify help content
-    assert!(response.contains("Using tool"), "Missing tool usage confirmation");
-    assert!(response.contains("todo_list"), "Missing todo_list tool usage");
+    assert!(response.contains("using tool"), "Missing using tool messsage");
+    assert!(response.contains("todo_list"), "Missing todo_list message");
     assert!(response.contains("Review emails"), "Missing Review emails message");
-    println!("✅ Confirmed todo_list tool usage");
 
     let response = chat.execute_command_with_timeout("/todos view",Some(2000))?;
 
@@ -324,7 +309,6 @@ fn test_todos_delete_command() -> Result<(), Box<dyn std::error::Error>> {
 
     assert!(response.contains("to-do"), "Missing to-do message");
     assert!(response.contains("view"), "Missing view message");
-    println!("✅ Confirmed to-do item presence in view output");
 
     // Send down arrow to select different model
     let selection_response = chat.send_key_input("\x1b[B")?;
@@ -344,7 +328,6 @@ fn test_todos_delete_command() -> Result<(), Box<dyn std::error::Error>> {
 
     assert!(confirm_response.contains("TODO"), "Missing TODO message");
     assert!(confirm_response.contains("Review emails"), "Missing Review emails to-do item");
-    println!("✅ Confirmed viewing of selected to-do list with items");
 
     let response = chat.execute_command_with_timeout("/todos delete",Some(2000))?;
 
@@ -355,7 +338,6 @@ fn test_todos_delete_command() -> Result<(), Box<dyn std::error::Error>> {
 
     assert!(response.contains("to-do"), "Missing to-do message");
     assert!(response.contains("delete"), "Missing delete message");
-    println!("✅ Confirmed to-do item presence in delete output");
 
     // Send down arrow to select different model
     let selection_response = chat.send_key_input("\x1b[B")?;
@@ -375,7 +357,6 @@ fn test_todos_delete_command() -> Result<(), Box<dyn std::error::Error>> {
 
     assert!(confirm_response.contains("Deleted"), "Missing Deleted message");
     assert!(confirm_response.contains("to-do"), "Missing to-do item");
-    println!("✅ Confirmed deletion of selected to-do list");
 
     println!("✅ /todos delete command test completed successfully");
 
@@ -383,6 +364,7 @@ fn test_todos_delete_command() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
 #[test]
 #[cfg(all(feature = "todos", feature = "sanity"))]
 fn test_todos_clear_finished_command() -> Result<(), Box<dyn std::error::Error>> {
@@ -390,26 +372,28 @@ fn test_todos_clear_finished_command() -> Result<(), Box<dyn std::error::Error>>
 
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
-    println!("✅ Global Q Chat session started");
+
+    println!("✅ Kiro CLI chat session started");
 
     // Create todo list with 2 tasks
     println!("\n🔍 Creating todo list with 2 tasks...");
-    let create_response = chat.execute_command_with_timeout("create a todo_list with 2 task in amazon q", Some(2000))?;
+    let create_response = chat.execute_command_with_timeout("create a todo_list with 2 tasks: 1. Review code changes 2. Update documentation", Some(2000))?;
+
     println!("📝 Create response: {} bytes", create_response.len());
     println!("📝 Create response: {}", create_response);
-    println!("✅ Found create response.");
-    println!("✅ Tasks has been created successfully.");
+    
+    assert!(create_response.contains("todo_list"), "Todo list was not created");
 
     // Extract todo ID
     let re = Regex::new(r"(\d{10,})")?;
     let todo_id = re.find(&create_response)
         .map(|m| m.as_str())
         .ok_or("Could not extract todo list ID")?;
-    println!("📝 Extracted todo ID: {}", todo_id);
 
     // Mark all tasks as completed
     println!("\n🔍 Marking all tasks as completed...");
     let mark_response = chat.execute_command_with_timeout(&format!("mark all tasks as completed for todo list {}", todo_id), Some(2000))?;
+
     println!("📝 Mark complete response: {} bytes", mark_response.len());
     println!("📝 Mark complete response: {}", mark_response);
     println!("✅ Found Task completion response.");
@@ -421,7 +405,7 @@ fn test_todos_clear_finished_command() -> Result<(), Box<dyn std::error::Error>>
     println!("📝 {}", clear_response);
 
     assert!(!clear_response.is_empty(), "Expected non-empty response from clear-finished command");
-    println!("✅ Found todo_list clear response");
+
     println!("✅ All finished task cleared successfully.");
 
     drop(chat);

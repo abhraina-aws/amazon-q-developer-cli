@@ -236,7 +236,6 @@ pub mod q_chat_helper {
     pub fn get_chat_session() -> &'static Mutex<QChatSession> {
         GLOBAL_CHAT_SESSION.get_or_init(|| {
             let chat = QChatSession::new().expect("Failed to create chat session");
-            println!("✅ Global Q Chat session started");
             Mutex::new(chat)
         })
     }

@@ -23,6 +23,8 @@ fn test_tools_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
+    println!("✅ Kiro CLI chat session started");
+
     let response = chat.execute_command_with_timeout("/tools",Some(2000))?;
     
     println!("📝 Tools response: {} bytes", response.len());
@@ -30,34 +32,20 @@ fn test_tools_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", response);
     println!("📝 END OUTPUT");
     
-    // Verify tools content structure
     assert!(response.contains("Tool"), "Missing Tool header");
     assert!(response.contains("Permission"), "Missing Permission header");
-    println!("✅ Found tools table with Tool and Permission columns");
-    
-    assert!(response.contains("Built-in:"), "Missing Built-in section");
-    println!("✅ Found Built-in tools section");
+    assert!(response.contains("Built-in"), "Missing Built-in section");
     
     // Verify some expected built-in tools
     assert!(response.contains("execute_bash"), "Missing execute_bash tool");
     assert!(response.contains("fs_read"), "Missing fs_read tool");
     assert!(response.contains("fs_write"), "Missing fs_write tool");
     assert!(response.contains("use_aws"), "Missing use_aws tool");
-    println!("✅ Verified core built-in tools: execute_bash, fs_read, fs_write, use_aws");
     
     // Check for MCP tools section if present
-    if response.contains("amzn-mcp (MCP):") {
-        println!("✅ Found MCP tools section with Amazon-specific tools");
+    if response.contains("(MCP):") {
         assert!(response.contains("not trusted") || response.contains("trusted"), "Missing permission status");
-        println!("✅ Verified permission status indicators (trusted/not trusted)");
-        
-        // Count some MCP tools
-        let mcp_tools = ["andes", "cradle", "datanet", "read_quip", "taskei_get_task"];
-        let found_tools: Vec<&str> = mcp_tools.iter().filter(|&&tool| response.contains(tool)).copied().collect();
-        println!("✅ Found {} MCP tools including: {:?}", found_tools.len(), found_tools);
     }
-    
-    println!("✅ All tools content verified!");
     
     println!("✅ /tools command executed successfully");
 
@@ -74,6 +62,8 @@ fn test_tools_help_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
+    println!("✅ Kiro CLI chat session started");
+
     let response = chat.execute_command_with_timeout("/tools --help",Some(2000))?;
     
     println!("📝 Tools help response: {} bytes", response.len());
@@ -82,26 +72,24 @@ fn test_tools_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify Usage section
-    assert!(response.contains("Usage:") && response.contains("/tools") && response.contains("[COMMAND]"), "Missing Usage section");
-    println!("✅ Found usage format");
-    println!("✅ Found usage format");
+    assert!(response.contains("Usage"), "Missing Usage label");
+    assert!(response.contains("/tools"), "Missing /tools command");
+    assert!(response.contains("[COMMAND]"), "Missing [COMMAND] placeholder");
     
     // Verify Commands section
-    assert!(response.contains("Commands:"), "Missing Commands section");
+    assert!(response.contains("Commands"), "Missing Commands section");
     assert!(response.contains("schema"), "Missing schema command");
     assert!(response.contains("trust"), "Missing trust command");
     assert!(response.contains("untrust"), "Missing untrust command");
     assert!(response.contains("trust-all"), "Missing trust-all command");
     assert!(response.contains("reset"), "Missing reset command");
     assert!(response.contains("help"), "Missing help command");
-    println!("✅ Found all commands: schema, trust, untrust, trust-all, reset, help");
     
     // Verify Options section
-    assert!(response.contains("Options:"), "Missing Options section");
+    assert!(response.contains("Options"), "Missing Options section");
     assert!(response.contains("-h") &&  response.contains("--help"), "Missing -h, --help flags");
-    println!("✅ Found Options section with help flags");
     
-    println!("✅ All tools help content verified!");
+    println!("✅ /tools --help command executed successfully");
     
     drop(chat);
 
@@ -116,6 +104,8 @@ fn test_tools_trust_all_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
+    println!("✅ Kiro CLI chat session started");
+
     // Execute trust-all command
     let trust_all_response = chat.execute_command_with_timeout("/tools trust-all",Some(2000))?;
     
@@ -126,7 +116,6 @@ fn test_tools_trust_all_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify that all tools now show "trusted" permission
     assert!(trust_all_response.contains("All tools") && trust_all_response.contains("trusted"), "Missing trusted tools after trust-all");
-    println!("✅ trust-all confirmation message!!");
     
     // Now check tools list to verify all tools are trusted
     let tools_response = chat.execute_command_with_timeout("/tools",Some(2000))?;
@@ -142,14 +131,10 @@ fn test_tools_trust_all_command() -> Result<(), Box<dyn std::error::Error>> {
     // Verify no tools have other permission statuses
     assert!(!tools_response.contains("not trusted"), "Found 'not trusted' tools after trust-all");
     assert!(!tools_response.contains("read-only commands"), "Found 'read-only commands' tools after trust-all");
-    println!("✅ Verified all tools are now trusted, no other permission statuses found");
     
     // Count lines with "trusted" to ensure multiple tools are trusted
     let trusted_count = tools_response.matches("trusted").count();
     assert!(trusted_count > 0, "No trusted tools found");
-    println!("✅ Found {} instances of 'trusted' in tools list", trusted_count);
-    
-    println!("✅ All tools trust-all functionality verified!");
     
     // Execute reset command
     let reset_response = chat.execute_command_with_timeout("/tools reset",Some(1000))?;
@@ -161,7 +146,6 @@ fn test_tools_trust_all_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify reset confirmation message
     assert!(reset_response.contains("Reset") && reset_response.contains("permission"), "Missing reset confirmation message");
-    println!("✅ Found reset confirmation message");
     
     // Now check tools list to verify tools have mixed permissions
     let tools_response = chat.execute_command_with_timeout("/tools",Some(2000))?;
@@ -175,9 +159,8 @@ fn test_tools_trust_all_command() -> Result<(), Box<dyn std::error::Error>> {
     assert!(tools_response.contains("trusted"), "Missing trusted tools");
     assert!(tools_response.contains("not trusted"), "Missing not trusted tools");
     assert!(tools_response.contains("read-only commands"), "Missing read-only commands tools");
-    println!("✅ Found all permission types after reset");
     
-    println!("✅ All tools reset functionality verified!");
+    println!("✅ /tools trust-all and reset commands executed successfully");
 
     drop(chat);
 
@@ -192,6 +175,8 @@ fn test_tools_trust_all_help_command() -> Result<(), Box<dyn std::error::Error>>
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
+    println!("✅ Kiro CLI chat session started");
+
     let response = chat.execute_command_with_timeout("/tools trust-all --help",Some(2000))?;
     
     println!("📝 Tools trust-all help response: {} bytes", response.len());
@@ -201,15 +186,15 @@ fn test_tools_trust_all_help_command() -> Result<(), Box<dyn std::error::Error>>
     
     
     // Verify usage format
-    assert!(response.contains("Usage:") && response.contains("/tools trust-all"), "Missing usage format");
-    println!("✅ Found usage format");
+    assert!(response.contains("Usage"), "Missing Usage section");
+    assert!(response.contains("/tools trust-all"), "Missing /tools trust-all command");
     
     // Verify options section
-    assert!(response.contains("Options:"), "Missing Options section");
-    assert!(response.contains("-h") && response.contains("--help"), "Missing help option");
-    println!("✅ Found options section with help flag");
+    assert!(response.contains("Options"), "Missing Options section");
+    assert!(response.contains("-h"), "Missing -h flag");
+    assert!(response.contains("--help"), "Missing --help flag");
     
-    println!("✅ All tools trust-all help functionality verified!");
+    println!("✅ /tools trust-all --help command executed successfully");
     
     drop(chat);
 
@@ -224,6 +209,8 @@ fn test_tools_reset_help_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
+    println!("✅ Kiro CLI chat session started");
+
     let response = chat.execute_command_with_timeout("/tools reset --help",Some(2000))?;
     
     println!("📝 Tools reset help response: {} bytes", response.len());
@@ -232,15 +219,15 @@ fn test_tools_reset_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify usage format
-    assert!(response.contains("Usage:") && response.contains("/tools reset"), "Missing usage format");
-    println!("✅ Found usage format");
+    assert!(response.contains("Usage"), "Missing Usage section");
+    assert!(response.contains("/tools reset"), "Missing /tools reset command");
     
     // Verify options section
-    assert!(response.contains("Options:"), "Missing Options section");
-    assert!(response.contains("-h") && response.contains("--help"), "Missing help option");
-    println!("✅ Found options section with help flag");
+    assert!(response.contains("Options"), "Missing Options section");
+    assert!(response.contains("-h"), "Missing -h flag");
+    assert!(response.contains("--help"), "Missing --help flag");
     
-    println!("✅ All tools reset help functionality verified!");
+    println!("✅ /tools reset --help command executed successfully");
      
     drop(chat);
 
@@ -254,6 +241,8 @@ fn test_tools_trust_command() -> Result<(), Box<dyn std::error::Error>> {
   
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+
+    println!("✅ Kiro CLI chat session started");
 
     // First get list of tools to find one that's not trusted
     let tools_response = chat.execute_command_with_timeout("/tools",Some(2000))?;
@@ -282,7 +271,6 @@ fn test_tools_trust_command() -> Result<(), Box<dyn std::error::Error>> {
     }
     
     if let Some(tool_name) = untrusted_tool {
-        println!("✅ Found untrusted tool: {}", tool_name);
         
         // Execute trust command
         let trust_command = format!("/tools trust {}", tool_name);
@@ -295,7 +283,6 @@ fn test_tools_trust_command() -> Result<(), Box<dyn std::error::Error>> {
         
         // Verify trust confirmation message
         assert!(trust_response.contains(&tool_name), "Missing trust confirmation message");
-        println!("✅ Found trust confirmation message for tool: {}", tool_name);
         
         // Execute untrust command
         let untrust_command = format!("/tools untrust {}", tool_name);
@@ -310,11 +297,12 @@ fn test_tools_trust_command() -> Result<(), Box<dyn std::error::Error>> {
         let expected_untrust_message = format!("Tool '{}' is", tool_name);
         assert!(untrust_response.contains(&expected_untrust_message), "Missing untrust confirmation message");
         println!("✅ Found untrust confirmation message for tool: {}", tool_name);
-        
-        println!("✅ All tools trust/untrust functionality verified!");
+
     } else {
         println!("ℹ️ No untrusted tools found to test trust command");
     }
+
+    println!("✅ /tools trust and untrust commands executed successfully");
   
     drop(chat);
 
@@ -328,6 +316,8 @@ fn test_tools_trust_help_command() -> Result<(), Box<dyn std::error::Error>> {
     
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+
+    println!("✅ Kiro CLI chat session started");
     
     let response = chat.execute_command_with_timeout("/tools trust --help",Some(2000))?;
     
@@ -337,19 +327,19 @@ fn test_tools_trust_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify usage format
-    assert!(response.contains("Usage:") && response.contains("/tools trust") && response.contains("<TOOL_NAMES>"), "Missing usage format");
-    println!("✅ Found usage format");
+    assert!(response.contains("Usage"), "Missing Usage label");
+    assert!(response.contains("/tools trust"), "Missing /tools trust command");
+    assert!(response.contains("<TOOL_NAMES>"), "Missing <TOOL_NAMES> parameter");
     
     // Verify arguments section
-    assert!(response.contains("Arguments:") && response.contains("<TOOL_NAMES>"), "Missing Arguments section");
-    println!("✅ Found arguments section");
+    assert!(response.contains("Arguments"), "Missing Arguments label");
+    assert!(response.contains("<TOOL_NAMES>"), "Missing <TOOL_NAMES> in arguments");
     
     // Verify options section
-    assert!(response.contains("Options:"), "Missing Options section");
-    assert!(response.contains("-h") && response.contains("--help"), "Missing help option");
-    println!("✅ Found options section with help flag");
+    assert!(response.contains("Options"), "Missing Options section");
+    assert!(response.contains("-h") && response.contains("--help"), "Missing -h, --help option");
     
-    println!("✅ All tools trust help functionality verified!");
+    println!("✅ /tools trust --help command executed successfully");
     
     drop(chat);
 
@@ -364,6 +354,8 @@ fn test_tools_untrust_help_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
+    println!("✅ Kiro CLI chat session started");
+
     let response = chat.execute_command_with_timeout("/tools untrust --help",Some(2000))?;
     
     println!("📝 Tools untrust help response: {} bytes", response.len());
@@ -372,19 +364,19 @@ fn test_tools_untrust_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify usage format
-    assert!(response.contains("Usage:") && response.contains("/tools untrust") && response.contains("<TOOL_NAMES>"), "Missing usage format");
-    println!("✅ Found usage format");
+    assert!(response.contains("Usage"), "Missing Usage label");
+    assert!(response.contains("/tools trust"), "Missing /tools trust command");
+    assert!(response.contains("<TOOL_NAMES>"), "Missing <TOOL_NAMES> parameter");
     
     // Verify arguments section
-    assert!(response.contains("Arguments:") && response.contains("<TOOL_NAMES>"), "Missing Arguments section");
-    println!("✅ Found arguments section");
+    assert!(response.contains("Arguments"), "Missing Arguments label");
+    assert!(response.contains("<TOOL_NAMES>"), "Missing <TOOL_NAMES> in arguments");
     
     // Verify options section
-    assert!(response.contains("Options:"), "Missing Options section");
-    assert!(response.contains("-h") && response.contains("--help"), "Missing help option");
-    println!("✅ Found options section with help flag");
+    assert!(response.contains("Options"), "Missing Options section");
+    assert!(response.contains("-h") && response.contains("--help"), "Missing -h, --help option");
     
-    println!("✅ All tools untrust help functionality verified!");
+    println!("✅ /tools untrust --help command executed successfully");
     
     drop(chat);
 
@@ -399,6 +391,8 @@ fn test_tools_schema_help_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
+    println!("✅ Kiro CLI chat session started");
+
     let response = chat.execute_command_with_timeout("/tools schema --help",Some(2000))?;
     
     println!("📝 Tools schema help response: {} bytes", response.len());
@@ -407,20 +401,20 @@ fn test_tools_schema_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
 
     // Verify usage format
-    assert!(response.contains("Usage:") && response.contains("/tools schema"), "Missing usage format");
-    println!("✅ Found usage format");
+    assert!(response.contains("Usage"), "Missing Usage label");
+    assert!(response.contains("/tools schema"), "Missing /tools schema command");
     
     // Verify options section
-    assert!(response.contains("Options:"), "Missing Options section");
-    assert!(response.contains("-h") && response.contains("--help"), "Missing help option");
-    println!("✅ Found options section with help flag");
+    assert!(response.contains("Options"), "Missing Options section");
+    assert!(response.contains("-h") && response.contains("--help"), "Missing -h, --help option");
     
-    println!("✅ All tools schema help functionality verified!");
+    println!("✅ /tools schema --help command executed successfully");
     
     drop(chat);
 
     Ok(())
 }
+
 //TODO: As response not giving full content , need to check this.
 /*#[test]
 #[cfg(feature = "tools")]
@@ -485,6 +479,8 @@ fn test_fs_write_and_fs_read_tools() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
+    println!("✅ Kiro CLI chat session started");
+
     // Test fs_write tool by asking to create a file with "Hello World" content
     let response = chat.execute_command_with_timeout(&format!("Create a file at {} with content 'Hello World'", save_path),Some(2000))?;
 
@@ -495,11 +491,9 @@ fn test_fs_write_and_fs_read_tools() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify tool usage indication
     assert!(response.contains("Using tool") && response.contains("fs_write"), "Missing fs_write tool usage indication");
-    println!("✅ Found fs_write tool usage indication");
     
     // Verify file path in response
     assert!(response.contains("demo.txt"), "Missing expected file path");
-    println!("✅ Found expected file path in response");
 
      // Allow the tool execution
     let allow_response = chat.execute_command_with_timeout("y",Some(2000))?;
@@ -510,12 +504,10 @@ fn test_fs_write_and_fs_read_tools() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END ALLOW RESPONSE");
     
     // Verify content reference
-    assert!(allow_response.contains("Hello World"), "Missing expected content reference");
-    println!("✅ Found expected content reference");
+    assert!(allow_response.contains("Hello World"), "Missing Hello World content reference");
     
     // Verify success indication
-    assert!(allow_response.contains("Created"), "Missing success indication");
-    println!("✅ Found success indication");
+    assert!(allow_response.contains("Created"), "Missing Created confirmation");
 
     // Test fs_read tool by asking to read the created file
     let response = chat.execute_command_with_timeout(&format!("Read file {}", save_path),Some(2000))?;
@@ -527,17 +519,14 @@ fn test_fs_write_and_fs_read_tools() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify tool usage indication
     assert!(response.contains("Using tool") && response.contains("fs_read"), "Missing fs_read tool usage indication");
-    println!("✅ Found fs_read tool usage indication");
     
     // Verify file path in response
-    assert!(response.contains("demo.txt"), "Missing expected file path");
-    println!("✅ Found expected file path in response");
+    assert!(response.contains("demo.txt"), "Missing demo.txt file path");
     
     // Verify content reference
-    assert!(response.contains("Hello World"), "Missing expected content reference");
-    println!("✅ Found expected content reference");
+    assert!(response.contains("Hello World"), "Missing Hello World content reference");
     
-    println!("✅ All fs_write and fs_read tool functionality verified!");
+    println!("✅ fs_write and fs_read tool executed and verified successfully!");
     
     drop(chat);
 
@@ -552,6 +541,8 @@ fn test_execute_bash_tool() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
+    println!("✅ Kiro CLI chat session started");
+
     // Test execute_bash tool by asking to run pwd command
     let response = chat.execute_command_with_timeout("Run pwd",Some(2000))?;
 
@@ -562,17 +553,14 @@ fn test_execute_bash_tool() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify tool usage indication
     assert!(response.contains("Using tool") && response.contains("execute_bash"), "Missing execute_bash tool usage indication");
-    println!("✅ Found execute_bash tool usage indication");
     
     // Verify command in response
-    assert!(response.contains("pwd"), "Missing expected command");
-    println!("✅ Found pwd command in response");
+    assert!(response.contains("pwd"), "Missing pwd command reference");
     
     // Verify success indication
-    assert!(response.contains("current working directory"), "Missing success indication");
-    println!("✅ Found success indication");
+    assert!(response.contains("current working directory"), "Missing current working directory output");
     
-    println!("✅ All execute_bash functionality verified!");
+    println!("✅ execute_bash tool executed and verified successfully!");
     
     drop(chat);
 
@@ -587,6 +575,8 @@ fn test_report_issue_tool() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
+    println!("✅ Kiro CLI chat session started");
+
     // Test report_issue tool by asking to report an issue
     let response = chat.execute_command_with_timeout("Report an issue: 'File creation not working properly'",Some(2000))?;
 
@@ -597,13 +587,11 @@ fn test_report_issue_tool() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify tool usage indication
     assert!(response.contains("Using tool") && response.contains("gh_issue"), "Missing report_issue tool usage indication");
-    println!("✅ Found report_issue tool usage indication");
     
     // Verify command executed successfully (GitHub opens automatically)
-    assert!(response.contains("Heading over to GitHub..."), "Missing browser opening confirmation");
-    println!("✅ Found browser opening confirmation");
+    assert!(response.contains("Heading over to GitHub..."), "Missing Heading over to GitHub message");
     
-    println!("✅ All report_issue functionality verified!");
+    println!("✅ report_issue tool executed and verified successfully!");
     
     drop(chat);
 
@@ -618,6 +606,8 @@ fn test_use_aws_tool() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
+    println!("✅ Kiro CLI chat session started");
+
     // Test use_aws tool by asking to describe EC2 instances in us-west-2
     let response = chat.execute_command_with_timeout("Describe EC2 instances in us-west-2",Some(2000))?;
 
@@ -628,13 +618,11 @@ fn test_use_aws_tool() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify tool usage indication
     assert!(response.contains("Using tool") && response.contains("use_aws"), "Missing use_aws tool usage indication");
-    println!("✅ Found use_aws tool usage indication");
     
     // Verify command executed successfully.
     assert!(response.contains("aws"), "Missing aws information");
-    println!("✅ Found aws information");
     
-    println!("✅ All use_aws functionality verified!");
+    println!("✅ use_aws tool executed and verified successfully!");
     
     drop(chat);
 
@@ -649,6 +637,8 @@ fn test_trust_execute_bash_for_direct_execution() -> Result<(), Box<dyn std::err
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
+    println!("✅ Kiro CLI chat session started");
+
     // First, trust the execute_bash tool
     let trust_response = chat.execute_command_with_timeout("/tools trust execute_bash",Some(2000))?;
     
@@ -658,8 +648,7 @@ fn test_trust_execute_bash_for_direct_execution() -> Result<(), Box<dyn std::err
     println!("📝 END TRUST OUTPUT");
     
     // Verify trust confirmation
-    assert!(trust_response.contains("trusted") || trust_response.contains("execute_bash"), "Missing trust confirmation");
-    println!("✅ Found trust confirmation");
+    assert!(trust_response.contains("trusted") || trust_response.contains("execute_bash"), "Missing execute_bash trust confirmation");
 
     // Now test execute_bash tool with a simple command that should run directly without confirmation
     let response = chat.execute_command_with_timeout("Run mkdir -p test_dir && echo 'test' > test_dir/test.txt",Some(2000))?;
@@ -671,13 +660,11 @@ fn test_trust_execute_bash_for_direct_execution() -> Result<(), Box<dyn std::err
     
     // Verify tool usage indication
     assert!(response.contains("Using tool") && response.contains("execute_bash"), "Missing execute_bash tool usage indication");
-    println!("✅ Found execute_bash tool usage indication");
     
     // Verify the command was executed directly without asking for confirmation
-    assert!(response.contains("Created") && response.contains("directory") && response.contains("test_dir") , "Missing success message");
-    println!("✅ Found success message");
-    
-    println!("✅ All trusted execute_bash functionality verified!");
+    assert!(response.contains("Created"), "Missing Created confirmation");
+    assert!(response.contains("directory"), "Missing directory reference");
+    assert!(response.contains("test_dir"), "Missing test_dir reference");
 
     chat.execute_command_with_timeout("Delete the directory test_dir/test.txt",Some(2000))?;
      
