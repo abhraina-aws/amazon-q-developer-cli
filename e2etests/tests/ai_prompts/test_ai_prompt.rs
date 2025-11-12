@@ -4,11 +4,11 @@ use q_cli_e2e_tests::q_chat_helper;
 #[test]
 #[cfg(all(feature = "ai_prompts", feature = "sanity"))]
 fn test_what_is_aws_prompt() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 [AI PROMPTS] Testing 'What is AWS?' AI prompt... | Description: Tests AI prompt functionality by sending 'What is AWS?' and verifying the response contains relevant AWS information and technical terms");
+    println!("\n🔍 [AI PROMPTS] Testing 'What is AWS?' AI prompt... | Description: Tests <code>AI prompt</code> functionality <code>by sending 'What is AWS?'</code> and verifying the response contains relevant AWS information and technical terms");
     
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap();
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro Chat session started");
     
     let response = chat.execute_command_with_timeout("What is AWS?",Some(1000))?;
     
@@ -64,7 +64,7 @@ fn test_simple_greeting() -> Result<(), Box<dyn std::error::Error>> {
     
     let session =q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap();
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro Chat session started");
     
     let response = chat.execute_command_with_timeout("Hello",Some(1000))?;
     

@@ -10,7 +10,7 @@ use q_cli_e2e_tests::q_chat_helper;
 #[cfg(all(feature = "q_subcommand", feature = "sanity"))]
 fn test_q_setting_format_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 
-println!("\n🔍 Testing q settings --format <FORMAT> <SETTINGS>... | Description: Tests the <code>q settings --FORMAT <FORMAT> <SETTINGS> </code>subcommand to validate FORMAT content.");
+println!("\n🔍 Testing kiro settings --format <FORMAT> <SETTINGS>... | Description: Tests the <code>kiro settings --FORMAT <FORMAT> <SETTINGS> </code>subcommand to validate FORMAT content.");
 let response = q_chat_helper::execute_q_subcommand("q", &["settings", "--format", "json-pretty", "chat.defaultAgent"])?;
 
 println!("📝 transform response: {} bytes", response.len());
@@ -19,7 +19,7 @@ println!("{}", response);
 println!("📝 END OUTPUT");
 
 assert!(!response.is_empty(), "Expected non-empty response");
-assert!(response.contains("\"q_cli_default\""), "Expected JSON-formatted setting value");
+assert!(response.contains("\"kiro_default\""), "Expected JSON-formatted setting value");
 assert!(response.contains("chat.defaultAgent"), "Expected command to reference the setting name");
 
 Ok(())

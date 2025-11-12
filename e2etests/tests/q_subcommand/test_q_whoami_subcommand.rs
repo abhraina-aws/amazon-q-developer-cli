@@ -38,7 +38,7 @@ fn test_q_whoami_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
 
     // Assert whoami help output contains expected commands
-    assert!(response.contains("Usage:") && response.contains("q whoami") && response.contains("[OPTIONS]"), 
+    assert!(response.contains("Usage:") && response.contains("kiro-cli whoami") && response.contains("[OPTIONS]"), 
             "Help should contain usage line");
     assert!(response.contains("Options:"), "Help should contain Options section");
     assert!(response.contains("-f, --format"), "Help should contain format option");
@@ -76,7 +76,7 @@ fn test_q_whoami_f_plain_subcommand() -> Result<(), Box<dyn std::error::Error>> 
 #[test]
 #[cfg(all(feature = "q_subcommand", feature = "sanity"))]
 fn test_q_whoami_f_json_subcommand() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q whoami  -f json subcommand... | Description: Tests the <code> q whoami  -f json</code> subcommand to display user profile information in json format.");
+    println!("\n🔍 Testing kiro whoami  -f json subcommand... | Description: Tests the <code> kiro whoami  -f json</code> subcommand to display user profile information in json format.");
     
     println!("\n🛠️ Running 'q whoami  -f json' subcommand...");
     let response = q_chat_helper::execute_q_subcommand("q", &["whoami", "-f", "json"])?;
@@ -107,9 +107,9 @@ fn test_q_whoami_f_json_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 #[cfg(all(feature = "q_subcommand", feature = "sanity"))]
 fn test_q_whoami_f_json_pretty_subcommand() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q whoami -f json-pretty subcommand... | Description: Tests the <code> q whoami -f json-pretty</code> subcommand to display user profile information in pretty json format.");
+    println!("\n🔍 Testing kiro whoami -f json-pretty subcommand... | Description: Tests the <code> kiro whoami -f json-pretty</code> subcommand to display user profile information in pretty json format.");
     
-    println!("\n🛠️ Running 'q whoami -f json-pretty' subcommand...");
+    println!("\n🛠️ Running 'kiro whoami -f json-pretty' subcommand...");
     let response = q_chat_helper::execute_q_subcommand("q", &["whoami", "-f", "json-pretty"])?;
 
     println!("📝 Whoami response: {} bytes", response.len());

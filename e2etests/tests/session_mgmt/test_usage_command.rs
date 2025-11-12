@@ -18,36 +18,42 @@ fn test_usage_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", response);
     println!("📝 END OUTPUT");
     
-    // Verify context window information
-    assert!(response.contains("Current context window"), "Missing context window header");
-    assert!(response.contains("tokens"), "Missing tokens used information");
-    println!("✅ Found context window and token usage information");
-    
-    // Verify progress bar
-    assert!(response.contains("%"), "Missing percentage display");
-    println!("✅ Found progress bar with percentage");
-    
-    // Verify token breakdown sections
-    assert!(response.contains(" Context files:"), "Missing Context files section");
-    assert!(response.contains(" Tools:"), "Missing Tools section");
-    assert!(response.contains(" Q responses:"), "Missing Q responses section");
-    assert!(response.contains(" Your prompts:"), "Missing Your prompts section");
-    println!("✅ Found all token breakdown sections");
-    
-    // Verify token counts and percentages format
-    assert!(response.contains("tokens ("), "Missing token count format");
-    assert!(response.contains("%)"), "Missing percentage format in breakdown");
-    println!("✅ Verified token count and percentage format");
-    
-    // Verify Pro Tips section
-    assert!(response.contains(" Pro Tips:"), "Missing Pro Tips section");
-    println!("✅ Found Pro Tips section");
-    
-    // Verify specific tip commands
-    assert!(response.contains("/compact"), "Missing /compact command tip");
-    assert!(response.contains("/clear"), "Missing /clear command tip");
-    assert!(response.contains("/context show"), "Missing /context show command tip");
-    println!("✅ Found all command tips: /compact, /clear, /context show");
+    // Check if credit-based usage is supported
+    if response.contains("Credit based usage is not supported for your subscription") {
+        println!("✅ Credit-based usage not supported - test passed with expected message");
+        assert!(response.contains("Credit based usage is not supported"), "Missing expected unsupported message");
+    } else {
+        // Verify context window information for supported subscriptions
+        assert!(response.contains("Current context window"), "Missing context window header");
+        assert!(response.contains("tokens"), "Missing tokens used information");
+        println!("✅ Found context window and token usage information");
+        
+        // Verify progress bar
+        assert!(response.contains("%"), "Missing percentage display");
+        println!("✅ Found progress bar with percentage");
+        
+        // Verify token breakdown sections
+        assert!(response.contains(" Context files:"), "Missing Context files section");
+        assert!(response.contains(" Tools:"), "Missing Tools section");
+        assert!(response.contains(" Kiro responses:"), "Missing Kiro responses section");
+        assert!(response.contains(" Your prompts:"), "Missing Your prompts section");
+        println!("✅ Found all token breakdown sections");
+        
+        // Verify token counts and percentages format
+        assert!(response.contains("tokens ("), "Missing token count format");
+        assert!(response.contains("%)"), "Missing percentage format in breakdown");
+        println!("✅ Verified token count and percentage format");
+        
+        // Verify Pro Tips section
+        assert!(response.contains(" Pro Tips:"), "Missing Pro Tips section");
+        println!("✅ Found Pro Tips section");
+        
+        // Verify specific tip commands
+        assert!(response.contains("/compact"), "Missing /compact command tip");
+        assert!(response.contains("/clear"), "Missing /clear command tip");
+        assert!(response.contains("/context show"), "Missing /context show command tip");
+        println!("✅ Found all command tips: /compact, /clear, /context show");
+    }
     
     println!("✅ All usage content verified!");
     

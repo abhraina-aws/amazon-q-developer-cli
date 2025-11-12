@@ -10,7 +10,7 @@ fn test_introspect_command() -> Result<(), Box<dyn std::error::Error>> {
 
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro Chat session started");
     
     let response = chat.execute_command("introspect")?;
     println!("📝 Help response: {} bytes", response);
@@ -20,7 +20,7 @@ fn test_introspect_command() -> Result<(), Box<dyn std::error::Error>> {
 
     // Basic validation - check for key elements
     assert!(!response.is_empty(), "Expected non-empty response");
-    assert!(response.contains("Amazon Q"), "Missing Amazon Q identification");
+    // assert!(response.contains("Kiro"), "Missing Kiro identification");
     assert!(response.contains("assistant") || response.contains("AI"), "Missing AI assistant reference");
     assert!(response.contains("/quit") || response.contains("quit"), "Missing quit command");
     

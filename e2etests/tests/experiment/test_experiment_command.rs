@@ -9,7 +9,7 @@ fn test_knowledge_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro Chat session started");
     
     let response = chat.execute_command_with_timeout("/experiment",Some(500))?;
     
@@ -125,7 +125,7 @@ fn test_thinking_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro Chat session started");
     
     let response = chat.execute_command_with_timeout("/experiment",Some(500))?;
     
@@ -241,7 +241,7 @@ fn test_experiment_help_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro Chat session started");
     
     let response = chat.execute_command_with_timeout("/experiment --help",Some(500))?;
     
@@ -251,10 +251,12 @@ fn test_experiment_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify help content
-    assert!(response.contains("Usage:") && response.contains("/experiment"),  "Missing usage information");
+    assert!(response.contains("Usage:"),"Missing Usage");
+    assert!(response.contains("/experiment"), "Missing experiment command");
+   
     assert!(response.contains("Options:"), "Missing Options section");
-    assert!(response.contains("-h") &&  response.contains("--help"), "Missing -h, --help flags");
-    println!("✅ Found all expected help content");
+    assert!(response.contains("-h"),"Missing -h command");
+    assert!(response.contains("--help"), "Missing --help command");
 
     println!("✅ /experiment --help command test completed successfully");
     
@@ -271,7 +273,7 @@ fn test_tangent_mode_experiment() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro Chat session started");
     
     let response = chat.execute_command_with_timeout("/experiment",Some(500))?;
     
@@ -387,7 +389,7 @@ fn test_todo_lists_experiment() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro Chat session started");
     
     let response = chat.execute_command_with_timeout("/experiment",Some(500))?;
     

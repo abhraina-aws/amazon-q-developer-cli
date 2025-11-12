@@ -18,9 +18,8 @@ fn test_subscribe_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify subscription management message
-    assert!(response.contains("Q Developer Pro subscription") && response.contains("IAM Identity Center"), "Missing subscription management message");
-    println!("✅ Found subscription management message");
-    
+    assert!(response.contains("Kiro"),"Missing Kiro in message");
+    assert!(response.contains("managed through"), "Missing managed through");    
     println!("✅ All subscribe content verified!");
 
     drop(chat);
@@ -44,9 +43,8 @@ fn test_subscribe_manage_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify subscription management message
-    assert!(response.contains("Q Developer Pro subscription") && response.contains("IAM Identity Center"), "Missing subscription management message");
-    println!("✅ Found subscription management message");
-    
+    assert!(response.contains("Kiro"),"Missing Kiro in message");
+    assert!(response.contains("managed through"), "Missing managed through");       
     println!("✅ All subscribe content verified!");
 
     drop(chat);
@@ -70,8 +68,7 @@ fn test_subscribe_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify description
-    assert!(response.contains("Q Developer Pro subscription"), "Missing subscription description");
-    println!("✅ Found subscription description");
+    assert!(response.contains("Kiro Developer Pro subscription"), "Missing subscription description");
     
     // Verify Usage section
     assert!(response.contains("Usage:"), "Missing Usage section");
@@ -85,11 +82,9 @@ fn test_subscribe_help_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify manage option
     assert!(response.contains("--manage"), "Missing --manage option");
-    println!("✅ Found --manage option");
     
     // Verify help flags
     assert!(response.contains("-h") &&  response.contains("--help"), "Missing -h, --help flags");
-    println!("✅ Found help flags: -h, --help with Print help description");
     
     println!("✅ All subscribe help content verified!");
     
@@ -114,7 +109,7 @@ fn test_subscribe_h_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify description
-    assert!(response.contains("Q Developer Pro subscription"), "Missing subscription description");
+    assert!(response.contains("Kiro Developer Pro subscription"), "Missing subscription description");
     println!("✅ Found subscription description");
     
     // Verify Usage section

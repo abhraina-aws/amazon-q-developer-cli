@@ -5,7 +5,7 @@ use q_cli_e2e_tests::q_chat_helper;
 #[cfg(all(feature = "q_subcommand", feature = "sanity"))]
 fn test_q_setting_delete_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!(
-        "\n🔍 Testing q settings --delete <KEY> <VALUE>... | Description: Tests the <code>q settings --delete <KEY> </code> subcommand to validate DELETE content."
+        "\n🔍 Testing kiro settings --delete <KEY> <VALUE>... | Description: Tests the <code>kiro settings --delete <KEY> </code> subcommand to validate DELETE content."
     );
 // Get all the settings
     let response = q_chat_helper::execute_q_subcommand("q", &["settings", "list"])?;

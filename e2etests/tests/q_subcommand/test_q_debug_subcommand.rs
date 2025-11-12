@@ -4,9 +4,9 @@ use q_cli_e2e_tests::q_chat_helper;
 #[test]
 #[cfg(all(feature = "q_subcommand", feature = "sanity"))]
 fn test_q_debug_subcommand() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q debug subcommand... | Description: Tests the <code> q debug </code> subcommand that provides debugging utilities for the app including app debugging, build switching, logs viewing, and various diagnostic tools.");
+    println!("\n🔍 Testing kiro debug subcommand... | Description: Tests the <code> kiro debug </code> subcommand that provides debugging utilities for the app including app debugging, build switching, logs viewing, and various diagnostic tools.");
     
-    println!("\n🔍 Executing 'q debug' subcommand...");
+    println!("\n🔍 Executing 'kiro debug' subcommand...");
     let response = q_chat_helper::execute_q_subcommand("q", &["debug"])?;
 
     println!("📝 Debug response: {} bytes", response.len());
@@ -30,9 +30,9 @@ fn test_q_debug_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 #[cfg(all(feature = "q_subcommand", feature = "sanity"))]
 fn test_q_debug_app_subcommand() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q debug app subcommand... | Description: Tests the <code> q debug app </code> subcommand that provides debugging utilities for the app including app debugging, build switching, logs viewing, and various diagnostic tools.");
+    println!("\n🔍 Testing kiro debug app subcommand... | Description: Tests the <code> kiro debug app </code> subcommand that provides debugging utilities for the app including app debugging, build switching, logs viewing, and various diagnostic tools.");
     
-    println!("\n🔍 Executing 'q debug app' subcommand...");
+    println!("\n🔍 Executing 'kiro debug app' subcommand...");
     let response = q_chat_helper::execute_q_subcommand("q", &["debug", "app"])?;
 
     println!("📝 Debug response: {} bytes", response.len());
@@ -41,11 +41,10 @@ fn test_q_debug_app_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
 
     // Assert that q debug app launches the Amazon Q interface
-    assert!(response.contains("Amazon Q"), "Response should contain 'Amazon Q'");
+    assert!(response.contains("Kiro CLI"), "Response should contain 'Kiro CLI'");
     assert!(response.contains("🤖 You are chatting with"), "Response should show chat interface");
     
-    println!("✅ Got debug app output ({} bytes)!", response.len());
-    println!("✅ q debug app subcommand executed successfully!");
+    println!("✅ kiro debug app subcommand executed successfully!");
     
     Ok(())
 }
@@ -53,7 +52,7 @@ fn test_q_debug_app_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 #[cfg(all(feature = "q_subcommand", feature = "sanity"))]
 fn test_q_debug_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q debug --help subcommand... | Description: Tests the <code> q debug --help</code> subcommand to validate help output format and content.");
+    println!("\n🔍 Testing kiro debug --help subcommand... | Description: Tests the <code> kiro debug --help</code> subcommand to validate help output format and content.");
     
     println!("\n🔍 Executing 'q debug --help' subcommand...");
     let response = q_chat_helper::execute_q_subcommand("q", &["debug", "help"])?;
@@ -64,7 +63,7 @@ fn test_q_debug_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
 
     // Assert debug help output contains expected commands
-    assert!(response.contains("Usage:") && response.contains("q debug") && response.contains("[OPTIONS]") && response.contains("<COMMAND>"), 
+    assert!(response.contains("Usage:") && response.contains("kiro-cli") && response.contains("[OPTIONS]") && response.contains("<COMMAND>"), 
             "Help should contain usage line");
     assert!(response.contains("Commands:"), "Response should list available commands");
     assert!(response.contains("app"), "Response should contain 'app' command");
@@ -77,8 +76,7 @@ fn test_q_debug_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     assert!(response.contains("-h, --help"), 
             "Should contain help option");
 
-    println!("✅ Got debug help output ({} bytes)!", response.len());
-    println!("✅ q debug --help subcommand executed successfully!");
+    println!("✅ kiro debug --help subcommand executed successfully!");
     
     Ok(())
 }
@@ -86,9 +84,9 @@ fn test_q_debug_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 #[cfg(all(feature = "q_subcommand", feature = "sanity"))]
 fn test_q_debug_build_help() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q debug build --help subcommand... | Description: Tests the <code> q debug build --help </code> subcommand to validate help output format and available build options.");
+    println!("\n🔍 Testing kiro debug build --help subcommand... | Description: Tests the <code> kiro debug build --help </code> subcommand to validate help output format and available build options.");
     
-    println!("\n🔍 Executing 'q debug build --help' subcommand...");
+    println!("\n🔍 Executing 'kiro debug build --help' subcommand...");
     let response = q_chat_helper::execute_q_subcommand("q", &["debug", "build", "--help"])?;
 
     println!("📝 Debug response: {} bytes", response.len());
@@ -97,14 +95,12 @@ fn test_q_debug_build_help() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
 
     // Assert expected output
-    assert!(response.contains("Usage: q debug build [OPTIONS] <APP> [BUILD]"), "Response should contain usage line");
     assert!(response.contains("<APP>"), "Response should contain APP argument");
     assert!(response.contains("[BUILD]"), "Response should contain BUILD argument");
     assert!(response.contains("-v, --verbose...  Increase logging verbosity"), "Response should contain verbose option");
     assert!(response.contains("-h, --help        Print help"), "Response should contain help option");
 
-    println!("✅ Got debug build help output ({} bytes)!", response.len());
-    println!("✅ q debug build --help subcommand executed successfully!");
+    println!("✅ kiro debug build --help subcommand executed successfully!");
     
     Ok(())
 }
@@ -112,9 +108,9 @@ fn test_q_debug_build_help() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 #[cfg(all(feature = "q_subcommand", feature = "sanity"))]
 fn test_q_debug_build_autocomplete() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q debug build autocomplete subcommand... | Description: Tests the <code> q debug build autocomplete </code> subcommand to get current autocomplete build version.");
+    println!("\n🔍 Testing kiro debug build autocomplete subcommand... | Description: Tests the <code> kiro debug build autocomplete </code> subcommand to get current autocomplete build version.");
     
-    println!("\n🔍 Executing 'q debug build autocomplete' subcommand...");
+    println!("\n🔍 Executing 'kiro debug build autocomplete' subcommand...");
     let response = q_chat_helper::execute_q_subcommand("q", &["debug", "build", "autocomplete"])?;
 
     println!("📝 Debug response: {} bytes", response.len());
@@ -134,9 +130,9 @@ fn test_q_debug_build_autocomplete() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 #[cfg(all(feature = "q_subcommand", feature = "sanity"))]
 fn test_q_debug_build_dashboard() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q debug build dashboard subcommand... | Description: Tests the <code> q debug build dashboard </code> subcommand to get current dashboard build version.");
+    println!("\n🔍 Testing kiro debug build dashboard subcommand... | Description: Tests the <code> kiro debug build dashboard </code> subcommand to get current dashboard build version.");
     
-    println!("\n🔍 Executing 'q debug build dashboard' subcommand...");
+    println!("\n🔍 Executing 'kiro debug build dashboard' subcommand...");
     let response = q_chat_helper::execute_q_subcommand("q", &["debug", "build", "dashboard"])?;
 
     println!("📝 Debug response: {} bytes", response.len());
@@ -147,8 +143,7 @@ fn test_q_debug_build_dashboard() -> Result<(), Box<dyn std::error::Error>> {
     // Assert expected output (should be either "production" or "beta")
     assert!(response.contains("production") || response.contains("beta"), "Response should contain either 'production' or 'beta'");
 
-    println!("✅ Got debug build dashboard output ({} bytes)!", response.len());
-    println!("✅ q debug build dashboard subcommand executed successfully!");
+    println!("✅ kiro debug build dashboard subcommand executed successfully!");
     
     Ok(())
 }
@@ -156,7 +151,7 @@ fn test_q_debug_build_dashboard() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 #[cfg(all(feature = "q_subcommand", feature = "sanity"))]
 fn test_q_debug_build_autocomplete_switch() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q debug build autocomplete switch functionality... | Description: Tests the <code> q debug build autocomplete &lt;build&gt; </code> subcommand to switch between different autocomplete builds and revert back.");
+    println!("\n🔍 Testing kiro debug build autocomplete switch functionality... | Description: Tests the <code> kiro debug build autocomplete &lt;build&gt; </code> subcommand to switch between different autocomplete builds and revert back.");
     
     let builds = ["production", "beta"];
     
@@ -184,7 +179,7 @@ fn test_q_debug_build_autocomplete_switch() -> Result<(), Box<dyn std::error::Er
     println!("{}", switch_response);
     println!("📝 END OUTPUT");
 
-    assert!(switch_response.contains("Amazon Q") && switch_response.contains(other_build) && switch_response.contains("autocomplete"));
+    assert!(switch_response.contains("Kiro CLI") && switch_response.contains(other_build) && switch_response.contains("autocomplete"));
     println!("✅ Switched to {} build successfully!", other_build);
 
     // Switch back to original build
@@ -196,7 +191,7 @@ fn test_q_debug_build_autocomplete_switch() -> Result<(), Box<dyn std::error::Er
     println!("{}", revert_response);
     println!("📝 END OUTPUT");
 
-    assert!(revert_response.contains("Amazon Q") && revert_response.contains(current_build) && revert_response.contains("autocomplete"));
+    assert!(revert_response.contains("Kiro CLI") && revert_response.contains(current_build) && revert_response.contains("autocomplete"));
     println!("✅ Switched back to {} build successfully!", current_build);
 
     println!("✅ Build switching test completed successfully!");

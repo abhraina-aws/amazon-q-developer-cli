@@ -4,9 +4,9 @@ use q_cli_e2e_tests::q_chat_helper;
 #[test]
 #[cfg(all(feature = "q_subcommand", feature = "sanity"))]
 fn test_q_chat_subcommand() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q chat subcommand... | Description: Tests the <code> q chat </code> subcommand that opens Q terminal for interactive AI conversations.");
+    println!("\n🔍 Testing kiro chat subcommand... | Description: Tests the <code> kiro chat </code> subcommand that opens Q terminal for interactive AI conversations.");
     
-    println!("\n🔍 Executing 'q chat' subcommand...");
+    println!("\n🔍 Executing 'kiro chat' subcommand...");
     let response = q_chat_helper::execute_q_subcommand("q", &["chat", "\"what is aws?\""])?;
 
     println!("📝 Chat response: {} bytes", response.len());

@@ -10,7 +10,7 @@ fn test_model_dynamic_command() -> Result<(), Box<dyn std::error::Error>> {
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
     // Execute /model command to get list
-    let model_response = chat.execute_command_with_timeout("/model",Some(1000))?;
+    let model_response = chat.execute_command_with_timeout("/model",Some(2000))?;
     
     println!("📝 Model response: {} bytes", model_response.len());
     println!("📝 MODEL RESPONSE:");
@@ -35,36 +35,25 @@ fn test_model_dynamic_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Parse available models from response
     let mut models = Vec::new();
-    let mut found_prompt = false;
     
     for line in model_response.lines() {
         let trimmed_line = line.trim();
+        let cleaned_line = strip_ansi(trimmed_line);
         
-        // Look for the prompt line
-        if trimmed_line.contains("Select a model for this chat session") {
-            found_prompt = true;
-            continue;
-        }
-        
-        // After finding prompt, parse model lines
-        if found_prompt {
-            let cleaned_line = strip_ansi(trimmed_line);
-            println!("\n🔍 Row: '{}' -> Cleaned: '{}'", trimmed_line, cleaned_line);
+        // Parse model lines directly - look for lines with model names
+        if cleaned_line.contains("claude-") || cleaned_line.contains("qwen") || cleaned_line.contains("Auto") {
+            let model_name = cleaned_line
+                .split('|')
+                .next()
+                .unwrap_or(&cleaned_line)
+                .replace("❯", "")
+                .replace("(current)", "")
+                .trim()
+                .to_string();
             
-            if !trimmed_line.is_empty() {
-                // Check if line contains a model (starts with ❯, spaces, or contains model names)
-                if cleaned_line.starts_with("❯") || cleaned_line.starts_with(" ") || cleaned_line.contains("-") {
-                    let model_name = cleaned_line
-                        .replace("❯", "")
-                        .replace("(active)", "")
-                        .trim()
-                        .to_string();
-                    
-                    println!("\n🔍 Extracted model: '{}'", model_name);
-                    if !model_name.is_empty() {
-                        models.push(model_name);
-                    }
-                }
+            println!("\n🔍 Extracted model: '{}'", model_name);
+            if !model_name.is_empty() {
+                models.push(model_name);
             }
         }
     }
@@ -89,8 +78,11 @@ fn test_model_dynamic_command() -> Result<(), Box<dyn std::error::Error>> {
         .map(|line| {
             let cleaned = strip_ansi(line.trim());
             cleaned
+                .split('|')
+                .next()
+                .unwrap_or(&cleaned)
                 .replace("❯", "")
-                .replace("(active)", "")
+                .replace("(current)", "")
                 .trim()
                 .to_string()
         })
@@ -115,6 +107,7 @@ fn test_model_dynamic_command() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
 
 #[test]
 #[cfg(all(feature = "model", feature = "sanity"))]

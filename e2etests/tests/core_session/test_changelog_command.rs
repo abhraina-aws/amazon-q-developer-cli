@@ -12,7 +12,7 @@ fn test_changelog_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro Chat session started");
     
     let response = chat.execute_command_with_timeout("/changelog",Some(1000))?;
     
@@ -22,11 +22,12 @@ fn test_changelog_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify changelog content
-    assert!(response.contains("New") && response.contains("Amazon Q CLI"), "Missing changelog header");
+    assert!(response.contains("New"),"Missing New section");
+    assert!(response.contains("Kiro CLI"), "Missing Kiro CLI");
     println!("✅ Found changelog header");
     
     // Verify version format (e.g., 1.16.2)
-    let version_regex = Regex::new(r"## \d+\.\d+\.\d+").unwrap();
+    let version_regex = Regex::new(r"\d+\.\d+\.\d+").unwrap();
     assert!(version_regex.is_match(&response), "Missing version format (x.x.x)");
     println!("✅ Found valid version format");
     
@@ -36,9 +37,7 @@ fn test_changelog_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("✅ Found valid date format");
     
     // Verify /changelog command reference
-    assert!(response.contains("/changelog"), "Missing /changelog command reference");
-    println!("✅ Found /changelog command reference");
-    
+    assert!(response.contains("/changelog"), "Missing /changelog command reference");    
     println!("✅ /changelog command test completed successfully");
     
     // Release the lock
@@ -55,7 +54,7 @@ fn test_changelog_help_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro Chat session started");
     
     let response = chat.execute_command_with_timeout("/changelog -h",Some(1000))?;
     
@@ -65,10 +64,12 @@ fn test_changelog_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify help content
-    assert!(response.contains("Usage:") && response.contains("/changelog"), "Missing usage information");
+    assert!(response.contains("Usage:"),"Missing Usage information");
+    assert!(response.contains("/changelog"), "Missing /changelog command reference");
+
     assert!(response.contains("Options:"), "Missing Options section");
-    assert!(response.contains("-h") &&  response.contains("--help"), "Missing -h, --help flags");
-    println!("✅ Found all expected help content");
+    assert!(response.contains("-h"), "Missing -h flags");
+    assert!(response.contains("--help"), "Missing --help flags");
 
     println!("✅ /changelog -h command test completed successfully");
     

@@ -18,11 +18,9 @@ fn test_context_show_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify context show output contains expected sections
     assert!(response.contains("Agent"), "Missing Agent section");
-    println!("✅ Found Agent section with emoji");
-    
+
     // Verify agent configuration details
-    assert!(response.contains("q_cli_default"), "Missing q_cli_default");
-    println!("✅ Found all expected agent configuration files");
+    assert!(response.contains("kiro_default"), "Missing kiro_default");
     
     println!("✅ All context show content verified!");
 
@@ -49,8 +47,8 @@ fn test_context_help_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify Usage section
     assert!(response.contains("Usage"), "Missing Usage section");
-    assert!(response.contains("/context") && response.contains("<COMMAND>"), "Missing /context command in usage");
-    println!("✅ Found Usage section");
+    assert!(response.contains("/context"),"Missing /context command");
+    assert!(response.contains("[COMMAND]"), "Missing [COMMAND] placeholder");
     
     // Verify Commands section
     assert!(response.contains("Commands"), "Missing Commands section");
@@ -59,15 +57,11 @@ fn test_context_help_command() -> Result<(), Box<dyn std::error::Error>> {
     assert!(response.contains("remove"), "Missing remove command");
     assert!(response.contains("clear"), "Missing clear command");
     assert!(response.contains("help"), "Missing help command");
-    println!("✅ Found Commands section with all subcommands");
-    
-    println!("✅ Found Options section with help flags");
-    
+        
     println!("✅ All context help content verified!");
 
     // Release the lock before cleanup
     drop(chat);
-    
     
     Ok(())
 }
@@ -87,17 +81,15 @@ fn test_context_without_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", response);
     println!("📝 END OUTPUT");
     
-    assert!(response.contains("Usage"), "Missing Usage section");
-    assert!(response.contains("/context") && response.contains("<COMMAND>"), "Missing /context command in usage");
-    println!("✅ Found Usage section with /context command");
-    
-    assert!(response.contains("Commands"), "Missing Commands section");
-    assert!(response.contains("show"), "Missing show command");
-    assert!(response.contains("add"), "Missing add command");
-    assert!(response.contains("remove"), "Missing remove command");
-    assert!(response.contains("clear"), "Missing clear command");
-    assert!(response.contains("help"), "Missing help command");
-    println!("✅ Found Commands section with all subcommands");
+    // /context without subcommands shows context usage information, not help
+    assert!(response.contains("Current context window"), "Missing context window information");
+    assert!(response.contains("% used"), "Missing usage percentage");
+    assert!(response.contains("Context files"), "Missing Context files section");
+    assert!(response.contains("Tools"), "Missing Tools section");
+    assert!(response.contains("Kiro responses"), "Missing Kiro responses section");
+    assert!(response.contains("Your prompts"), "Missing Your prompts section");
+    assert!(response.contains("Pro Tips:"), "Missing Pro Tips section");
+    println!("✅ Found context usage information and pro tips");
     
     println!("✅ All context help content verified!");
 
@@ -124,9 +116,7 @@ fn test_context_invalid_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify error message for invalid subcommand
-    assert!(response.contains("error"), "Missing error message");
-    println!("✅ Found expected error message for invalid subcommand");
-    
+    assert!(response.contains("error"), "Missing error message");    
     println!("✅ All context invalid command content verified!");
 
     // Release the lock before cleanup
@@ -194,13 +184,17 @@ fn test_context_remove_command_of_non_existent_file() -> Result<(), Box<dyn std:
 fn test_add_remove_file_context() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing /context add <filename> command and /context remove <filename> command... | Description: Tests the <code> /context add</code> command to add a file to context and <code> /context remove</code> command to remove a file from context");
 
-    let test_file_path = "/tmp/test_context_file_.py";
+    let test_file_path = "/tmp/test_context_unique_file.py";
     // Create a test file
     std::fs::write(test_file_path, "# Test file for context\nprint('Hello from test file')")?;
     println!("✅ Created test file at {}", test_file_path);
 
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+    
+    // Clear context first to avoid interference from previous tests
+    let _ = chat.execute_command_with_timeout("/context clear", Some(1000));
+    println!("✅ Cleared context to start fresh");
     
     // Add file to context
     let add_response = chat.execute_command_with_timeout(&format!("/context add {}", test_file_path),Some(1000))?;
@@ -212,7 +206,6 @@ fn test_add_remove_file_context() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify file was added successfully - be flexible with the exact message format
     assert!(add_response.contains("Added"), "Missing success message for adding file");
-    println!("✅ File added to context successfully");
     
     // Execute /context show to confirm file is present
     let show_response = chat.execute_command_with_timeout("/context show",Some(500))?;
@@ -223,9 +216,7 @@ fn test_add_remove_file_context() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END SHOW RESPONSE");
     
     // Verify file is present in context
-    assert!(show_response.contains(test_file_path), "File not found in context show output");
-    println!("✅ File confirmed present in context");
-    
+    assert!(show_response.contains(test_file_path), "File not found in context show output");    
     // Remove file from context
     let remove_response = chat.execute_command_with_timeout(&format!("/context remove {}", test_file_path),Some(1000))?;
     
@@ -236,7 +227,6 @@ fn test_add_remove_file_context() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify file was removed successfully - be flexible with the exact message format
     assert!(remove_response.contains("Removed"), "Missing success message for removing file");
-    println!("✅ File removed from context successfully");
     
     // Execute /context show to confirm file is gone
     let final_show_response = chat.execute_command_with_timeout("/context show",Some(500))?;
@@ -255,8 +245,6 @@ fn test_add_remove_file_context() -> Result<(), Box<dyn std::error::Error>> {
 
     // Clean up test file
     let _ = std::fs::remove_file(test_file_path);
-    println!("✅ Cleaned up test file");
-
     Ok(())
 }
 
@@ -280,7 +268,7 @@ fn test_add_glob_pattern_file_context()-> Result<(), Box<dyn std::error::Error>>
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
     
     // Add glob pattern to context
-    let add_response = chat.execute_command_with_timeout(&format!("/context add {}", glob_pattern),Some(1000))?;
+    let add_response = chat.execute_command_with_timeout(&format!("/context add {}", glob_pattern),Some(3000))?;
     
     println!("📝 Context add response: {} bytes", add_response.len());
     println!("📝 ADD RESPONSE:");
@@ -299,9 +287,10 @@ fn test_add_glob_pattern_file_context()-> Result<(), Box<dyn std::error::Error>>
     println!("{}", show_response);
     println!("📝 END SHOW RESPONSE");
     
-    // Verify glob pattern is present and matches files
-    assert!(show_response.contains(glob_pattern), "Glob pattern not found in context show output");
-    println!("✅ Glob pattern confirmed present in context with matches");
+    // Verify that the Python files are present in context (glob pattern matched them)
+    assert!(show_response.contains(test_file1_path) && show_response.contains(test_file2_path), "Python files not found in context show output");
+    assert!(!show_response.contains(test_file3_path), "JavaScript file should not be matched by .py pattern");
+    println!("✅ Glob pattern matched Python files correctly");
 
     // Remove glob pattern from context
     let remove_response = chat.execute_command_with_timeout(&format!("/context remove {}", glob_pattern),Some(1000))?;
@@ -380,7 +369,6 @@ fn test_add_remove_multiple_file_context()-> Result<(), Box<dyn std::error::Erro
     assert!(show_response.contains(test_file1_path), "Python file not found in context show output");
     assert!(show_response.contains(test_file2_path), "JavaScript file not found in context show output");
     assert!(show_response.contains(test_file3_path), "Text file not found in context show output");
-    println!("✅ All files confirmed present in context");
 
     // Remove multiple files from context
     let remove_response = chat.execute_command_with_timeout(&format!("/context remove {} {} {}", test_file1_path, test_file2_path, test_file3_path),Some(1000))?;
@@ -392,7 +380,6 @@ fn test_add_remove_multiple_file_context()-> Result<(), Box<dyn std::error::Erro
     
     // Verify files were removed successfully - be flexible with the exact message format
     assert!(remove_response.contains("Removed"), "Missing success message for removing multiple files");
-    println!("✅ Multiple files removed from context successfully");
     
     // Execute /context show to confirm files are gone
     let final_show_response = chat.execute_command_with_timeout("/context show",Some(500))?;
@@ -414,9 +401,7 @@ fn test_add_remove_multiple_file_context()-> Result<(), Box<dyn std::error::Erro
     // Clean up test file
     let _ = std::fs::remove_file(test_file1_path);
     let _ = std::fs::remove_file(test_file2_path);
-    let _ = std::fs::remove_file(test_file3_path);
-    println!("✅ Cleaned up test file");
-    
+    let _ = std::fs::remove_file(test_file3_path);    
     
     Ok(())
 }
@@ -457,7 +442,6 @@ fn test_clear_context_command()-> Result<(), Box<dyn std::error::Error>> {
     
     // Verify files are present in context
     assert!(show_response.contains(test_file_path), "Python file not found in context show output");
-    println!("✅ Files confirmed present in context");
     
     // Execute /context clear to remove all files
     let clear_response = chat.execute_command_with_timeout("/context clear",Some(500))?;
@@ -469,7 +453,6 @@ fn test_clear_context_command()-> Result<(), Box<dyn std::error::Error>> {
     
     // Verify context was cleared successfully
     assert!(clear_response.contains("Cleared context"), "Missing success message for clearing context");
-    println!("✅ Context cleared successfully");
     
     // Execute /context show to confirm no files remain
     let final_show_response = chat.execute_command_with_timeout("/context show",Some(500))?;
@@ -481,9 +464,9 @@ fn test_clear_context_command()-> Result<(), Box<dyn std::error::Error>> {
     
     // Verify no files remain in context
     assert!(!final_show_response.contains(test_file_path), "Python file still found in context after clear");
-    assert!(final_show_response.contains("Agent (q_cli_default):"), "Missing Agent section");
-    assert!(final_show_response.contains("<none>"), "Missing <none> indicator for cleared context");
-    println!("✅ All files confirmed removed from context and <none> sections present");
+    assert!(final_show_response.contains("Agent (kiro_default)"), "Missing Agent section");
+    assert!(final_show_response.contains("No files in the current directory matched the rules above"), "Missing empty context indicator");
+    println!("✅ All files confirmed removed from context and empty context message present");
 
     // Release the lock before cleanup
     drop(chat);

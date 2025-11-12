@@ -9,7 +9,7 @@ fn test_clear_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro Chat session started");
     
     // Send initial message
     println!("\n🔍 Sending prompt: 'My name is TestUser'");

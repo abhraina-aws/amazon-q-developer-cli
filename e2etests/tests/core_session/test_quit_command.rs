@@ -7,9 +7,8 @@ fn test_quit_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing /quit command... | Description: Tests the <code> /quit</code> command to properly terminate the Q Chat session and exit cleanly");
     
     let session = q_chat_helper::get_chat_session();
-    let mut chat = session.lock().unwrap();
-
-    println!("✅ Q Chat session started");
+let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+    println!("✅ Kiro Chat session started");
     
     chat.execute_command_with_timeout("/quit",Some(1000))?;
     

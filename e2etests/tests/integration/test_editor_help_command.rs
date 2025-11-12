@@ -17,21 +17,19 @@ fn test_editor_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify Usage section
-    assert!(response.contains("Usage:") && response.contains("/editor") && response.contains("[INITIAL_TEXT]"), "Missing Usage section");
-    println!("✅ Found Usage section with /editor command");
+    assert!(response.contains("Usage:"),"Missing Usage");
+    assert!(response.contains("/editor"),"Missing /editor command");
+    assert!(response.contains("INITIAL_TEXT"), "Missing INITIAL_TEXT");
     
     // Verify Arguments section
     assert!(response.contains("Arguments:"), "Missing Arguments section");
-    assert!(response.contains("[INITIAL_TEXT]"), "Missing INITIAL_TEXT argument");
-    println!("✅ Found Arguments section");
     
     // Verify Options section
     assert!(response.contains("Options:"), "Missing Options section");
-    println!("✅ Found Options section");
     
     // Verify help flags
-    assert!(response.contains("-h") &&  response.contains("--help"), "Missing -h, --help flags");
-    println!("✅ Found help flags: -h, --help with Print help description");
+     assert!(response.contains("-h"),"Missing -h flag");
+     assert!(response.contains("--help"), "Missing --help flag");
     
     println!("✅ All editor help content verified!");
     
@@ -207,7 +205,7 @@ fn test_editor_command_error() -> Result<(), Box<dyn std::error::Error>> {
     assert!(wq_response.contains("Content loaded from editor. Submitting prompt..."), "Missing expected editor output message");
     println!("✅ Found expected editor output: 'Content loaded from editor. Submitting prompt...'");
    
-    assert!(wq_response.contains("nonexistent_file.txt") && wq_response.contains("does not exist"), "Missing file validation error message");
+    assert!(wq_response.contains("nonexistent_file.txt") && wq_response.contains("doesn't exist"), "Missing file validation error message");
     println!("✅ Found expected file validation error message");
 
     println!("✅ Editor command error test completed successfully!");
@@ -233,6 +231,9 @@ fn test_editor_with_file_path() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
     
+    // Trust fs_read tool to avoid permission prompts
+    chat.execute_command("/tools trust fs_read")?;
+
     // Execute /editor command with file path
     let response = chat.execute_command_with_timeout(&format!("/editor {}", test_file_path),Some(500))?;
     

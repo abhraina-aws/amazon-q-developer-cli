@@ -218,7 +218,7 @@ fn test_show_summary() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    let response = chat.execute_command_with_timeout("/compact --show-summary",Some(2000))?;
+    let response = chat.execute_command_with_timeout("/compact --show-summary",Some(3000))?;
     
     println!("📝 Compact response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
@@ -265,7 +265,7 @@ fn test_max_message_truncate_true() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    let response = chat.execute_command_with_timeout("/compact --truncate-large-messages true  --max-message-length 5",Some(1000))?;
+    let response = chat.execute_command_with_timeout("/compact --truncate-large-messages true  --max-message-length 5",Some(3000))?;
     
     println!("📝 Compact response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");

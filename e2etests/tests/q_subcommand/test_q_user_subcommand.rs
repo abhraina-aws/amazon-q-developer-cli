@@ -5,9 +5,9 @@ use q_cli_e2e_tests::q_chat_helper;
 #[test]
 #[cfg(all(feature = "q_subcommand", feature = "sanity"))]
 fn test_q_user_subcommand() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q user subcommand... | Description: Tests the <code> q user </code> subcommand to display user management help.");
+    println!("\n🔍 Testing kiro user subcommand... | Description: Tests the <code> q user </code> subcommand to display user management help.");
     
-    println!("\n🛠️ Running 'q user' subcommand...");
+    println!("\n🛠️ Running 'kiro user' subcommand...");
     let response = q_chat_helper::execute_q_subcommand("q", &["user"])?;
 
     println!("📝 User response: {} bytes", response.len());
@@ -35,7 +35,7 @@ fn test_q_user_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 #[cfg(all(feature = "q_subcommand", feature = "sanity"))]
 fn test_q_user_help_flag() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q user -h help flag...");
+    println!("\n🔍 Testing kiro user -h help flag...");
     
     let response = q_chat_helper::execute_q_subcommand("q", &["user", "-h"])?;
     

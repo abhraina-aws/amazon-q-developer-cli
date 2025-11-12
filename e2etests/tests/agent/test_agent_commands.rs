@@ -262,10 +262,10 @@ fn test_agent_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    assert!(response.contains("~/.aws/amazonq/cli-agents/"), "Missing global path");
-    assert!(response.contains("cwd/.amazonq/cli-agents"), "Missing workspace path");
+    assert!(response.contains("~/.kiro-cli/cli-agents/"), "Missing gloabal path(~/.kiro-cli/cli-agents/) path");
+    assert!(response.contains("cwd/.kiro-cli/cli-agents"), "Missing workspace (cwd/.kiro-cli/cli-agents) path");
     assert!(response.contains("Usage:"), "Missing usage label");
-    assert!(response.contains("/agent"), "Missing agent command");
+    assert!(response.contains("/agent"), "Missing /agent command");
     assert!(response.contains("<COMMAND>"), "Missing command parameter");
     assert!(response.contains("Commands:"), "Missing commands section");
     assert!(response.contains("list"), "Missing list command");
@@ -342,10 +342,10 @@ fn test_agent_list_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    assert!(response.contains("q_cli_default"), "Missing q_cli_default agent");
-    println!("✅ Found q_cli_default agent in list");
+    assert!(response.contains("kiro_default"), "Missing kiro_default agent");
+    println!("✅ Found kiro_default agent in list");
 
-    assert!(response.contains("* q_cli_default"), "Missing bullet point format for q_cli_default");
+    assert!(response.contains("* kiro_default"), "Missing bullet point format for kiro_default");
     println!("✅ Verified bullet point format for agent list");
 
     println!("✅ /agent list command executed successfully");
@@ -369,7 +369,7 @@ fn test_agent_set_default_command() -> Result<(), Box<dyn std::error::Error>> {
     let _ = chat.execute_command("clear");
     let _ = chat.execute_command("\x0C");
 
-    let response = chat.execute_command_with_timeout("/agent set-default -n q_cli_default",Some(1000))?;
+    let response = chat.execute_command_with_timeout("/agent set-default -n kiro_default",Some(1000))?;
 
     println!("📝 Agent set-default command response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
@@ -380,9 +380,9 @@ fn test_agent_set_default_command() -> Result<(), Box<dyn std::error::Error>> {
 
     if !response.contains("✓") { failures.push("Missing success checkmark"); }
     if !response.contains("Default agent set to") { failures.push("Missing success message"); }
-    if !response.contains("q_cli_default") { failures.push("Missing agent name"); }
+    if !response.contains("kiro_default") { failures.push("Missing agent name"); }
     if !response.contains("This will take effect") { failures.push("Missing effect message"); }
-    if !response.contains("next time q chat is launched") { failures.push("Missing launch message"); }
+    if !response.contains("next time kiro-cli chat is launched") { failures.push("Missing launch message"); }
 
     if !failures.is_empty() {
         panic!("Test failures: {}", failures.join(", "));

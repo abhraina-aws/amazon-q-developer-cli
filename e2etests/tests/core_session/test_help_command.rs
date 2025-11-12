@@ -14,7 +14,7 @@ fn test_help_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro Chat session started");
 
     let response = chat.execute_command_with_timeout("/help",Some(100))?;
 
@@ -89,7 +89,7 @@ fn test_whoami_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro Chat session started");
 
     let response = chat.execute_command_with_timeout("!whoami",Some(100))?;
 
@@ -121,7 +121,7 @@ fn test_ctrls_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro Chat session started");
 
     // Ctrl+J produces ASCII Line Feed (0x0A)
     let ctrl_j = "\x13";
@@ -152,7 +152,7 @@ fn test_multiline_with_alt_enter_command() -> Result<(), Box<dyn std::error::Err
 
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro Chat session started");
     let alt_enter = "\x1B\x0A";
     let aws_prompt = "what is AWS explain in 100 words ";
     let ai_rompt = "what is AI explain in 100 words";
