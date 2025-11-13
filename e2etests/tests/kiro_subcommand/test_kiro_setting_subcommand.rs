@@ -3,8 +3,8 @@ use q_cli_e2e_tests::q_chat_helper;
 
 /// Tests the q settings --help subcommand
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_setting_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_setting_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing Kiro settings --help subcommand... | Description: Tests the <code> kiro settings --help </code> subcommand to validate help output format and content.");
     
     println!("\n🛠️ Running 'kiro settings --help' subcommand...");
@@ -41,8 +41,8 @@ fn test_q_setting_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 
 /// Tests the q setting all subcommand
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_settings_all_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_settings_all_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kito settings all subcommand... | Description: Tests the <code> kiro settings all </code> subcommand to display all settings.");
     
     println!("\n🛠️ Running 'kiro settings all' subcommand...");
@@ -64,8 +64,8 @@ fn test_q_settings_all_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 
 /// Tests the q settings help subcommand
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_settings_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_settings_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro settings help subcommand... | Description: Tests the <code> kiro settings help </code> subcommand to validate help output format and content.");
     
     println!("\n🛠️ Running 'kiro settings help' subcommand...");

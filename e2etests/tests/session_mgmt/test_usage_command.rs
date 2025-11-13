@@ -22,7 +22,7 @@ fn test_usage_command() -> Result<(), Box<dyn std::error::Error>> {
     if response.contains("Credit based usage is not supported for your subscription") {
         println!("✅ Credit-based usage not supported - test passed with expected message");
         assert!(response.contains("Credit based usage is not supported"), "Missing expected unsupported message");
-    } else {
+    } else if response.contains("Current context window"){
         // Verify context window information for supported subscriptions
         assert!(response.contains("Current context window"), "Missing context window header");
         assert!(response.contains("tokens"), "Missing tokens used information");
@@ -53,14 +53,13 @@ fn test_usage_command() -> Result<(), Box<dyn std::error::Error>> {
         assert!(response.contains("/clear"), "Missing /clear command tip");
         assert!(response.contains("/context show"), "Missing /context show command tip");
         println!("✅ Found all command tips: /compact, /clear, /context show");
+    } else {
+        assert!(response.contains("Upgrade to Kiro for better usage insights through"), "Missing upgrade message");
     }
-    
     println!("✅ All usage content verified!");
-    
     println!("✅ Test completed successfully");
     
     drop(chat);
-
     Ok(())
 }
 

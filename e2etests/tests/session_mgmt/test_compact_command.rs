@@ -251,41 +251,39 @@ fn test_max_message_truncate_true() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    let response = chat.execute_command_with_timeout("What is AWS explain 100 chaarectors",Some(2000))?;
+    let prompt_one_response = chat.execute_command_with_timeout("What is AWS explain 50 words",Some(2000))?;
     
-    println!("📝 AI response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
-    println!("{}", response);
+    println!("{}", prompt_one_response);
     println!("📝 END OUTPUT");
 
-    let response = chat.execute_command_with_timeout("What is DL explain in 100 chrectors",Some(2000))?;
+    let prompt_two_response = chat.execute_command_with_timeout("What is DL explain in 50 words",Some(2000))?;
     
-    println!("📝 AI response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
-    println!("{}", response);
+    println!("{}", prompt_two_response);
     println!("📝 END OUTPUT");
 
-    let response = chat.execute_command_with_timeout("/compact --truncate-large-messages true  --max-message-length 5",Some(3000))?;
+    let truncate_response = chat.execute_command_with_timeout("/compact --truncate-large-messages true  --max-message-length 5",Some(3000))?;
     
-    println!("📝 Compact response: {} bytes", response.len());
+   
     println!("📝 FULL OUTPUT:");
-    println!("{}", response);
+    println!("{}", truncate_response);
     println!("📝 END OUTPUT");
     
     // Verify compact response - either success or too short
-    if response.to_lowercase().contains("truncating") {
+    if truncate_response.to_lowercase().contains("truncating") {
         println!("✅ Truncation of large messages verified!");
-        if response.contains("history") && response.contains("compacted") && response.contains("successfully") {
+        if truncate_response.contains("history") && truncate_response.contains("compacted") && truncate_response.contains("successfully") {
             println!("✅ Found compact success message");
         }
-    } else if response.contains("Conversation") && response.contains("short") {
+    } else if truncate_response.contains("Conversation") && truncate_response.contains("short") {
         println!("✅ Found conversation too short message");
     } else {
         panic!("Missing expected message");
     }
     
     // Verify compact sumary response
-    assert!(response.to_lowercase().contains("conversation") && response.to_lowercase().contains("summary"), "Missing Summary section");
+    assert!(truncate_response.to_lowercase().contains("conversation") && truncate_response.to_lowercase().contains("summary"), "Missing Summary section");
     println!("✅ All compact content verified!");
     
     drop(chat);
@@ -301,38 +299,35 @@ fn test_max_message_truncate_false() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    let response = chat.execute_command_with_timeout("What is AWS explain 100 chaarectors",Some(2000))?;
+    let prompt_one_response = chat.execute_command_with_timeout("What is AWS explain 100 chaarectors",Some(2000))?;
     
-    println!("📝 AI response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
-    println!("{}", response);
+    println!("{}", prompt_one_response);
     println!("📝 END OUTPUT");
 
-    let response = chat.execute_command_with_timeout("What is DL explain in 100 chrectors",Some(2000))?;
+    let prompt_two_response = chat.execute_command_with_timeout("What is DL explain in 100 chrectors",Some(2000))?;
     
-    println!("📝 AI response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
-    println!("{}", response);
+    println!("{}", prompt_two_response);
     println!("📝 END OUTPUT");
 
-    let response = chat.execute_command_with_timeout("/compact --truncate-large-messages false  --max-message-length 5",Some(1000))?;
+    let truncate_response = chat.execute_command_with_timeout("/compact --truncate-large-messages false  --max-message-length 5",Some(1000))?;
     
-    println!("📝 Compact response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
-    println!("{}", response);
+    println!("{}", truncate_response);
     println!("📝 END OUTPUT");
     
     // Verify compact response - either success or too short
-    if response.contains("history") && response.contains("compacted") && response.contains("successfully") {
+    if truncate_response.contains("history") && truncate_response.contains("compacted") && truncate_response.contains("successfully") {
         println!("✅ Found compact success message");
-    } else if response.contains("Conversation") && response.contains("short") {
+    } else if truncate_response.contains("Conversation") && truncate_response.contains("short") {
         println!("✅ Found conversation too short message");
     } else {
         panic!("Missing expected compact response");
     }
     
     // Verify compact sumary response
-    assert!(response.to_lowercase().contains("conversation") && response.to_lowercase().contains("summary"), "Missing Summary section");
+    assert!(truncate_response.to_lowercase().contains("conversation") && truncate_response.to_lowercase().contains("summary"), "Missing Summary section");
     println!("✅ All compact content verified!");
     
     drop(chat);

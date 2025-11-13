@@ -7,8 +7,8 @@ use q_cli_e2e_tests::q_chat_helper;
 /// - Validates that the setting name is referenced in the output
 /// - Uses json-pretty format to display the chat.defaultAgent setting
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_setting_format_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_setting_format_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 
 println!("\n🔍 Testing kiro settings --format <FORMAT> <SETTINGS>... | Description: Tests the <code>kiro settings --FORMAT <FORMAT> <SETTINGS> </code>subcommand to validate FORMAT content.");
 let response = q_chat_helper::execute_q_subcommand("q", &["settings", "--format", "json-pretty", "chat.defaultAgent"])?;

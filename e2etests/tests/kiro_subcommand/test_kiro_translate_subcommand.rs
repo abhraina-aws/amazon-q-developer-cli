@@ -2,8 +2,8 @@
 use q_cli_e2e_tests::q_chat_helper;
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_translate_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_translate_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro translate subcommand... | Description: Tests the <code> kiro translate </code> subcommand for Natural Language to Shell translation");
     
     println!("\n🔍 Executing 'kiro translate' subcommand with input 'hello'...");

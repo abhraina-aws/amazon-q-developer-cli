@@ -5,8 +5,8 @@ use regex::Regex;
 
 /// Tests the q update subcommand
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_update_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_update_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro update subcommand... | Description: Tests the <code> kiro update </code> subcommand to check for updates.");
     
     println!("\n🛠️ Running 'q update' subcommand...");
@@ -31,8 +31,8 @@ fn test_q_update_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 
 /// Tests the q update -h help flag
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_update_help_flag() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_update_help_flag() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro update -h help flag...");
     
     let response = q_chat_helper::execute_q_subcommand("q", &["update", "-h"])?;

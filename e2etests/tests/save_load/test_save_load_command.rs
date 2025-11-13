@@ -116,7 +116,7 @@ fn test_save_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("✅ Found Usage section with /save command");
     
     assert!(response.contains("Arguments"), "Missing Arguments section");
-    assertpwd!(response.contains("<PATH>"), "Missing PATH argument");
+    assert!(response.contains("<PATH>"), "Missing PATH argument");
     println!("✅ Found Arguments section with PATH parameter");
     
     assert!(response.contains("Options"), "Missing Options section");

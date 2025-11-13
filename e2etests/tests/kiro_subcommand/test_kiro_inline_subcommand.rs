@@ -2,8 +2,8 @@
 use q_cli_e2e_tests::q_chat_helper;
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_inline_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_inline_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro inline subcommand... | Description: Tests the <code> kiro inline </code> subcommand for inline shell completion");   
     
     println!("\n🔍 Executing 'kiro inline' subcommand...");
@@ -26,8 +26,8 @@ fn test_q_inline_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_inline_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_inline_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro inline --help subcommand... | Description: Tests the <code> kiro inline --help</code> subcommand for inline shell completion");   
     
     println!("\n🔍 Executing 'kiro inline --help' subcommand...");
@@ -50,8 +50,8 @@ fn test_q_inline_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_inline_disable_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_inline_disable_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro inline disable subcommand... | Description: Tests the <code> kiro inline disable</code> subcommand for disabling inline");   
     
     println!("\n🔍 Executing 'kiro inline disable' subcommand...");
@@ -71,8 +71,8 @@ fn test_q_inline_disable_subcommand() -> Result<(), Box<dyn std::error::Error>> 
 }
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_inline_disable_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_inline_disable_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro inline disable --help subcommand... | Description: Tests the <code> kiro inline disable --help</code> subcommand to show help for disabling inline");   
     
     println!("\n🔍 Executing 'kiro inline disable --help' subcommand...");
@@ -91,8 +91,8 @@ fn test_q_inline_disable_help_subcommand() -> Result<(), Box<dyn std::error::Err
 }
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_inline_enable_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_inline_enable_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro inline enable subcommand... | Description: Tests the <code> kiro inline enable</code> subcommand for enabling inline");   
     
     println!("\n🔍 Executing 'kiro inline enable' subcommand...");
@@ -112,8 +112,8 @@ fn test_q_inline_enable_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_inline_enable_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_inline_enable_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro inline enable --help subcommand... | Description: Tests the <code> kiro inline enable --help</code> subcommand to show help for enabling inline");   
     
     println!("\n🔍 Executing 'kiro inline enable --help' subcommand...");
@@ -132,8 +132,8 @@ fn test_q_inline_enable_help_subcommand() -> Result<(), Box<dyn std::error::Erro
 }
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_inline_status_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_inline_status_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro inline status subcommand... | Description: Tests the <code> kiro inline status</code> subcommand for showing inline status");
     
     println!("\n🔍 Executing 'kiro inline status' subcommand...");
@@ -176,8 +176,8 @@ fn test_q_inline_status_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_inline_status_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_inline_status_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing q inline status --help subcommand... | Description: Tests the <code> q inline status --help</code> subcommand to show help for inline status");   
     
     println!("\n🔍 Executing 'q inline status --help' subcommand...");
@@ -196,8 +196,8 @@ fn test_q_inline_status_help_subcommand() -> Result<(), Box<dyn std::error::Erro
 }
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_inline_show_customizations_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_inline_show_customizations_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro inline show-customizations subcommand... | Description: Tests the <code> kiro inline show-customizations</code> that show the available customizations");   
     
     println!("\n🔍 Executing 'kiro inline show-customizations' subcommand...");
@@ -218,8 +218,8 @@ fn test_q_inline_show_customizations_subcommand() -> Result<(), Box<dyn std::err
 }
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_inline_show_customizations_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_inline_show_customizations_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro inline show-customizations --help subcommand... | Description: Tests the <code> kiro inline show-customizations --help</code> to show help for showing customizations");   
     
     println!("\n🔍 Executing 'kiro inline show-customizations --help' subcommand...");
@@ -239,8 +239,8 @@ fn test_q_inline_show_customizations_help_subcommand() -> Result<(), Box<dyn std
 }
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_inline_set_customization_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_inline_set_customization_subcommand() -> Result<(), Box<dyn std::error::Error>> {
    println!("\n🔍 Testing kiro-cli inline set-customization subcommand... | Description: Tests the <code> kiro-cli inline set-customization</code> interactive menu for selecting customizations");
     
     // Use helper function to select second option (Amazon-Internal-V1)
@@ -260,8 +260,8 @@ fn test_q_inline_set_customization_subcommand() -> Result<(), Box<dyn std::error
 }
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_inline_unset_customization_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_inline_unset_customization_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro-cli inline unset customization... | Description: Tests the <code> kiro-cli inline set-customization</code> interactive menu for selecting 'None' to unset customization");
     
     // Get the interactive menu to find None position (always at last line)
@@ -285,8 +285,8 @@ fn test_q_inline_unset_customization_subcommand() -> Result<(), Box<dyn std::err
 }
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_inline_set_customization_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_inline_set_customization_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro-cli inline set-customization --help subcommand... | Description: Tests the <code> kiro-cli inline set-customization --help</code> to show help for setting customizations");
     
     let response = q_chat_helper::execute_q_subcommand("q", &["inline", "set-customization", "--help"])?;
@@ -303,3 +303,4 @@ fn test_q_inline_set_customization_help_subcommand() -> Result<(), Box<dyn std::
     
     Ok(())
 }
+

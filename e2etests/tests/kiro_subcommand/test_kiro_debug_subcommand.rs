@@ -2,8 +2,8 @@
 use q_cli_e2e_tests::q_chat_helper;
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_debug_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_debug_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro debug subcommand... | Description: Tests the <code> kiro debug </code> subcommand that provides debugging utilities for the app including app debugging, build switching, logs viewing, and various diagnostic tools.");
     
     println!("\n🔍 Executing 'kiro debug' subcommand...");
@@ -28,8 +28,8 @@ fn test_q_debug_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_debug_app_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_debug_app_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro debug app subcommand... | Description: Tests the <code> kiro debug app </code> subcommand that provides debugging utilities for the app including app debugging, build switching, logs viewing, and various diagnostic tools.");
     
     println!("\n🔍 Executing 'kiro debug app' subcommand...");
@@ -42,7 +42,7 @@ fn test_q_debug_app_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 
     // Assert that q debug app launches the Amazon Q interface
     assert!(response.contains("Kiro CLI"), "Response should contain 'Kiro CLI'");
-    assert!(response.contains("🤖 You are chatting with"), "Response should show chat interface");
+    assert!(response.contains("Running the Kiro CLI.app"), "Missing Running Kiro CLI confrmation");
     
     println!("✅ kiro debug app subcommand executed successfully!");
     
@@ -50,8 +50,8 @@ fn test_q_debug_app_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_debug_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_debug_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro debug --help subcommand... | Description: Tests the <code> kiro debug --help</code> subcommand to validate help output format and content.");
     
     println!("\n🔍 Executing 'q debug --help' subcommand...");
@@ -82,8 +82,8 @@ fn test_q_debug_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_debug_build_help() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_debug_build_help() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro debug build --help subcommand... | Description: Tests the <code> kiro debug build --help </code> subcommand to validate help output format and available build options.");
     
     println!("\n🔍 Executing 'kiro debug build --help' subcommand...");
@@ -106,8 +106,8 @@ fn test_q_debug_build_help() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_debug_build_autocomplete() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_debug_build_autocomplete() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro debug build autocomplete subcommand... | Description: Tests the <code> kiro debug build autocomplete </code> subcommand to get current autocomplete build version.");
     
     println!("\n🔍 Executing 'kiro debug build autocomplete' subcommand...");
@@ -128,8 +128,8 @@ fn test_q_debug_build_autocomplete() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_debug_build_dashboard() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_debug_build_dashboard() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro debug build dashboard subcommand... | Description: Tests the <code> kiro debug build dashboard </code> subcommand to get current dashboard build version.");
     
     println!("\n🔍 Executing 'kiro debug build dashboard' subcommand...");
@@ -149,8 +149,8 @@ fn test_q_debug_build_dashboard() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_debug_build_autocomplete_switch() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_debug_build_autocomplete_switch() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro debug build autocomplete switch functionality... | Description: Tests the <code> kiro debug build autocomplete &lt;build&gt; </code> subcommand to switch between different autocomplete builds and revert back.");
     
     let builds = ["production", "beta"];

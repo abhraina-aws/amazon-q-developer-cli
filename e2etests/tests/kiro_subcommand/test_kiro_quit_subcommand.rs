@@ -2,8 +2,8 @@
 use q_cli_e2e_tests::q_chat_helper;
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_quit_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_quit_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!(
         "\n🔍 Testing kiro settings kiro quit subcommand | Description: Tests the <code>kiro quit </code> subcommand to validate whether it quit the kiro app."
     );

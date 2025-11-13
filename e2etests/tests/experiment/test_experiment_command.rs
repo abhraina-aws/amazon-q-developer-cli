@@ -19,8 +19,9 @@ fn test_knowledge_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify experiment menu content
-    assert!(response.contains("Select"), "Missing selection prompt");
+    assert!(response.contains("Press (↑↓) to navigate"), "Missing selection prompt");
     assert!(response.contains("Knowledge"), "Missing Knowledge experiment");
+    assert!(response.contains("Thinking"), "Missing Thinking experiment");
     println!("✅ Found experiment menu with Knowledge option");
     
     // Find Knowledge and check if it's already selected
@@ -135,7 +136,7 @@ fn test_thinking_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify experiment menu content
-    assert!(response.contains("Select"), "Missing selection prompt");
+    assert!(response.contains("Press (↑↓) to navigate"), "Missing selection prompt");
     assert!(response.contains("Thinking"), "Missing Thinking experiment");
     println!("✅ Found experiment menu with Thinking option");
     
@@ -283,7 +284,7 @@ fn test_tangent_mode_experiment() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify experiment menu content
-    assert!(response.contains("Select"), "Missing selection prompt");
+    assert!(response.contains("Press (↑↓) to navigate"), "Missing selection prompt");
     assert!(response.contains("Tangent Mode"), "Missing Tangent Mode experiment");
     println!("✅ Found experiment menu with Tangent Mode option");
     
@@ -399,7 +400,7 @@ fn test_todo_lists_experiment() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify experiment menu content
-    assert!(response.contains("Select"), "Missing selection prompt");
+    assert!(response.contains("Press (↑↓) to navigate"), "Missing selection prompt");
     assert!(response.contains("Todo Lists"), "Missing Todo Lists experiment");
     println!("✅ Found experiment menu with Todo Lists option");
     

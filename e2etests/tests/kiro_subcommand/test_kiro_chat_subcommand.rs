@@ -2,8 +2,8 @@
 use q_cli_e2e_tests::q_chat_helper;
 
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_chat_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
+fn test_kiro_chat_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro chat subcommand... | Description: Tests the <code> kiro chat </code> subcommand that opens Q terminal for interactive AI conversations.");
     
     println!("\n🔍 Executing 'kiro chat' subcommand...");
