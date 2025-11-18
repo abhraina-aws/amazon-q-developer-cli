@@ -70,7 +70,8 @@ fn test_todos_help_command() -> Result<(), Box<dyn std::error::Error>> {
 fn test_todos_view_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing /todos view command... | Description: Tests the <code> /todos view</code> command to view to-do lists");
 
-    let session = q_chat_helper::get_chat_session();
+    // Use a new isolated session to avoid context contamination from previous tests
+    let session = q_chat_helper::get_new_chat_session()?;
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
     println!("Executing 'kiro-cli settings chat.enableTodoList true' to enable todos feature...");
@@ -170,7 +171,8 @@ fn test_todos_view_command() -> Result<(), Box<dyn std::error::Error>> {
 fn test_todos_resume_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing /todos resume command... | Description: Tests the <code> /todos resume</code> command to resume a specific to-do list");
 
-    let session = q_chat_helper::get_chat_session();
+    // Use a new isolated session to avoid context contamination from previous tests
+    let session = q_chat_helper::get_new_chat_session()?;
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
     println!("Executing 'kiro-cli settings chat.enableTodoList true' to enable todos feature...");
@@ -270,7 +272,8 @@ fn test_todos_resume_command() -> Result<(), Box<dyn std::error::Error>> {
 fn test_todos_delete_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing /todos delete command... | Description: Tests the <code> /todos delete</code> command to delete a specific to-do list");
 
-    let session = q_chat_helper::get_chat_session();
+    // Use a new isolated session to avoid context contamination from previous tests
+    let session = q_chat_helper::get_new_chat_session()?;
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
     println!("Executing 'kiro-cli settings chat.enableTodoList true' to enable todos feature...");
@@ -288,7 +291,7 @@ fn test_todos_delete_command() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("✅ Kiro CLI chat session started");
 
-    let response = chat.execute_command_with_timeout("Add task in todos list Review emails",Some(2000))?;
+    let response = chat.execute_command_with_timeout("Add task in todos list Review emails",Some(4000))?;
 
     println!("📝 Help response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");

@@ -1,5 +1,7 @@
 #[allow(unused_imports)]
 use q_cli_e2e_tests::q_chat_helper;
+use std::fs;
+use std::path::PathBuf;
 
 #[test]
 #[cfg(all(feature = "ai_prompts", feature = "sanity"))]
@@ -146,33 +148,81 @@ fn test_prompts_list_command() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 #[cfg(all(feature = "ai_prompts", feature = "sanity"))]
 fn test_prompts_get_command() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing /prompts list command... | Description: Tests the <code> /prompts get prompt_name</code> command to display all available prompts with their arguments and usage information");
+    println!("\n🔍 Testing /prompts get command... | Description: Tests the <code> /prompts get prompt_name</code> command to display all available prompts with their arguments and usage information");
 
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap();
 
+    // First, check if any prompts exist
     let response = chat.execute_command_with_timeout("/prompts list",Some(2000))?;
     println!("📝 Prompts list response: {}", response);
     
-    // Look for prompt file paths in the output
-    let first_prompt = response
+    // Look for prompt names in the table output (skip header lines)
+    let first_prompt_opt = response
         .lines()
-        .find(|line| line.contains(".md") && (line.contains("prompts/") || line.contains("/.kiro/")))
-        .and_then(|line| {
-            // Extract filename without extension from the path
-            std::path::Path::new(line.trim())
-                .file_stem()
-                .and_then(|stem| stem.to_str())
+        .skip_while(|line| !line.contains("▔") && !line.contains("─")) // Skip until we find the table separator
+        .skip(1) // Skip the separator line itself
+        .find(|line| {
+            let trimmed = line.trim();
+            // Skip empty lines, lines starting with >, lines with Usage, and lines that only contain special chars
+            !trimmed.is_empty() 
+                && !trimmed.starts_with(">") 
+                && !line.contains("Usage:")
+                && !trimmed.chars().all(|c| c == '▔' || c == '─' || c.is_whitespace())
+                && trimmed.chars().any(|c| c.is_alphanumeric())
         })
-        .ok_or("No prompts found in list")?;
+        .and_then(|line| {
+            // Extract the first word (prompt name) from the table row
+            let first_word = line.trim().split_whitespace().next()?;
+            // Validate it's a reasonable prompt name (alphanumeric with hyphens/underscores)
+            if first_word.chars().all(|c| c.is_alphanumeric() || c == '-' || c == '_') {
+                Some(first_word)
+            } else {
+                None
+            }
+        });
 
-    assert!(!first_prompt.is_empty(), "No prompt name available");
-    println!("📝 First prompt found: {}", first_prompt);
+    let prompts_dir = PathBuf::from(".kiro/prompts");
+    let test_prompt_path = prompts_dir.join("test-e2e-prompt.md");
+    let mut created_prompt = false;
+    let prompt_name: String;
 
-    let get_response = chat.execute_command_with_timeout(&format!("/prompts get {}", first_prompt),Some(2000))?;
+    // If no prompts found, create one
+    if first_prompt_opt.is_none() {
+        println!("📝 No prompts found, creating temporary test prompt");
+        fs::create_dir_all(&prompts_dir)?;
+        let prompt_content = r#"---
+name: test-e2e-prompt
+---
+What is AWS? Explain in 10 words.
+"#;
+        fs::write(&test_prompt_path, prompt_content)?;
+        created_prompt = true;
+        prompt_name = "test-e2e-prompt".to_string();
+        println!("📝 Created temporary test prompt: {}", prompt_name);
+        
+        // Re-run list command to verify prompt was created
+        let new_response = chat.execute_command_with_timeout("/prompts list",Some(2000))?;
+        println!("📝 Updated prompts list response: {}", new_response);
+    } else {
+        prompt_name = first_prompt_opt.unwrap().to_string();
+        println!("📝 Found existing prompt: {}", prompt_name);
+    }
+
+    // Test the get command
+    let get_response = chat.execute_command_with_timeout(&format!("/prompts get {}", prompt_name),Some(2000))?;
     println!("📝 Get response: {}", get_response);
 
     assert!(!get_response.is_empty(), "Prompt get command should return content");
+    println!("✅ Prompt get command executed successfully");
+    
     drop(chat);
+
+    // Cleanup: Remove the test prompt if we created it
+    if created_prompt && test_prompt_path.exists() {
+        fs::remove_file(&test_prompt_path)?;
+        println!("📝 Cleaned up temporary test prompt");
+    }
+
     Ok(())
 }
