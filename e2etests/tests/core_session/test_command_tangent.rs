@@ -11,7 +11,7 @@ let session =q_chat_helper::get_chat_session();
 let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
 // Enable tangent mode first
-q_chat_helper::execute_q_subcommand("q", &["settings", "chat.enableTangentMode", "true"])?;
+q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", "chat.enableTangentMode", "true"])?;
 let response = chat.execute_command("/tangent")?;
 
 println!("📝 transform response: {} bytes", response.len());

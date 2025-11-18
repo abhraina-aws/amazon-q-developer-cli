@@ -98,7 +98,7 @@ fn test_agent_create_command() -> Result<(), Box<dyn std::error::Error>> {
         .trim();
     println!("✅ Current username: {}", username);
 
-    let agent_path = format!("/Users/{}/.aws/amazonq/cli-agents/{}.json", username, agent_name);
+    let agent_path = format!("/Users/{}/.kiro/agents/{}.json", username, agent_name);
     println!("✅ Agent path: {}", agent_path);
 
     if std::path::Path::new(&agent_path).exists() {
@@ -150,7 +150,7 @@ fn test_agent_edit_command() -> Result<(), Box<dyn std::error::Error>> {
 
 
     // Use line-based editing
-    chat.execute_command("3G")?; // Go to line 2 (assuming description is there)
+    chat.execute_command("/description")?; // Search for description line
     chat.execute_command("S")?; // Delete line and enter insert mode
     chat.execute_command("  \"description\": \"Updated agent description for testing\",")?;
     chat.execute_command("\u{1b}")?; // ESC
@@ -179,7 +179,7 @@ fn test_agent_edit_command() -> Result<(), Box<dyn std::error::Error>> {
         .trim();
     println!("✅ Current username: {}", username);
 
-    let agent_path = format!("/Users/{}/.aws/amazonq/cli-agents/{}.json", username, agent_name);
+    let agent_path = format!("/Users/{}/.kiro/agents/{}.json", username, agent_name);
     println!("✅ Agent path: {}", agent_path);
 
     if std::path::Path::new(&agent_path).exists() {
@@ -262,8 +262,8 @@ fn test_agent_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    assert!(response.contains("~/.kiro-cli/cli-agents/"), "Missing gloabal path(~/.kiro-cli/cli-agents/) path");
-    assert!(response.contains("cwd/.kiro-cli/cli-agents"), "Missing workspace (cwd/.kiro-cli/cli-agents) path");
+    assert!(response.contains("~/.kiro/agents/"), "Missing gloabal path(~/.kiro/agents/) path");
+    assert!(response.contains("cwd/.kiro/agents"), "Missing workspace (cwd/.kiro/agents) path");
     assert!(response.contains("Usage:"), "Missing usage label");
     assert!(response.contains("/agent"), "Missing /agent command");
     assert!(response.contains("<COMMAND>"), "Missing command parameter");
@@ -482,10 +482,15 @@ fn test_agent_generate_command() -> Result<(), Box<dyn std::error::Error>> {
 
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
- // Clear any previous session output to prevent contamination
+    // Clear any previous session output to prevent contamination
     let _ = chat.execute_command("clear");
     // Start the command and wait for name prompt
-    let _response1 = chat.execute_command_with_timeout("/agent generate", Some(20000))?;
+    let response = chat.execute_command_with_timeout("/agent generate", Some(20000))?;
+
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
     // Wait longer for the prompt to fully appear
     std::thread::sleep(std::time::Duration::from_secs(5));
 
@@ -503,6 +508,10 @@ fn test_agent_generate_command() -> Result<(), Box<dyn std::error::Error>> {
 
     // Wait for MCP menu, then confirm (Enter)
     let _final_response = chat.send_key_input("\r")?;
+
+    println!("📝 FULL OUTPUT:");
+    println!("{}", _final_response);
+    println!("📝 END OUTPUT");
     std::thread::sleep(std::time::Duration::from_secs(2));
 
     // Handle vi editor opening - enter insert mode and add content
