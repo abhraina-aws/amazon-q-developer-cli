@@ -20,13 +20,11 @@ fn test_usage_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Check if credit-based usage is supported
     if response.contains("Credit based usage is not supported for your subscription") {
-        println!("✅ Credit-based usage not supported - test passed with expected message");
         assert!(response.contains("Credit based usage is not supported"), "Missing expected unsupported message");
     } else if response.contains("Current context window"){
         // Verify context window information for supported subscriptions
         assert!(response.contains("Current context window"), "Missing context window header");
         assert!(response.contains("tokens"), "Missing tokens used information");
-        println!("✅ Found context window and token usage information");
         
         // Verify progress bar
         assert!(response.contains("%"), "Missing percentage display");

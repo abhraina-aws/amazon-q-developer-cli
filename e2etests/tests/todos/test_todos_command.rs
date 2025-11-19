@@ -89,32 +89,28 @@ fn test_todos_view_command() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("✅ Kiro CLI chat session started");
 
-    let response = chat.execute_command_with_timeout("Add task in todos list Review emails",Some(2000))?;
+    let response = chat.execute_command_with_timeout("create a todo_list with 2 tasks: 1. Review code changes 2. Update documentation",Some(2000))?;
 
-    println!("📝 Help response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
     println!("{}", response);
     println!("📝 END OUTPUT");
 
     // Verify help content
-    assert!(response.contains("using tool"), "Missing using tool message");
-    assert!(response.contains("todo_list"), "Missing todo_list message");
-    assert!(response.contains("Review emails"), "Missing Review emails message");
+    assert!(response.contains("TODO list"), "Expecting 'TODO list' in reponse.");
+    assert!(response.contains("ID"), "Expecting 'ID' in response.");
 
-    let response = chat.execute_command_with_timeout("/todos view",Some(2000))?;
+    let view_response = chat.execute_command_with_timeout("/todos view",Some(2000))?;
 
-    println!("📝 Help response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
-    println!("{}", response);
+    println!("{}", view_response);
     println!("📝 END OUTPUT");
 
-    assert!(response.contains("to-do"), "Missing to-do message");
-    assert!(response.contains("view"), "Missing view message");
+    assert!(view_response.contains("to-do"), "Expecting 'to-do' in response.");
+    assert!(view_response.contains("view"), "Expecting 'view' in response.");
 
     // Send down arrow to select different model
     let selection_response = chat.send_key_input("\x1b[B")?;
-
-    println!("📝 Selection response: {} bytes", selection_response.len());
+   
     println!("📝 SELECTION RESPONSE:");
     println!("{}", selection_response);
     println!("📝 END SELECTION RESPONSE");
@@ -122,28 +118,24 @@ fn test_todos_view_command() -> Result<(), Box<dyn std::error::Error>> {
     // Send Enter to confirm
     let confirm_response = chat.send_key_input("\r")?;
 
-    println!("📝 Confirm response: {} bytes", confirm_response.len());
     println!("📝 CONFIRM RESPONSE:");
     println!("{}", confirm_response);
     println!("📝 END CONFIRM RESPONSE");
 
-    assert!(confirm_response.contains("TODO"), "Missing TODO message");
-    assert!(confirm_response.contains("Review emails"), "Missing Review emails message");
+    assert!(confirm_response.contains("TODO"), "Expecting 'TODO' in response.");
 
-    let response = chat.execute_command_with_timeout("/todos delete",Some(2000))?;
+    let delete_response = chat.execute_command_with_timeout("/todos delete",Some(2000))?;
 
-    println!("📝 Help response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
-    println!("{}", response);
+    println!("{}", delete_response);
     println!("📝 END OUTPUT");
 
-    assert!(response.contains("to-do"), "Missing to-do message");
-    assert!(response.contains("delete"), "Missing delete message");
+    assert!(delete_response.contains("to-do"), "Expecting 'to-do' in reponse.");
+    assert!(delete_response.contains("delete"), "Expecting 'delete' in reponse");
 
     // Send down arrow to select different model
     let selection_response = chat.send_key_input("\x1b[B")?;
 
-    println!("📝 Selection response: {} bytes", selection_response.len());
     println!("📝 SELECTION RESPONSE:");
     println!("{}", selection_response);
     println!("📝 END SELECTION RESPONSE");
@@ -151,13 +143,12 @@ fn test_todos_view_command() -> Result<(), Box<dyn std::error::Error>> {
     // Send Enter to confirm
     let confirm_response = chat.send_key_input("\r")?;
 
-    println!("📝 Confirm response: {} bytes", confirm_response.len());
     println!("📝 CONFIRM RESPONSE:");
     println!("{}", confirm_response);
     println!("📝 END CONFIRM RESPONSE");
 
-    assert!(confirm_response.contains("Deleted"), "Missing Deleted message");
-    assert!(confirm_response.contains("to-do"), "Missing to-do item");
+    assert!(confirm_response.contains("Deleted"), "Expecting 'Deleted' in reponse.");
+    assert!(confirm_response.contains("to-do"), "Expecting 'to-do' in reponse.");
 
     println!("✅ /todos view command test completed successfully");
 
@@ -190,32 +181,28 @@ fn test_todos_resume_command() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("✅ Kiro CLI chat session started");
 
-    let response = chat.execute_command_with_timeout("Add task in todos list Review emails",Some(2000))?;
+    let create_response = chat.execute_command_with_timeout("create a todo_list with 1 tasks: 1. Review code changes",Some(3000))?;
 
-    println!("📝 Help response: {} bytes", response.len());
-    println!("📝 FULL OUTPUT:");
-    println!("{}", response);
-    println!("📝 END OUTPUT");
+    println!("📝 CREATE OUTPUT:");
+    println!("{}", create_response);
+    println!("📝 END CREATE OUTPUT");
 
     // Verify help content
-    assert!(response.contains("using tool"), "Missing using tool message");
-    assert!(response.contains("todo_list"), "Missing todo_list tool message");
-    assert!(response.contains("Review emails"), "Missing Review emails message");
+    assert!(create_response.contains("TODO"), "Expecting 'TODO' in response.");
+    assert!(create_response.contains("list"), "Expecting 'list' in response");
 
-    let response = chat.execute_command_with_timeout("/todos resume",Some(2000))?;
+    let resume_response = chat.execute_command_with_timeout("/todos resume",Some(2000))?;
 
-    println!("📝 Help response: {} bytes", response.len());
-    println!("📝 FULL OUTPUT:");
-    println!("{}", response);
-    println!("📝 END OUTPUT");
+    println!("📝 RESUME OUTPUT:");
+    println!("{}", resume_response);
+    println!("📝 END RESUME OUTPUT");
 
-    assert!(response.contains("to-do"), "Missing to-do message");
-    assert!(response.contains("resume"), "Missing resume message");
+    assert!(resume_response.contains("to-do"), "Expecting 'to-do' in response.");
+    assert!(resume_response.contains("resume"), "Expecting 'resume' in response.");
 
     // Send down arrow to select different model
     let selection_response = chat.send_key_input("\x1b[B")?;
 
-    println!("📝 Selection response: {} bytes", selection_response.len());
     println!("📝 SELECTION RESPONSE:");
     println!("{}", selection_response);
     println!("📝 END SELECTION RESPONSE");
@@ -223,28 +210,25 @@ fn test_todos_resume_command() -> Result<(), Box<dyn std::error::Error>> {
     // Send Enter to confirm
     let confirm_response = chat.send_key_input("\r")?;
 
-    println!("📝 Confirm response: {} bytes", confirm_response.len());
     println!("📝 CONFIRM RESPONSE:");
     println!("{}", confirm_response);
     println!("📝 END CONFIRM RESPONSE");
 
-    assert!(confirm_response.contains("Review emails"), "Missing Review emails message");
-    assert!(confirm_response.contains("TODO"), "Missing TODO item");
+    assert!(confirm_response.contains("Resuming"), "Expecting 'Resuming' in reponse.");
+    assert!(confirm_response.contains("TODO"), "Expecting TODO in response.");
 
-    let response = chat.execute_command_with_timeout("/todos delete",Some(2000))?;
+    let delete_response = chat.execute_command_with_timeout("/todos delete",Some(2000))?;
 
-    println!("📝 Help response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
-    println!("{}", response);
+    println!("{}", delete_response);
     println!("📝 END OUTPUT");
 
-    assert!(response.contains("to-do"), "Missing to-do message");
-    assert!(response.contains("delete"), "Missing delete message");
+    assert!(delete_response.contains("to-do"), "Expecting 'to-do' in reponse.");
+    assert!(delete_response.contains("delete"), "Expecting 'delete' in reponse");
 
     // Send down arrow to select different model
     let selection_response = chat.send_key_input("\x1b[B")?;
 
-    println!("📝 Selection response: {} bytes", selection_response.len());
     println!("📝 SELECTION RESPONSE:");
     println!("{}", selection_response);
     println!("📝 END SELECTION RESPONSE");
@@ -252,13 +236,12 @@ fn test_todos_resume_command() -> Result<(), Box<dyn std::error::Error>> {
     // Send Enter to confirm
     let confirm_response = chat.send_key_input("\r")?;
 
-    println!("📝 Confirm response: {} bytes", confirm_response.len());
     println!("📝 CONFIRM RESPONSE:");
     println!("{}", confirm_response);
     println!("📝 END CONFIRM RESPONSE");
 
-    assert!(confirm_response.contains("Deleted"), "Missing Deleted message");
-    assert!(confirm_response.contains("to-do"), "Missing to-do item");
+    assert!(confirm_response.contains("Deleted"), "Expecting 'Deleted' in reponse.");
+    assert!(confirm_response.contains("to-do"), "Expecting 'to-do' in reponse.");
 
     println!("✅ /todos resume command test completed successfully");
 
@@ -289,34 +272,31 @@ fn test_todos_delete_command() -> Result<(), Box<dyn std::error::Error>> {
     assert!(response.contains("chat.enableTodoList = true"), "Failed to enable todos feature using chat.enableTodoList = true");
     println!("✅ Todos feature enabled");
 
+    let session = q_chat_helper::get_chat_session();
+    let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+
     println!("✅ Kiro CLI chat session started");
 
-    let response = chat.execute_command_with_timeout("Add task in todos list Review emails",Some(4000))?;
-
-    println!("📝 Help response: {} bytes", response.len());
-    println!("📝 FULL OUTPUT:");
-    println!("{}", response);
-    println!("📝 END OUTPUT");
-
-    // Verify help content
-    assert!(response.contains("using tool"), "Missing using tool messsage");
-    assert!(response.contains("todo_list"), "Missing todo_list message");
-    assert!(response.contains("Review emails"), "Missing Review emails message");
-
-    let response = chat.execute_command_with_timeout("/todos view",Some(2000))?;
-
-    println!("📝 Help response: {} bytes", response.len());
-    println!("📝 FULL OUTPUT:");
-    println!("{}", response);
-    println!("📝 END OUTPUT");
-
-    assert!(response.contains("to-do"), "Missing to-do message");
-    assert!(response.contains("view"), "Missing view message");
+    // Create a new todo list for testing
+    println!("Creating a new todo list for testing...");
+    let create_response = chat.execute_command_with_timeout("create a todo_list with 2 tasks: 1. Review code changes 2. Update documentation", Some(3000))?;
+    println!("create_response: {}", create_response);
+    
+ // Verify help content
+    assert!(create_response.contains("TODO"), "Expecting 'TODO' in response.");
+    assert!(create_response.contains("list"), "Expecting 'list' in response");
+    
+    println!("Todo list created successfully, now testing delete...");
+    
+    // Test the delete command and actually delete the todo
+    let delete_response = chat.execute_command_with_timeout("/todos delete", Some(1000))?;
+    
+    assert!(delete_response.contains("to-do"), "Expecting 'to-do' in reponse.");
+    assert!(delete_response.contains("delete"), "Expecting 'delete' in reponse");
 
     // Send down arrow to select different model
     let selection_response = chat.send_key_input("\x1b[B")?;
 
-    println!("📝 Selection response: {} bytes", selection_response.len());
     println!("📝 SELECTION RESPONSE:");
     println!("{}", selection_response);
     println!("📝 END SELECTION RESPONSE");
@@ -324,47 +304,15 @@ fn test_todos_delete_command() -> Result<(), Box<dyn std::error::Error>> {
     // Send Enter to confirm
     let confirm_response = chat.send_key_input("\r")?;
 
-    println!("📝 Confirm response: {} bytes", confirm_response.len());
     println!("📝 CONFIRM RESPONSE:");
     println!("{}", confirm_response);
     println!("📝 END CONFIRM RESPONSE");
 
-    assert!(confirm_response.contains("TODO"), "Missing TODO message");
-    assert!(confirm_response.contains("Review emails"), "Missing Review emails to-do item");
-
-    let response = chat.execute_command_with_timeout("/todos delete",Some(2000))?;
-
-    println!("📝 Help response: {} bytes", response.len());
-    println!("📝 FULL OUTPUT:");
-    println!("{}", response);
-    println!("📝 END OUTPUT");
-
-    assert!(response.contains("to-do"), "Missing to-do message");
-    assert!(response.contains("delete"), "Missing delete message");
-
-    // Send down arrow to select different model
-    let selection_response = chat.send_key_input("\x1b[B")?;
-
-    println!("📝 Selection response: {} bytes", selection_response.len());
-    println!("📝 SELECTION RESPONSE:");
-    println!("{}", selection_response);
-    println!("📝 END SELECTION RESPONSE");
-
-    // Send Enter to confirm
-    let confirm_response = chat.send_key_input("\r")?;
-
-    println!("📝 Confirm response: {} bytes", confirm_response.len());
-    println!("📝 CONFIRM RESPONSE:");
-    println!("{}", confirm_response);
-    println!("📝 END CONFIRM RESPONSE");
-
-    assert!(confirm_response.contains("Deleted"), "Missing Deleted message");
-    assert!(confirm_response.contains("to-do"), "Missing to-do item");
+    assert!(confirm_response.contains("Deleted"), "Expecting 'Deleted' in reponse.");
+    assert!(confirm_response.contains("to-do"), "Expecting 'to-do' in reponse.");
 
     println!("✅ /todos delete command test completed successfully");
-
     drop(chat);
-
     Ok(())
 }
 

@@ -9,9 +9,8 @@ fn test_compact_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
      
-    let response = chat.execute_command_with_timeout("What is AWS explain 100 chaarectors",Some(2000))?;
+    let response = chat.execute_command_with_timeout("What is AWS explain 100 charectors",Some(2000))?;
     
-    println!("📝 AI response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
     println!("{}", response);
     println!("📝 END OUTPUT");
@@ -206,21 +205,18 @@ fn test_show_summary() -> Result<(), Box<dyn std::error::Error>> {
 
     let response = chat.execute_command_with_timeout("What is AWS explain 100 chaarectors",Some(2000))?;
     
-    println!("📝 AI response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
     println!("{}", response);
     println!("📝 END OUTPUT");
 
     let response = chat.execute_command_with_timeout("What is AWS explain 100 chaarectors",Some(2000))?;
     
-    println!("📝 AI response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
     println!("{}", response);
     println!("📝 END OUTPUT");
 
     let response = chat.execute_command_with_timeout("/compact --show-summary",Some(3000))?;
     
-    println!("📝 Compact response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
     println!("{}", response);
     println!("📝 END OUTPUT");
@@ -345,7 +341,6 @@ fn test_max_message_length_invalid() -> Result<(), Box<dyn std::error::Error>> {
     
     let response = chat.execute_command_with_timeout("What is AWS explain 100 chaarectors",Some(2000))?;
     
-    println!("📝 AI response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
     println!("{}", response);
     println!("📝 END OUTPUT");

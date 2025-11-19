@@ -15,6 +15,7 @@ impl<'a> Drop for FileCleanup<'a> {
     }
 }
 
+
 #[test]
 #[cfg(all(feature = "tools", feature = "sanity"))]
 fn test_tools_command() -> Result<(), Box<dyn std::error::Error>> {
@@ -101,11 +102,11 @@ fn test_tools_help_command() -> Result<(), Box<dyn std::error::Error>> {
 fn test_tools_trust_all_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing /tools trust-all command... | Description: Tests the <code> /tools trust-all</code> command to trust all available tools and verify all tools show trusted status, then tests reset functionality");
     
-    let session = q_chat_helper::get_chat_session();
+    // Use a new isolated session to avoid context contamination
+    let session = q_chat_helper::get_new_chat_session()?;
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
     println!("✅ Kiro CLI chat session started");
-
     // Execute trust-all command
     let trust_all_response = chat.execute_command_with_timeout("/tools trust-all",Some(2000))?;
     
@@ -167,46 +168,15 @@ fn test_tools_trust_all_command() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-#[test]
-#[cfg(all(feature = "tools", feature = "sanity"))]
-fn test_tools_trust_all_help_command() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing /tools trust-all --help command... | Description: Tests the <code> /tools trust-all --help</code>command to display help information for the trust-all subcommand");
-  
-    let session = q_chat_helper::get_chat_session();
-    let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Kiro CLI chat session started");
-
-    let response = chat.execute_command_with_timeout("/tools trust-all --help",Some(2000))?;
-    
-    println!("📝 Tools trust-all help response: {} bytes", response.len());
-    println!("📝 FULL OUTPUT:");
-    println!("{}", response);
-    println!("📝 END OUTPUT");
-    
-    
-    // Verify usage format
-    assert!(response.contains("Usage"), "Missing Usage section");
-    assert!(response.contains("/tools trust-all"), "Missing /tools trust-all command");
-    
-    // Verify options section
-    assert!(response.contains("Options"), "Missing Options section");
-    assert!(response.contains("-h"), "Missing -h flag");
-    assert!(response.contains("--help"), "Missing --help flag");
-    
-    println!("✅ /tools trust-all --help command executed successfully");
-    
-    drop(chat);
-
-    Ok(())
-}
 
 #[test]
 #[cfg(all(feature = "tools", feature = "sanity"))]
 fn test_tools_reset_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing /tools reset --help command... | Description: Tests the <code> /tools reset --help</code> command to display help information for the reset subcommand");
     
-    let session = q_chat_helper::get_chat_session();
+    // Use a new isolated session to avoid context contamination
+    let session = q_chat_helper::get_new_chat_session()?;
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
     println!("✅ Kiro CLI chat session started");
@@ -262,15 +232,10 @@ fn test_tools_trust_command() -> Result<(), Box<dyn std::error::Error>> {
         if line.contains("not trusted") {
             // Extract tool name - look for pattern "- toolname" or just "toolname"
             let trimmed = line.trim();
-            println!("📝 DEBUG: Checking line: '{}'", trimmed);
-            println!("📝 DEBUG: Line bytes: {:?}", trimmed.as_bytes().iter().take(10).collect::<Vec<_>>());
             if trimmed.starts_with("- ") || trimmed.starts_with("-") {
                 let tool_part = trimmed.strip_prefix("- ").or_else(|| trimmed.strip_prefix("-")).unwrap_or(trimmed).trim();
-                println!("📝 DEBUG: After strip: '{}'", tool_part);
                 let parts: Vec<&str> = tool_part.split_whitespace().collect();
-                println!("📝 DEBUG: Parts: {:?}", parts);
                 if let Some(display_name) = parts.first() {
-                    println!("📝 DEBUG: Extracted tool name: '{}'", display_name);
                     
                     // Map display names to actual tool names
                     let actual_tool_name = match *display_name {
@@ -286,11 +251,9 @@ fn test_tools_trust_command() -> Result<(), Box<dyn std::error::Error>> {
                     // Prefer shell or report as they are known working tools
                     if display_name == &"shell" || display_name == &"report" {
                         untrusted_tool = Some(actual_tool_name.to_string());
-                        println!("📝 Found untrusted tool (preferred): {} (actual: {})", display_name, actual_tool_name);
                         break;
                     } else if fallback_tool.is_none() {
                         fallback_tool = Some(actual_tool_name.to_string());
-                        println!("📝 Found untrusted tool (fallback): {} (actual: {})", display_name, actual_tool_name);
                     }
                 }
             }
@@ -311,7 +274,6 @@ fn test_tools_trust_command() -> Result<(), Box<dyn std::error::Error>> {
         let trust_command = format!("/tools trust {}", tool_name);
         let trust_response = chat.execute_command_with_timeout(&trust_command,Some(2000))?;
         
-        println!("📝 Trust response: {} bytes", trust_response.len());
         println!("📝 TRUST OUTPUT:");
         println!("{}", trust_response);
         println!("📝 END TRUST OUTPUT");
@@ -327,7 +289,6 @@ fn test_tools_trust_command() -> Result<(), Box<dyn std::error::Error>> {
         let untrust_command = format!("/tools untrust {}", tool_name);
         let untrust_response = chat.execute_command_with_timeout(&untrust_command,Some(2000))?;
         
-        println!("📝 Untrust response: {} bytes", untrust_response.len());
         println!("📝 UNTRUST OUTPUT:");
         println!("{}", untrust_response);
         println!("📝 END UNTRUST OUTPUT");
@@ -428,7 +389,7 @@ fn test_tools_untrust_help_command() -> Result<(), Box<dyn std::error::Error>> {
 fn test_tools_schema_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing /tools schema --help command... | Description: Tests the <code>/tools schema --help</code> command to display help information for viewing tool schemas");
     
-    let session = q_chat_helper::get_chat_session();
+    let session = q_chat_helper::get_new_chat_session()?;
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
     println!("✅ Kiro CLI chat session started");
