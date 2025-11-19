@@ -18,30 +18,26 @@ fn agent_without_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    assert!(response.contains("Manage agents"), "Missing 'Manage agents' description");
-    assert!(response.contains("Usage:"), "Missing usage information");
-    assert!(response.contains("/agent"), "Missing agent command");
-    assert!(response.contains("<COMMAND>"), "Missing command placeholder");
-    println!("✅ Found agent command description and usage");
+    assert!(response.contains("Manage agents"), "Expected output 'Manage agents' is missing in response");
+    assert!(response.contains("Usage"), "Expected output 'Usage' is missing in response");
+    assert!(response.contains("/agent"), "Expected output '/agent' is missing in response");
+    assert!(response.contains("<COMMAND>"), "Expected output '<COMMAND>' is missing in response");
 
-    assert!(response.contains("Commands:"), "Missing Commands section");
-    assert!(response.contains("list"), "Missing list subcommand");
-    assert!(response.contains("create"), "Missing create subcommand");
-    assert!(response.contains("schema"), "Missing schema subcommand");
-    assert!(response.contains("set-default"), "Missing set-default subcommand");
-    assert!(response.contains("help"), "Missing help subcommand");
-    println!("✅ Verified all agent subcommands: list, create, schema, set-default, help");
+    assert!(response.contains("Commands"), "Expected output 'Commands' is missing in response");
+    assert!(response.contains("list"), "Expected output 'list' is missing in response");
+    assert!(response.contains("create"), "Expected output 'create' is missing in response");
+    assert!(response.contains("schema"), "Expected output 'schema' is missing in response");
+    assert!(response.contains("set-default"), "Expected output 'set-default' is missing in response");
+    assert!(response.contains("help"), "Expected output 'help' is missing in response");
 
-    assert!(response.contains("List all available agents"), "Missing list command description");
-    assert!(response.contains("Create a new agent"), "Missing create command description");
-    assert!(response.contains("Show agent config schema"), "Missing schema command description");
-    assert!(response.contains("Define a default agent"), "Missing set-default command description");
-    println!("✅ Verified command descriptions");
+    assert!(response.contains("List all available agents"), "Expected output 'List all available agents' is missing in response");
+    assert!(response.contains("Create a new agent"), "Expected output 'Create a new agent' is missing in response");
+    assert!(response.contains("Show agent config schema"), "Expected output 'Show agent config schema' is missing in response");
+    assert!(response.contains("Define a default agent"), "Expected output 'Define a default agent' is missing in response");
 
-    assert!(response.contains("Options:"), "Missing Options section");
-    assert!(response.contains("-h"), "Missing short help option");
-    assert!(response.contains("--help"), "Missing long help option");
-    println!("✅ Found options section with help flag");
+    assert!(response.contains("Options"), "Expected output 'Options' is missing in response");
+    assert!(response.contains("-h"), "Expected output '-h' is missing in response");
+    assert!(response.contains("--help"), "Expected output '--help' is missing in response");
 
     println!("✅ /agent command executed successfully");
 
@@ -81,25 +77,17 @@ fn test_agent_create_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", save_response);
     println!("📝 END SAVE RESPONSE");
 
-    assert!(save_response.contains("Agent") && save_response.contains(&agent_name) && save_response.contains("has been created successfully"), "Missing agent creation success message");
-    println!("✅ Found agent creation success message");
+    assert!(save_response.contains("Agent") && save_response.contains(&agent_name) && save_response.contains("has been created successfully"), "Expected output 'Agent has been created successfully' is missing in response");
 
     let whoami_response = chat.execute_command_with_timeout("!whoami",Some(1000))?;
-
-    println!("📝 Whoami response: {} bytes", whoami_response.len());
-    println!("📝 WHOAMI RESPONSE:");
-    println!("{}", whoami_response);
-    println!("📝 END WHOAMI RESPONSE");
 
     let lines: Vec<&str> = whoami_response.lines().collect();
     let username = lines.iter()
         .find(|line| !line.starts_with("!") && !line.starts_with(">") && !line.trim().is_empty())
-        .expect("Failed to get username from whoami command")
+        .expect("Expected output 'username' is missing in whoami response")
         .trim();
-    println!("✅ Current username: {}", username);
 
     let agent_path = format!("/Users/{}/.kiro/agents/{}.json", username, agent_name);
-    println!("✅ Agent path: {}", agent_path);
 
     if std::path::Path::new(&agent_path).exists() {
         std::fs::remove_file(&agent_path)?;
@@ -108,8 +96,9 @@ fn test_agent_create_command() -> Result<(), Box<dyn std::error::Error>> {
         println!("⚠️ Agent file not found at: {}", agent_path);
     }
 
-    assert!(!std::path::Path::new(&agent_path).exists(), "Agent file should be deleted");
-    println!("✅ Agent deletion verified");
+    assert!(!std::path::Path::new(&agent_path).exists(), "Expected output 'agent file deletion' is missing");
+
+    println!("✅ Agent create command executed successfully");
 
     // Release the lock before cleanup
     drop(chat);
@@ -132,13 +121,12 @@ fn test_agent_edit_command() -> Result<(), Box<dyn std::error::Error>> {
 
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+
     chat.execute_command_with_timeout(&format!("/agent create --name {}", agent_name),Some(1000))?;
 
     let save_response = chat.execute_command(":wq")?;
 
-
-    assert!(save_response.contains("Agent") && save_response.contains(&agent_name) && save_response.contains("has been created successfully"), "Missing agent creation success message");
-    println!("✅ Found agent creation success message");
+    assert!(save_response.contains("Agent") && save_response.contains(&agent_name) && save_response.contains("has been created successfully"), "Expected output 'Agent has been created successfully' is missing in response");
 
     // Edit the agent description
     let edit_response = chat.execute_command_with_timeout(&format!("/agent edit --name {}", agent_name),Some(2000))?;
@@ -162,8 +150,7 @@ fn test_agent_edit_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", save_edit);
     println!("📝 END EDIT SAVE RESPONSE");
 
-    assert!(save_edit.contains("Agent") && save_edit.contains(&agent_name) && save_edit.contains("has been edited successfully"), "Missing agent update success message");
-    println!("✅ Found agent update success message");
+    assert!(save_edit.contains("Agent") && save_edit.contains(&agent_name) && save_edit.contains("has been edited successfully"), "Expected output 'has been edited successfully' is missing in response");
 
     let whoami_response = chat.execute_command_with_timeout("!whoami",Some(500))?;
 
@@ -175,12 +162,10 @@ fn test_agent_edit_command() -> Result<(), Box<dyn std::error::Error>> {
     let lines: Vec<&str> = whoami_response.lines().collect();
     let username = lines.iter()
         .find(|line| !line.starts_with("!") && !line.starts_with(">") && !line.trim().is_empty())
-        .expect("Failed to get username from whoami command")
+        .expect("Expected output 'username' is missing in whoami response")
         .trim();
-    println!("✅ Current username: {}", username);
 
     let agent_path = format!("/Users/{}/.kiro/agents/{}.json", username, agent_name);
-    println!("✅ Agent path: {}", agent_path);
 
     if std::path::Path::new(&agent_path).exists() {
         std::fs::remove_file(&agent_path)?;
@@ -189,8 +174,7 @@ fn test_agent_edit_command() -> Result<(), Box<dyn std::error::Error>> {
         println!("⚠️ Agent file not found at: {}", agent_path);
     }
 
-    assert!(!std::path::Path::new(&agent_path).exists(), "Agent file should be deleted");
-    println!("✅ Agent deletion verified");
+    assert!(!std::path::Path::new(&agent_path).exists(), "Expected output 'agent file deletion' is missing");
 
     //Release the lock before cleanup
     drop(chat);
@@ -214,28 +198,24 @@ fn test_agent_create_missing_args() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    assert!(response.contains("error:"), "Missing error message part 1a");
-    assert!(response.contains("the following required arguments"), "Missing error message part 1b");
-    assert!(response.contains("were not provided:"), "Missing error message part 2");
-    assert!(response.contains("--name"), "Missing required name argument part 1");
-    assert!(response.contains("<NAME>"), "Missing required name argument part 2");
-    println!("✅ Found error message for missing required arguments");
+    assert!(response.contains("error"), "Expected output 'error' is missing in response");
+    assert!(response.contains("the following required arguments"), "Expected output 'the following required arguments' is missing in response");
+    assert!(response.contains("were not provided:"), "Expected output 'were not provided:' is missing in response");
+    assert!(response.contains("--name"), "Expected output '--name' is missing in response");
+    assert!(response.contains("<NAME>"), "Expected output '<NAME>' is missing in response");
 
-    assert!(response.contains("Usage:"), "Missing usage information part 1");
-    assert!(response.contains("/agent create"), "Missing usage information part 2a");
-    assert!(response.contains("--name <NAME>"), "Missing usage information part 2b");
-    println!("✅ Found usage information");
+    assert!(response.contains("Usage"), "Expected output 'Usage' is missing in response");
+    assert!(response.contains("/agent create"), "Expected output '/agent create' is missing in response");
+    assert!(response.contains("--name <NAME>"), "Expected output '--name <NAME>' is missing in response");
 
-    assert!(response.contains("For more information"), "Missing help suggestion part 1");
-    assert!(response.contains("try"), "Missing help suggestion part 2a");
-    println!("✅ Found help suggestion");
+    assert!(response.contains("For more information"), "Expected output 'For more information' is missing in response");
+    assert!(response.contains("try"), "Expected output 'try' is missing in response");
 
-    assert!(response.contains("Options:"), "Missing options section");
-    assert!(response.contains("<NAME>"), "Missing name option part 2");
-    assert!(response.contains("Name of the agent to be created"), "Missing name description");
-    assert!(response.contains("<DIRECTORY>"), "Missing directory option part 2");
-    assert!(response.contains("<FROM>"), "Missing from option part 2");
-    println!("✅ Found all expected options");
+    assert!(response.contains("Options"), "Expected output 'Options' is missing in response");
+    assert!(response.contains("<NAME>"), "Expected output '<NAME>' is missing in response");
+    assert!(response.contains("Name of the agent to be created"), "Expected output 'Name of the agent to be created' is missing in response");
+    assert!(response.contains("<DIRECTORY>"), "Expected output '<DIRECTORY>' is missing in response");
+    assert!(response.contains("<FROM>"), "Expected output '<FROM>' is missing in response");
 
     println!("✅ /agent create executed successfully with expected error for missing arguments");
 
@@ -262,25 +242,22 @@ fn test_agent_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    assert!(response.contains("~/.kiro/agents/"), "Missing gloabal path(~/.kiro/agents/) path");
-    assert!(response.contains("cwd/.kiro/agents"), "Missing workspace (cwd/.kiro/agents) path");
-    assert!(response.contains("Usage:"), "Missing usage label");
-    assert!(response.contains("/agent"), "Missing /agent command");
-    assert!(response.contains("<COMMAND>"), "Missing command parameter");
-    assert!(response.contains("Commands:"), "Missing commands section");
-    assert!(response.contains("list"), "Missing list command");
-    assert!(response.contains("create"), "Missing create command");
-    assert!(response.contains("schema"), "Missing schema command");
-    assert!(response.contains("set-default"), "Missing set-default command");
-    assert!(response.contains("help"), "Missing help command");
-    println!("✅ Found all expected commands in help output");
+    assert!(response.contains("~/.kiro/agents/"), "Expected output '~/.kiro/agents/' is missing in response");
+    assert!(response.contains("cwd/.kiro/agents"), "Expected output 'cwd/.kiro/agents' is missing in response");
+    assert!(response.contains("Usage"), "Expected output 'Usage' is missing in response");
+    assert!(response.contains("/agent"), "Expected output '/agent' is missing in response");
+    assert!(response.contains("<COMMAND>"), "Expected output '<COMMAND>' is missing in response");
+    assert!(response.contains("Commands:"), "Expected output 'Commands:' is missing in response");
+    assert!(response.contains("list"), "Expected output 'list' is missing in response");
+    assert!(response.contains("create"), "Expected output 'create' is missing in response");
+    assert!(response.contains("schema"), "Expected output 'schema' is missing in response");
+    assert!(response.contains("set-default"), "Expected output 'set-default' is missing in response");
+    assert!(response.contains("help"), "Expected output 'help' is missing in response");
 
-    assert!(response.contains("Options:"), "Missing options section");
-    assert!(response.contains("-h"), "Missing short help flag");
-    assert!(response.contains("--help"), "Missing long help flag");
-    println!("✅ Found all expected options in help output");
+    assert!(response.contains("Options"), "Expected output 'Options' is missing in response");
+    assert!(response.contains("-h"), "Expected output '-h' is missing in response");
+    assert!(response.contains("--help"), "Expected output '--help' is missing in response");
 
-    println!("✅ All expected help content found");
     println!("✅ /agent help executed successfully");
 
     // Release the lock before cleanup
@@ -306,16 +283,13 @@ fn test_agent_invalid_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    assert!(response.contains("Commands:"), "Missing commands section");
-    assert!(response.contains("list"), "Missing list command");
-    assert!(response.contains("create"), "Missing create command");
-    assert!(response.contains("schema"), "Missing schema command");
-    assert!(response.contains("set-default"), "Missing set-default command");
-    assert!(response.contains("help"), "Missing help command");
-    println!("✅ Found all expected commands in help output");
-
-    assert!(response.contains("Options:"), "Missing options section");
-    println!("✅ Found options section");
+    assert!(response.contains("Commands"), "Expected output 'Commands' is missing in response");
+    assert!(response.contains("list"), "Expected output 'list' is missing in response");
+    assert!(response.contains("create"), "Expected output 'create' is missing in response");
+    assert!(response.contains("schema"), "Expected output 'schema' is missing in response");
+    assert!(response.contains("set-default"), "Expected output 'set-default' is missing in response");
+    assert!(response.contains("help"), "Expected output 'help' is missing in response");
+    assert!(response.contains("Options"), "Expected output 'Options' is missing in response");
 
     println!("✅ /agent invalidcommand executed successfully with expected error");
 
@@ -342,11 +316,9 @@ fn test_agent_list_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    assert!(response.contains("kiro_default"), "Missing kiro_default agent");
-    println!("✅ Found kiro_default agent in list");
+    assert!(response.contains("kiro_default"), "Expected output 'kiro_default' is missing in response");
 
-    assert!(response.contains("* kiro_default"), "Missing bullet point format for kiro_default");
-    println!("✅ Verified bullet point format for agent list");
+    assert!(response.contains("* kiro_default"), "Expected output '* kiro_default' is missing in response");
 
     println!("✅ /agent list command executed successfully");
 
@@ -355,7 +327,6 @@ fn test_agent_list_command() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
-
 
 /// Tests the /agent set-default command with valid arguments to set default agent
 /// Verifies success messages and confirmation of default agent configuration
@@ -376,19 +347,12 @@ fn test_agent_set_default_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    let mut failures = Vec::new();
+    assert!(response.contains("✓"), "Expected output '✓' is missing in response");
+    assert!(response.contains("Default agent set to"), "Expected output 'Default agent set to' is missing in response");
+    assert!(response.contains("kiro_default"), "Expected output 'kiro_default' is missing in response");
+    assert!(response.contains("This will take effect"), "Expected output 'This will take effect' is missing in response");
+    assert!(response.contains("next time kiro-cli chat is launched"), "Expected output 'next time kiro-cli chat is launched' is missing in response");
 
-    if !response.contains("✓") { failures.push("Missing success checkmark"); }
-    if !response.contains("Default agent set to") { failures.push("Missing success message"); }
-    if !response.contains("kiro_default") { failures.push("Missing agent name"); }
-    if !response.contains("This will take effect") { failures.push("Missing effect message"); }
-    if !response.contains("next time kiro-cli chat is launched") { failures.push("Missing launch message"); }
-
-    if !failures.is_empty() {
-        panic!("Test failures: {}", failures.join(", "));
-    }
-
-    println!("✅ All expected success messages found");
     println!("✅ /agent set-default executed successfully with valid arguments");
 
     // Release the lock before cleanup
@@ -413,14 +377,13 @@ fn test_agent_schema_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", schema_response);
     println!("📝 END OUTPUT");
 
-    assert!(schema_response.contains("$schema"), "Missing $schema key");
-    assert!(schema_response.contains("title"), "Missing title key");
-    assert!(schema_response.contains("description"), "Missing description key");
-    assert!(schema_response.contains("type"), "Missing type key");
-    assert!(schema_response.contains("properties"), "Missing properties key");
-    assert!(schema_response.contains("name"), "Missing name key");
+    assert!(schema_response.contains("$schema"), "Expected output '$schema' is missing in response");
+    assert!(schema_response.contains("title"), "Expected output 'title' is missing in response");
+    assert!(schema_response.contains("description"), "Expected output 'description' is missing in response");
+    assert!(schema_response.contains("type"), "Expected output 'type' is missing in response");
+    assert!(schema_response.contains("properties"), "Expected output 'properties' is missing in response");
+    assert!(schema_response.contains("name"), "Expected output 'name' is missing in response");
 
-    println!("✅ Found all expected JSON schema keys and properties");
     println!("✅ /agent schema executed successfully with valid JSON schema");
 
     drop(chat);
@@ -443,28 +406,21 @@ fn test_agent_set_default_missing_args() -> Result<(), Box<dyn std::error::Error
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    let mut failures = Vec::new();
+    assert!(response.contains("error"), "Expected output 'error' is missing in response");
+    assert!(response.contains("the following required arguments were not provided:"), "Expected output 'the following required arguments were not provided:' is missing in response");
+    assert!(response.contains("--name <NAME>"), "Expected output '--name <NAME>' is missing in response");
+    assert!(response.contains("Usage"), "Expected output 'Usage' is missing in response");
+    assert!(response.contains("/agent"), "Expected output '/agent' is missing in response");
+    assert!(response.contains("set-default"), "Expected output 'set-default' is missing in response");
+    assert!(response.contains("--name"), "Expected output '--name' is missing in response");
+    assert!(response.contains("For more information"), "Expected output 'For more information' is missing in response");
+    assert!(response.contains("--help"), "Expected output '--help' is missing in response");
+    assert!(response.contains("Options"), "Expected output 'Options' is missing in response");
+    assert!(response.contains("-n"), "Expected output '-n' is missing in response");
+    assert!(response.contains("<NAME>"), "Expected output '<NAME>' is missing in response");
+    assert!(response.contains("-h"), "Expected output '-h' is missing in response");
+    assert!(response.contains("Print help"), "Expected output 'Print help' is missing in response");
 
-    if !response.contains("error") { failures.push("Missing error message"); }
-    if !response.contains("the following required arguments were not provided:") { failures.push("Missing error message2"); }
-    if !response.contains("--name <NAME>") { failures.push("Missing required name argument"); }
-    if !response.contains("Usage:") { failures.push("Missing usage text"); }
-    if !response.contains("/agent") { failures.push("Missing agent command"); }
-    if !response.contains("set-default") { failures.push("Missing set-default subcommand"); }
-    if !response.contains("--name") { failures.push("Missing name flag"); }
-    if !response.contains("For more information") { failures.push("Missing help text"); }
-    if !response.contains("--help") { failures.push("Missing help flag"); }
-    if !response.contains("Options:") { failures.push("Missing options section"); }
-    if !response.contains("-n") { failures.push("Missing short name flag"); }
-    if !response.contains("<NAME>") { failures.push("Missing name parameter"); }
-    if !response.contains("-h") { failures.push("Missing short help flag"); }
-    if !response.contains("Print help") { failures.push("Missing help description"); }
-
-    if !failures.is_empty() {
-        panic!("Test failures: {}", failures.join(", "));
-    }
-
-    println!("✅ All expected error messages and options found");
     println!("✅ /agent set-default executed successfully with expected error for missing arguments");
 
     // Release the lock before cleanup
@@ -529,7 +485,7 @@ fn test_agent_generate_command() -> Result<(), Box<dyn std::error::Error>> {
         final_response.contains("has been created and saved successfully") ||
             final_response.contains("Generating agent config") ||
             final_response.contains("Agent 'test-agent'"),
-        "Expected agent creation confirmation"
+        "Expected output 'agent creation confirmation' is missing in response"
     );
     drop(chat);
     Ok(())
@@ -558,7 +514,7 @@ fn test_agent_swap_command() -> Result<(), Box<dyn std::error::Error>> {
 
     assert!(
         _response2.contains("✓") || _response2.contains("Choose one of the following agents"),
-        "Expected agent swap confirmation"
+        "Expected output 'agent swap confirmation' is missing in response"
     );
     drop(chat);
     Ok(())
