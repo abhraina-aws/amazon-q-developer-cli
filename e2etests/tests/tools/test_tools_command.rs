@@ -316,7 +316,7 @@ fn test_tools_trust_command() -> Result<(), Box<dyn std::error::Error>> {
 fn test_tools_trust_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing /tools trust --help command... | Description: Tests the <code>/tools trust --help</code> command to display help information for trusting specific tools");
     
-    let session = q_chat_helper::get_chat_session();
+    let session = q_chat_helper::get_new_chat_session()?;
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
     println!("✅ Kiro CLI chat session started");
@@ -706,6 +706,40 @@ fn test_trust_execute_bash_for_direct_execution() -> Result<(), Box<dyn std::err
     chat.execute_command_with_timeout("Delete the directory test_dir/test.txt",Some(2000))?;
      
     println!("✅ Directory successfully deleted");
+    
+    drop(chat);
+
+    Ok(())
+}
+
+#[test]
+#[cfg(all(feature = "tools", feature = "sanity"))]
+fn test_tools_trust_all_help_command() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing /tools trust-all --help command... | Description: Tests the <code> /tools trust-all --help</code>command to display help information for the trust-all subcommand");
+  
+    let session = q_chat_helper::get_new_chat_session()?;
+    let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+
+    println!("✅ Kiro CLI chat session started");
+
+    let response = chat.execute_command_with_timeout("/tools trust-all --help",Some(2000))?;
+    
+    println!("📝 Tools trust-all help response: {} bytes", response.len());
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+    
+    
+    // Verify usage format
+    assert!(response.contains("Usage"), "Missing Usage section");
+    assert!(response.contains("/tools trust-all"), "Missing /tools trust-all command");
+    
+    // Verify options section
+    assert!(response.contains("Options"), "Missing Options section");
+    assert!(response.contains("-h"), "Missing -h flag");
+    assert!(response.contains("--help"), "Missing --help flag");
+    
+    println!("✅ /tools trust-all --help command executed successfully");
     
     drop(chat);
 
