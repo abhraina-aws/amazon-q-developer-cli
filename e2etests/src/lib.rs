@@ -19,7 +19,7 @@ pub mod q_chat_helper {
     impl QChatSession {
         /// Start a new Q Chat session
         pub fn new() -> Result<Self, Error> {
-            let q_binary = std::env::var("Q_CLI_PATH").unwrap_or_else(|_| "q".to_string());
+            let q_binary = std::env::var("Q_CLI_PATH").unwrap_or_else(|_| "kiro-cli".to_string());
             let command = format!("{} chat", q_binary);
             let mut session = expectrl::spawn(&command)?;
             session.set_expect_timeout(Some(Duration::from_secs(60)));

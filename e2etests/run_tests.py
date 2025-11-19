@@ -181,7 +181,7 @@ def parse_test_results(stdout, stderr=""):
     
     return tests
 
-def run_single_cargo_test(feature, test_suite, binary_path="q", quiet=False):
+def run_single_cargo_test(feature, test_suite, binary_path="kiro-cli", quiet=False):
     """Run cargo test for a single feature with test suite"""
     feature_str = f"{feature},{test_suite}"
     cmd = ["cargo", "test", "--tests", "--features", feature_str, "--", "--nocapture", "--test-threads=1"]
@@ -273,7 +273,7 @@ def get_test_suites_from_features(features):
     
     return test_suites
 
-def run_tests_with_suites(features, test_suites, binary_path="q", quiet=False):
+def run_tests_with_suites(features, test_suites, binary_path="kiro-cli", quiet=False):
     """Run tests for each feature with each test suite"""
     results = []
     
@@ -298,7 +298,7 @@ def run_tests_with_suites(features, test_suites, binary_path="q", quiet=False):
     
     return results
 
-def get_system_info(binary_path="q"):
+def get_system_info(binary_path="kiro-cli"):
     """Get Q binary version and system information"""
     system_info = {
         "os": platform.system(),
@@ -320,7 +320,7 @@ def get_system_info(binary_path="q"):
     
     return system_info
 
-def generate_report(results, features, test_suites, binary_path="q"):
+def generate_report(results, features, test_suites, binary_path="kiro-cli"):
     """Generate JSON report and console summary"""
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     system_info = get_system_info(binary_path)
@@ -389,7 +389,8 @@ def generate_report(results, features, test_suites, binary_path="q"):
         features_str += "_" + "-".join(test_suites)
     
     datetime_str = datetime.now().strftime("%m%d%y%H%M%S")
-    filename = reports_dir / f"qcli_test_summary_{features_str}_{datetime_str}.json"
+    filename_prefix = "kiro_cli_test_summary" if "kiro" in binary_path else "qcli_test_summary"
+    filename = reports_dir / f"{filename_prefix}_{features_str}_{datetime_str}.json"
     
     # Save JSON report
     with open(filename, "w") as f:
@@ -483,6 +484,9 @@ def generate_html_report(json_filename):
     feature_total_tests = [stats['passed'] + stats['failed'] for _, stats in sorted_features]
     feature_passed_tests = [stats['passed'] for _, stats in sorted_features]
     
+    # Set title based on binary path
+    title = "🧪 KIRO CLI E2E Test Report" if "kiro" in report['system_info']['q_binary_path'] else "🧪 Q CLI E2E Test Report"
+    
     # Fill template with data
     html_content = html_template.format(
         timestamp=report['timestamp'],
@@ -498,6 +502,7 @@ def generate_html_report(json_filename):
         feature_names=json.dumps(feature_names),
         feature_total_tests=json.dumps(feature_total_tests),
         feature_passed_tests=json.dumps(feature_passed_tests),
+        title=title,
     )
     
     with open(html_filename, 'w') as f:
@@ -512,8 +517,8 @@ def print_summary(report, quiet=False):
         print("\n💻 System Information:")
         print(f"  Platform: {report['system_info']['platform']}")
         print(f"  OS: {report['system_info']['os']} {report['system_info']['os_version']}")
-        print(f"  Q Binary: {report['system_info']['q_binary_path']}")
-        print(f"  Q Version: {report['system_info']['q_version']}")
+        print(f"  Binary: {report['system_info']['q_binary_path']}")
+        print(f"  Version: {report['system_info']['q_version']}")
         
     print("\n📋 Feature Summary:")
     for feature, stats in report["features"].items():
@@ -656,7 +661,7 @@ Usage:
     
     # For backward compatibility
     parser.add_argument("--features", help="Comma-separated list of features")
-    parser.add_argument("--binary", default="q", help="Path to Q CLI binary")
+    parser.add_argument("--binary", default="kiro-cli", help="Path to Q CLI binary")
     parser.add_argument("--quiet", action="store_true", help="Quiet mode")
     
     args = parser.parse_args()
