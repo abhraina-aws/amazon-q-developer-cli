@@ -24,17 +24,14 @@ fn test_changelog_command() -> Result<(), Box<dyn std::error::Error>> {
     // Verify changelog content
     assert!(response.contains("New"),"Missing New section");
     assert!(response.contains("Kiro CLI"), "Missing Kiro CLI");
-    println!("✅ Found changelog header");
     
     // Verify version format (e.g., 1.16.2)
     let version_regex = Regex::new(r"\d+\.\d+\.\d+").unwrap();
     assert!(version_regex.is_match(&response), "Missing version format (x.x.x)");
-    println!("✅ Found valid version format");
     
     // Verify date format (e.g., 2025-09-19)
     let date_regex = Regex::new(r"\(\d{4}-\d{2}-\d{2}\)").unwrap();
     assert!(date_regex.is_match(&response), "Missing date format (YYYY-MM-DD)");
-    println!("✅ Found valid date format");
     
     // Verify /changelog command reference
     assert!(response.contains("/changelog"), "Missing /changelog command reference");    

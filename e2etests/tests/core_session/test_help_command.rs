@@ -25,7 +25,6 @@ fn test_help_command() -> Result<(), Box<dyn std::error::Error>> {
 
     // Verify help content
     assert!(response.contains("Commands:"), "Missing Commands section");
-    println!("✅ Found Commands section with all available commands");
 
     assert!(response.contains("quit"), "Missing quit command");
     assert!(response.contains("clear"), "Missing clear command");
@@ -100,11 +99,9 @@ fn test_whoami_command() -> Result<(), Box<dyn std::error::Error>> {
 
     // Verify whoami content
     assert!(!response.is_empty(), "Empty response from whoami command");
-    println!("✅ Command executed with response");
 
     // Verify response contains user information
     assert!(response.len() > 0, "Response should contain user information");
-    println!("✅ Found user information in response");
 
     println!("✅ All whoami command functionality verified!");
 
@@ -132,6 +129,7 @@ fn test_ctrls_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 FULL OUTPUT:");
     println!("{}", cleaned_response);
     println!("📝 END OUTPUT");
+
     assert!(cleaned_response.contains("agent"),"Response should contain /agent");
     assert!(cleaned_response.contains("editor"),"Response should contain /editor");
     assert!(cleaned_response.contains("clear"),"Response should contain /clear");
@@ -140,6 +138,8 @@ fn test_ctrls_command() -> Result<(), Box<dyn std::error::Error>> {
 
     //pressing esc button to close ctrl+s window
     let _esc = chat.execute_command("\x1B")?;
+
+    println!("✅ Ctrl+s input processed successfully");
 
     drop(chat);
     Ok(())
@@ -152,13 +152,16 @@ fn test_multiline_with_alt_enter_command() -> Result<(), Box<dyn std::error::Err
 
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+
     println!("✅ Kiro Chat session started");
+
     let alt_enter = "\x1B\x0A";
     let aws_prompt = "what is AWS explain in 100 words ";
     let ai_rompt = "what is AI explain in 100 words";
 
     let combined = format!("{}{}{}", aws_prompt, alt_enter,ai_rompt);
     let response = chat.execute_command_with_timeout(&combined,Some(1000))?;
+
     println!("📝 Response: {} bytes", response.len());
     println!("📝 FULL OUTPUT: {}",response);
     println!("📝 END");
@@ -166,6 +169,7 @@ fn test_multiline_with_alt_enter_command() -> Result<(), Box<dyn std::error::Err
     assert!(response.contains("AWS"), "Response should contain 'AWS'");
     assert!(response.contains("AI"), "Response should contain 'AI'");
     assert!(!response.is_empty(), "Response should not be empty");
+    
     println!("✅ Alt+Enter multiline input processed successfully");
 
     drop(chat);

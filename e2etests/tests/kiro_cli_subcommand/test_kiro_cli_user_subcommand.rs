@@ -3,11 +3,11 @@ use q_cli_e2e_tests::q_chat_helper;
 
 /// Tests the q user subcommand
 #[test]
-#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
-fn test_kiro_user_subcommand() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing kiro user subcommand... | Description: Tests the <code> q user </code> subcommand to display user management help.");
+#[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
+fn test_kiro_cli_user_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli user subcommand... | Description: Tests the <code> kiro-cli user </code> subcommand to display user management help.");
     
-    println!("\n🛠️ Running 'kiro user' subcommand...");
+    println!("\n🛠️ Running 'kiro-cli user' subcommand...");
     let response = q_chat_helper::execute_q_subcommand("q", &["user"])?;
 
     println!("📝 User response: {} bytes", response.len());
@@ -33,11 +33,16 @@ fn test_kiro_user_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 
 /// Tests the q user -h help flag
 #[test]
-#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
-fn test_kiro_user_help_flag() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing kiro user -h help flag...");
+#[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
+fn test_kiro_cli_user_help_flag() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli user -h help flag...");
     
-    let response = q_chat_helper::execute_q_subcommand("q", &["user", "-h"])?;
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["user", "-h"])?;
+
+    println!("📝 User response: {} bytes", response.len());
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
     
    // Validate output contains expected help information
     assert!(response.contains("Usage:") && response.contains("user") && response.contains("[OPTIONS]") && response.contains("<COMMAND>"), "Should contain usage line");

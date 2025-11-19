@@ -5,8 +5,8 @@ use regex::Regex;
 
 /// Tests the q update subcommand
 #[test]
-#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
-fn test_kiro_update_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
+fn test_kiro_cli_update_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro update subcommand... | Description: Tests the <code> kiro update </code> subcommand to check for updates.");
     
     println!("\n🛠️ Running 'q update' subcommand...");
@@ -31,11 +31,16 @@ fn test_kiro_update_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 
 /// Tests the q update -h help flag
 #[test]
-#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
-fn test_kiro_update_help_flag() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing kiro update -h help flag...");
+#[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
+fn test_kiro_cli_update_help_flag() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli update -h help flag...");
     
-    let response = q_chat_helper::execute_q_subcommand("q", &["update", "-h"])?;
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["update", "-h"])?;
+
+    println!("📝 Response: {} bytes", response.len());
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
     
     // Verify exact help output format
     assert!(response.contains("Usage:") && response.contains("kiro-cli update") && response.contains("[OPTIONS]"), "Should contain usage line");
@@ -45,6 +50,6 @@ fn test_kiro_update_help_flag() -> Result<(), Box<dyn std::error::Error>> {
     assert!(response.contains("-v, --verbose..."), "Should contain verbose option");
     assert!(response.contains("-h, --help"), "Should contain help option");
     
-    println!("✅ Update help flag test passed!");
+    println!("✅ Kiro-cli update help flag test passed!");
     Ok(())
 }

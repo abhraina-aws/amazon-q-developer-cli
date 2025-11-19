@@ -40,7 +40,7 @@ issue_reporting = [] # Issue Reporting Commands
 mcp = [] # MCP Commands (/mcp, /mcp --help)
 ai_prompts = [] # AI Prompts ("What is AWS?", "Hello")
 
-kiro_subcommand = [] # Kiro SubCommand (q chat, q doctor, q translate)
+kiro_cli_subcommand = [] # Kiro-cli SubCommand (q chat, q doctor, q translate)
 
 todos = []  # todos command
 experiment=[] # experiment command

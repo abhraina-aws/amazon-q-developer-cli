@@ -22,8 +22,6 @@ fn test_clear_command() -> Result<(), Box<dyn std::error::Error>> {
     // Execute clear command
     println!("\n🔍 Executing command: '/clear'");
     let _clear_response = chat.execute_command_with_timeout("/clear",Some(1000))?;
-
-    println!("✅ Clear command executed");
     
     // Check if AI remembers previous conversation
     println!("\n🔍 Sending prompt: 'What is my name?'");

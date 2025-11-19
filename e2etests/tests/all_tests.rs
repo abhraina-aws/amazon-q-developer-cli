@@ -6,7 +6,7 @@ mod core_session;
 mod integration;
 mod mcp;
 mod model;
-mod kiro_subcommand;
+mod kiro_cli_subcommand;
 mod save_load;
 mod session_mgmt;
 mod tools;

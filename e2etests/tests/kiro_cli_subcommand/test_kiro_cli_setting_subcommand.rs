@@ -3,12 +3,12 @@ use q_cli_e2e_tests::q_chat_helper;
 
 /// Tests the q settings --help subcommand
 #[test]
-#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
-fn test_kiro_setting_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing Kiro settings --help subcommand... | Description: Tests the <code> kiro settings --help </code> subcommand to validate help output format and content.");
+#[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
+fn test_kiro_cli_setting_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli settings --help subcommand... | Description: Tests the <code> kiro-cli settings --help </code> subcommand to validate help output format and content.");
     
-    println!("\n🛠️ Running 'kiro settings --help' subcommand...");
-    let response = q_chat_helper::execute_q_subcommand("q", &["settings", "--help"])?;
+    println!("\n🛠️ Running 'kiro-cli settings --help' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", "--help"])?;
 
     println!("📝 Help response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
@@ -41,12 +41,12 @@ fn test_kiro_setting_help_subcommand() -> Result<(), Box<dyn std::error::Error>>
 
 /// Tests the q setting all subcommand
 #[test]
-#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
-fn test_kiro_settings_all_subcommand() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing kito settings all subcommand... | Description: Tests the <code> kiro settings all </code> subcommand to display all settings.");
+#[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
+fn test_kiro_cli_settings_all_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli settings all subcommand... | Description: Tests the <code> kiro-cli settings all </code> subcommand to display all settings.");
     
-    println!("\n🛠️ Running 'kiro settings all' subcommand...");
-    let response = q_chat_helper::execute_q_subcommand("q", &["settings", "all"])?;
+    println!("\n🛠️ Running 'kiro-cli settings all' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", "all"])?;
 
     println!("📝 All settings response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
@@ -64,12 +64,12 @@ fn test_kiro_settings_all_subcommand() -> Result<(), Box<dyn std::error::Error>>
 
 /// Tests the q settings help subcommand
 #[test]
-#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
-fn test_kiro_settings_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing kiro settings help subcommand... | Description: Tests the <code> kiro settings help </code> subcommand to validate help output format and content.");
+#[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
+fn test_kiro_cli_settings_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli settings help subcommand... | Description: Tests the <code> kiro-cli settings help </code> subcommand to validate help output format and content.");
     
-    println!("\n🛠️ Running 'kiro settings help' subcommand...");
-    let response = q_chat_helper::execute_q_subcommand("q", &["settings", "help"])?;
+    println!("\n🛠️ Running 'kiro-cli settings help' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", "help"])?;
 
     println!("📝 Help response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
@@ -95,7 +95,8 @@ fn test_kiro_settings_help_subcommand() -> Result<(), Box<dyn std::error::Error>
             "Help should contain verbose option");
     assert!(response.contains("-h, --help"), 
             "Should contain help option");
-    println!("✅ Help output validated successfully!");
+
+    println!("✅ Kiro-cli help command executed successfully!");
     
     Ok(())
 }

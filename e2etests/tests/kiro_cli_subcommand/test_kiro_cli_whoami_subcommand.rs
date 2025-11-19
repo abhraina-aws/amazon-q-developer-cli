@@ -3,8 +3,8 @@ use q_cli_e2e_tests::q_chat_helper;
 
 /// Tests the q whoami subcommand
 #[test]
-#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
-fn test_kiro_whoami_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
+fn test_kiro_cli_whoami_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing q whoami subcommand... | Description: Tests the <code> q whoami </code> subcommand to display user profile information.");
     
     println!("\n🛠️ Running 'q whoami' subcommand...");
@@ -25,8 +25,8 @@ fn test_kiro_whoami_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
-fn test_kiro_whoami_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
+fn test_kiro_cli_whoami_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing q whoami --help subcommand... | Description: Tests the <code> q whoami --help</code> subcommand to validate help output format and content.");
     
     println!("\n🔍 Executing 'q whoami --help' subcommand...");
@@ -52,8 +52,8 @@ fn test_kiro_whoami_help_subcommand() -> Result<(), Box<dyn std::error::Error>> 
 }
 
 #[test]
-#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
-fn test_kiro_whoami_f_plain_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
+fn test_kiro_cli_whoami_f_plain_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing q whoami  -f plain subcommand... | Description: Tests the <code> q whoami  -f plain</code> subcommand to display user profile information in plain format.");
     
     println!("\n🛠️ Running 'q whoami  -f plain' subcommand...");
@@ -74,8 +74,8 @@ fn test_kiro_whoami_f_plain_subcommand() -> Result<(), Box<dyn std::error::Error
 }
 
 #[test]
-#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
-fn test_kiro_whoami_f_json_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
+fn test_kiro_cli_whoami_f_json_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro whoami  -f json subcommand... | Description: Tests the <code> kiro whoami  -f json</code> subcommand to display user profile information in json format.");
     
     println!("\n🛠️ Running 'q whoami  -f json' subcommand...");
@@ -105,12 +105,12 @@ fn test_kiro_whoami_f_json_subcommand() -> Result<(), Box<dyn std::error::Error>
 }
 
 #[test]
-#[cfg(all(feature = "kiro_subcommand", feature = "sanity"))]
-fn test_kiro_whoami_f_json_pretty_subcommand() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing kiro whoami -f json-pretty subcommand... | Description: Tests the <code> kiro whoami -f json-pretty</code> subcommand to display user profile information in pretty json format.");
+#[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
+fn test_kiro_cli_whoami_f_json_pretty_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli whoami -f json-pretty subcommand... | Description: Tests the <code> kiro-cli whoami -f json-pretty</code> subcommand to display user profile information in pretty json format.");
     
-    println!("\n🛠️ Running 'kiro whoami -f json-pretty' subcommand...");
-    let response = q_chat_helper::execute_q_subcommand("q", &["whoami", "-f", "json-pretty"])?;
+    println!("\n🛠️ Running 'kiro-cli whoami -f json-pretty' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["whoami", "-f", "json-pretty"])?;
 
     println!("📝 Whoami response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");

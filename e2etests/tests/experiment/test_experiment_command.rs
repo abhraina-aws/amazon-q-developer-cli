@@ -21,7 +21,6 @@ fn test_knowledge_command() -> Result<(), Box<dyn std::error::Error>> {
     // Verify experiment menu content
     assert!(response.contains("Knowledge"), "Missing Knowledge experiment");
     assert!(response.contains("Thinking"), "Missing Thinking experiment");
-    println!("✅ Found experiment menu with Knowledge option");
     
     // Find Knowledge and check if it's already selected
     let lines: Vec<&str> = response.lines().collect();
