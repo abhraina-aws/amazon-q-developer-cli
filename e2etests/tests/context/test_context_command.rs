@@ -117,7 +117,7 @@ fn test_context_invalid_command() -> Result<(), Box<dyn std::error::Error>> {
     // Verify error message for invalid subcommand
     assert!(response.contains("error"), "Missing error message");    
 
-    println("✅ All context invalid content verified!");
+    println!("✅ All context invalid content verified!");
 
     // Release the lock before cleanup
     drop(chat);
