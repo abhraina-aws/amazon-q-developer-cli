@@ -150,7 +150,7 @@ fn test_agent_edit_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END EDIT SAVE RESPONSE");
 
     assert!(save_edit.contains("Agent") && save_edit.contains(&agent_name) && save_edit.contains("has been edited successfully"), "Expected output 'has been edited successfully' is missing in response");
-
+    println!("✅ /agent edit executed successfully with expected response.");
     let whoami_response = chat.execute_command_with_timeout("!whoami",Some(500))?;
 
     let lines: Vec<&str> = whoami_response.lines().collect();
@@ -158,11 +158,8 @@ fn test_agent_edit_command() -> Result<(), Box<dyn std::error::Error>> {
         .find(|line| !line.starts_with("!") && !line.starts_with(">") && !line.trim().is_empty())
         .expect("Expected output 'username' is missing in whoami response")
         .trim();
-    println!("✅ Current username: {}", username);
 
     let agent_path = format!("/Users/{}/.kiro/agents/{}.json", username, agent_name);
-    println!("✅ Agent path: {}", agent_path);
-
     if std::path::Path::new(&agent_path).exists() {
         std::fs::remove_file(&agent_path)?;
     } else {
@@ -170,8 +167,6 @@ fn test_agent_edit_command() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     assert!(!std::path::Path::new(&agent_path).exists(), "Agent file should be deleted");
-    println!("✅ Agent deletion verified");
-
     //Release the lock before cleanup
     drop(chat);
 
