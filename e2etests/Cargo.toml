@@ -47,3 +47,4 @@ experiment=[] # experiment command
 
 regression = [] # Regression Tests
 sanity = [] # Sanity Tests - Quick smoke tests for basic functionality
+deprecate = [] # Deprecated Tests

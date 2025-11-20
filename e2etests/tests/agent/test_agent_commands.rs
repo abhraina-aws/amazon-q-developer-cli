@@ -91,7 +91,6 @@ fn test_agent_create_command() -> Result<(), Box<dyn std::error::Error>> {
 
     if std::path::Path::new(&agent_path).exists() {
         std::fs::remove_file(&agent_path)?;
-        println!("✅ Agent file deleted: {}", agent_path);
     } else {
         println!("⚠️ Agent file not found at: {}", agent_path);
     }
@@ -154,27 +153,24 @@ fn test_agent_edit_command() -> Result<(), Box<dyn std::error::Error>> {
 
     let whoami_response = chat.execute_command_with_timeout("!whoami",Some(500))?;
 
-    println!("📝 Whoami response: {} bytes", whoami_response.len());
-    println!("📝 WHOAMI RESPONSE:");
-    println!("{}", whoami_response);
-    println!("📝 END WHOAMI RESPONSE");
-
     let lines: Vec<&str> = whoami_response.lines().collect();
     let username = lines.iter()
         .find(|line| !line.starts_with("!") && !line.starts_with(">") && !line.trim().is_empty())
         .expect("Expected output 'username' is missing in whoami response")
         .trim();
+    println!("✅ Current username: {}", username);
 
     let agent_path = format!("/Users/{}/.kiro/agents/{}.json", username, agent_name);
+    println!("✅ Agent path: {}", agent_path);
 
     if std::path::Path::new(&agent_path).exists() {
         std::fs::remove_file(&agent_path)?;
-        println!("✅ Agent file deleted: {}", agent_path);
     } else {
         println!("⚠️ Agent file not found at: {}", agent_path);
     }
 
-    assert!(!std::path::Path::new(&agent_path).exists(), "Expected output 'agent file deletion' is missing");
+    assert!(!std::path::Path::new(&agent_path).exists(), "Agent file should be deleted");
+    println!("✅ Agent deletion verified");
 
     //Release the lock before cleanup
     drop(chat);
@@ -487,6 +483,7 @@ fn test_agent_generate_command() -> Result<(), Box<dyn std::error::Error>> {
             final_response.contains("Agent 'test-agent'"),
         "Expected output 'agent creation confirmation' is missing in response"
     );
+    println!("✅ /agent generate executed successfully with expected response");
     drop(chat);
     Ok(())
 
@@ -509,13 +506,13 @@ fn test_agent_swap_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 Full output: {}", _response1);
     println!("📝 End output");
     let _response2 = chat.execute_command_with_timeout("1",Some(1000))?;
-    println!("📝 Agent swap response: {} bytes", _response2.len());
     println!("📝 Agent swap response Full output : {}", _response2);
 
     assert!(
         _response2.contains("✓") || _response2.contains("Choose one of the following agents"),
         "Expected output 'agent swap confirmation' is missing in response"
     );
+    println!("✅ /agent swap executed successfully with expected response");
     drop(chat);
     Ok(())
 }

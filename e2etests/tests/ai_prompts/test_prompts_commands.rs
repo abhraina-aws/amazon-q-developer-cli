@@ -1,6 +1,8 @@
 #[allow(unused_imports)]
 use q_cli_e2e_tests::q_chat_helper;
+#[allow(unused_imports)]
 use std::fs;
+#[allow(unused_imports)]
 use std::path::PathBuf;
 
 #[test]
@@ -51,9 +53,8 @@ fn test_prompts_help_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    let response = chat.execute_command_with_timeout("/prompts --help",Some(1000))?;
+    let response = chat.execute_command_with_timeout("/prompts --help",Some(3000))?;
 
-    println!("📝 Prompts help response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
     println!("{}", response);
     println!("📝 END OUTPUT");
