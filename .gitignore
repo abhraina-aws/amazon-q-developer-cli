@@ -49,3 +49,7 @@ book/
 .env*
 
 run-build.sh
+
+# Test artifacts
+.kiro
+e2etests/reports

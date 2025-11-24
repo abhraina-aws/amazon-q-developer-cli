@@ -34,7 +34,7 @@ def parse_features():
     features = cargo_toml.get("features", {})
     
     # Features to always exclude from individual runs
-    excluded_features = {"default", "regression", "sanity"}
+    excluded_features = {"default", "regression", "sanity", "deprecated"}
     
     # Group features (features that contain other features)
     grouped_features = {}
@@ -215,9 +215,9 @@ def run_single_cargo_test(feature, test_suite, binary_path="kiro-cli", quiet=Fal
     individual_tests = parse_test_results(result.stdout, result.stderr)
     
     if not quiet:
-        print(result.stdout)
+        print(strip_ansi(result.stdout))
         if result.stderr:
-            print(result.stderr)
+            print(strip_ansi(result.stderr))
         
         # Show individual test results
         print(f"\n📋 Individual Test Results for {feature}:")
@@ -249,23 +249,25 @@ def validate_features(features):
     """Validate that all features exist in Cargo.toml"""
     grouped_features, standalone_features, child_features = parse_features()
     valid_features = set(grouped_features.keys()) | set(standalone_features) | child_features
-    invalid_features = [f for f in features if f not in valid_features and f not in {"sanity", "regression"}]
+    invalid_features = [f for f in features if f not in valid_features and f not in {"sanity", "regression", "deprecated"}]
     if invalid_features:
         print(f"❌ Error: Invalid feature(s): {', '.join(invalid_features)}")
         print(f"Available features: {', '.join(sorted(valid_features))}")
         sys.exit(1)
 
 def get_test_suites_from_features(features):
-    """Extract test suites (sanity/regression) from feature list"""
+    """Extract test suites (sanity/regression/deprecated) from feature list"""
     test_suites = []
     if "sanity" in features:
         test_suites.append("sanity")
     if "regression" in features:
         test_suites.append("regression")
+    if "deprecated" in features:
+        test_suites.append("deprecated")
     
-    # Check if both sanity and regression are specified
+    # Check if multiple test suites are specified
     if len(test_suites) > 1:
-        print("❌ Error: Only a single test suite is allowed. Cannot run both 'sanity' and 'regression' together.")
+        print("❌ Error: Only a single test suite is allowed. Cannot run multiple test suites together.")
         sys.exit(1)
     
     if not test_suites:
@@ -282,7 +284,7 @@ def run_tests_with_suites(features, test_suites, binary_path="kiro-cli", quiet=F
         print("=" * 40)
         
         for feature in features:
-            if feature not in {"sanity", "regression"}:
+            if feature not in {"sanity", "regression", "deprecated"}:
                 result = run_single_cargo_test(feature, test_suite, binary_path, quiet)
                 results.append(result)
                 
@@ -687,7 +689,7 @@ Usage:
         test_suites = get_test_suites_from_features(requested_features)
         
         # Remove test suites from feature list
-        features_only = [f for f in requested_features if f not in {"sanity", "regression"}]
+        features_only = [f for f in requested_features if f not in {"sanity", "regression", "deprecated"}]
         
         if not features_only:
             # Only sanity/regression specified - run all features
@@ -709,6 +711,9 @@ Usage:
     # Generate and display report
     report = generate_report(results, all_features, test_suites, args.binary)
     print_summary(report, args.quiet)
+    
+    # Disable mouse tracking that may have been enabled by cargo test
+    print("\033[?1000l\033[?1002l\033[?1015l\033[?1006l", end="", flush=True)
     
     # Exit with appropriate code
     sys.exit(0 if report["summary"]["failed"] == 0 else 1)

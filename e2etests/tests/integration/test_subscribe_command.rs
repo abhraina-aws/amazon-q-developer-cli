@@ -3,7 +3,7 @@ use q_cli_e2e_tests::q_chat_helper;
 
 
 #[test]
-#[cfg(all(feature = "subscribe", feature = "deprecate"))]
+#[cfg(all(feature = "subscribe", feature = "deprecated"))]
 fn test_subscribe_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing /subscribe command... | Description: Tests the <code> /subscribe</code> command to display Q Developer Pro subscription information and IAM Identity Center details");
 
@@ -28,7 +28,7 @@ fn test_subscribe_command() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-#[cfg(all(feature = "subscribe", feature = "deprecate"))]
+#[cfg(all(feature = "subscribe", feature = "deprecated"))]
 fn test_subscribe_manage_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing /subscribe --manage command... | Description: Tests the <code> /subscribe --manage</code> command to access subscription management interface for Q Developer Pro");
 
@@ -53,7 +53,7 @@ fn test_subscribe_manage_command() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-#[cfg(all(feature = "subscribe", feature = "deprecate"))]
+#[cfg(all(feature = "subscribe", feature = "deprecated"))]
 fn test_subscribe_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing /subscribe --help command... | Description: Tests the <code> /subscribe --help</code> command to display comprehensive help information for subscription management");
 
@@ -94,7 +94,7 @@ fn test_subscribe_help_command() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-#[cfg(all(feature = "subscribe", feature = "deprecate"))]
+#[cfg(all(feature = "subscribe", feature = "deprecated"))]
 fn test_subscribe_h_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing /subscribe -h command... | Description: Tests the <code> /subscribe -h</code> command (short form) to display subscription help information");
 

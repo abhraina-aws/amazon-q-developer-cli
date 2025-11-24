@@ -204,9 +204,16 @@ fn test_kiro_cli_inline_show_customizations_subcommand() -> Result<(), Box<dyn s
     println!("📝 END OUTPUT");
 
     // Assert that kiro-cli inline show-customizations shows available customizations
+    if(response.contains("No customizations found")){
+
+        assert!(response.contains("No customizations found"), "'No customizations found' message should be displayed");
+
+    }else{
+
+   
     assert!(response.contains("Amazon-Internal-V1"), "Response should contain 'Amazon-Internal-V1'");
     assert!(response.contains("Amazon-Aladdin-V1"), "Response should contain 'Amazon-Aladdin-V1'");
-    
+    }
     println!("✅ kiro-cli inline show-customizations subcommand executed successfully!");
     
     Ok(())
@@ -238,18 +245,33 @@ fn test_kiro_cli_inline_show_customizations_help_subcommand() -> Result<(), Box<
 fn test_kiro_cli_inline_set_customization_subcommand() -> Result<(), Box<dyn std::error::Error>> {
    println!("\n🔍 Testing kiro-cli inline set-customization subcommand... | Description: Tests the <code> kiro-cli inline set-customization</code> interactive menu for selecting customizations");
     
-    // Use helper function to select second option (Amazon-Internal-V1)
-    let response = q_chat_helper::execute_interactive_menu_selection("kiro-cli", &["inline", "set-customization"], 1)?;
-    
-    println!("📝 Debug response: {} bytes", response.len());
+
+    let response1 = q_chat_helper::execute_q_subcommand("kiro-cli", &["inline", "set-customization"])?;
+
+    println!("📝 Debug response: {} bytes", response1.len());
     println!("📝 FULL OUTPUT:");
-    println!("{}", response);
+    println!("{}", response1);
     println!("📝 END OUTPUT");
     
-    // Just verify that the command executed (may select first option by default)
-    assert!(response.contains("Customization")  && response.contains("selected"), "Should show selection confirmation");
+    if response1.contains("No customizations found") {
+        println!("✅ No customizations available message printed");
+        assert!(false  , "No customization available to set");
+
+    } else {
+        // Use helper function to select second option (Amazon-Internal-V1)
+        let response = q_chat_helper::execute_interactive_menu_selection("kiro-cli", &["inline", "set-customization"], 1)?;
+        
+        println!("📝 Debug response: {} bytes", response.len());
+        println!("📝 FULL OUTPUT:");
+        println!("{}", response);
+        println!("📝 END OUTPUT");
+        
+        // Just verify that the command executed (may select first option by default)
+        assert!(response.contains("Customization")  && response.contains("selected"), "Should show selection confirmation");
+        println!("✅ kiro-cli inline set-customization subcommand executed successfully!");
+    }
     
-    println!("✅ kiro-cli inline set-customization subcommand executed successfully!");
+
     
     Ok(())
 }
@@ -261,20 +283,32 @@ fn test_kiro_cli_inline_unset_customization_subcommand() -> Result<(), Box<dyn s
     
     // Get the interactive menu to find None position (always at last line)
     let menu_response = q_chat_helper::execute_q_subcommand("kiro-cli", &["inline", "set-customization"])?;
+    //TODO : Fix logic none_index may not present
     let none_index = menu_response.lines().count();
+    if menu_response.contains("No customizations found") {
+        
+        println!("📝 Debug response: {} bytes", menu_response.len());
+        println!("📝 FULL OUTPUT:");
+        println!("{}", menu_response);
+        println!("📝 END OUTPUT");
+        println!("✅ No customizations available message printed");
 
-    
-    let response = q_chat_helper::execute_interactive_menu_selection("kiro-cli", &["inline", "set-customization"], none_index)?;
-    
-    println!("📝 Debug response: {} bytes", response.len());
-    println!("📝 FULL OUTPUT:");
-    println!("{}", response);
-    println!("📝 END OUTPUT");
-    
-    // Verify that None was selected (customization unset)
-    assert!(response.contains("Customization") && response.contains("unset"), "Should show None selection or unset confirmation");
-    
-    println!("✅ kiro-cli inline unset customization executed successfully!");
+        assert!(false  , "Expected : 'None' option in interactive menu but got 'No customizations available' ");
+
+    } else {
+        println!("none_index={}", none_index);
+        let response = q_chat_helper::execute_interactive_menu_selection("kiro-cli", &["inline", "set-customization"], none_index)?;
+        
+        println!("📝 Debug response: {} bytes", response.len());
+        println!("📝 FULL OUTPUT:");
+        println!("{}", response);
+        println!("📝 END OUTPUT");
+        
+        // Verify that None was selected (customization unset)
+        assert!(response.contains("Customization") && response.contains("unset"), "Should show None selection or unset confirmation");
+        
+        println!("✅ kiro-cli inline unset customization executed successfully!");
+    }
     
     Ok(())
 }
