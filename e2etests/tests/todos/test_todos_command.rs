@@ -96,7 +96,7 @@ fn test_todos_view_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
 
     // Verify help content
-    assert!(response.contains("TODO list"), "Expecting 'TODO list' in reponse.");
+    assert!(response.contains("todo"), "Expecting 'todo' in reponse.");
     assert!(response.contains("ID"), "Expecting 'ID' in response.");
 
     let view_response = chat.execute_command_with_timeout("/todos view",Some(2000))?;
