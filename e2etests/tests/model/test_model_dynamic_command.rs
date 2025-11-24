@@ -178,3 +178,28 @@ fn test_model_h_command() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+#[cfg(all(feature = "model", feature = "sanity"))]
+fn test_model_command() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing /model command... | Description: Tests the <code> /model </code> command to check it shows the auto model select");
+
+    let session = q_chat_helper::get_new_chat_session()?;
+    let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+
+    let response = chat.execute_command_with_timeout("/model",Some(500))?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
+    // Verify Usage section
+    assert!(response.contains("Press"), "Expected 'Press' in response.");
+    assert!(response.contains("Auto"), "Expected 'Auto' in response.");
+
+    println!("✅ Model content verified for Auto");
+    
+    drop(chat);
+
+    Ok(())
+}
