@@ -181,7 +181,7 @@ fn test_todos_resume_command() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("✅ Kiro CLI chat session started");
 
-    let create_response = chat.execute_command_with_timeout("create a todo_list with 1 tasks: 1. Review code changes",Some(3000))?;
+    let create_response = chat.execute_command_with_timeout("create a todo_list with 1 tasks: 1. Draft email to dummy host ",Some(3000))?;
 
     println!("📝 CREATE OUTPUT:");
     println!("{}", create_response);
@@ -215,6 +215,7 @@ fn test_todos_resume_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END CONFIRM RESPONSE");
 
     assert!(confirm_response.contains("Resuming"), "Expecting 'Resuming' in reponse.");
+    assert!(resume_response.contains("Draft email to dummy host"), "Expecting 'Draft email to dummy host' in response.");
     assert!(confirm_response.contains("TODO"), "Expecting TODO in response.");
 
     let delete_response = chat.execute_command_with_timeout("/todos delete",Some(2000))?;
