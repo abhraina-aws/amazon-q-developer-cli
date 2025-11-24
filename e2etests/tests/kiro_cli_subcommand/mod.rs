@@ -11,3 +11,4 @@ pub mod test_kiro_cli_user_subcommand;
 pub mod test_kiro_cli_settings_format_subcommand;
 pub mod test_kiro_cli_settings_delete_subcommand;
 pub mod test_kiro_cli_quit_subcommand;
+pub mod test_kiro_cli_dashboard_subcommand;
