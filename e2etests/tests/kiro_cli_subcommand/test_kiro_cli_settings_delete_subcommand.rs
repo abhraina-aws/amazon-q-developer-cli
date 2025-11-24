@@ -29,7 +29,8 @@ fn test_kiro_cli_settings_delete_subcommand() -> Result<(), Box<dyn std::error::
                 let delete_response = q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", "--delete", key])?;
                 println!("📝 Delete response: {}", delete_response);
 
-                let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", "--list", key])?;
+                // Verify deletion
+                let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", "--", "--list", key])?;
                 println!("📝 Response: {}", response);
                 
                 // Restore the setting
@@ -41,6 +42,8 @@ fn test_kiro_cli_settings_delete_subcommand() -> Result<(), Box<dyn std::error::
             }
         }
     }
+
+    println!("✅ kiro-cli settings --delete <KEY> subcommand executed successfully!");
 
     Ok(())
 

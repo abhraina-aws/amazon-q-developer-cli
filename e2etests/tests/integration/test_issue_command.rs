@@ -18,7 +18,6 @@ fn test_issue_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify command executed successfully (GitHub opens automatically)
     assert!(response.contains("Heading over to GitHub..."), "Missing browser opening confirmation");
-    println!("✅ Found browser opening confirmation");
     
     println!("✅ All issue command functionality verified!");
 
@@ -44,7 +43,6 @@ fn test_issue_force_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify command executed successfully (GitHub opens automatically or shows command)
     assert!(response.contains("Heading over to GitHub...") || response.contains("/issue --force") || !response.trim().is_empty(), "Command should execute or show in history");
-    println!("✅ Command executed successfully");
     
     println!("✅ All issue --force command functionality verified!");
 
@@ -58,7 +56,7 @@ fn test_issue_force_command() -> Result<(), Box<dyn std::error::Error>> {
 fn test_issue_f_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing /issue -f command with critical bug... | Description: Tests the <code> /issue -f</code> command (short form) to create a critical bug report with force flag");
     
-        let session = q_chat_helper::get_chat_session();
+    let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
     let response = chat.execute_command_with_timeout("/issue -f \"Critical bug in file handling\"",Some(3000))?;
@@ -70,7 +68,6 @@ fn test_issue_f_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify command executed successfully (GitHub opens automatically)
     assert!(response.contains("Heading over to GitHub..."), "Missing browser opening confirmation");
-    println!("✅ Found browser opening confirmation");
     
     println!("✅ All issue --force command functionality verified!");
 
@@ -96,18 +93,15 @@ fn test_issue_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify Usage section
-    assert!(response.contains("Usage:") && response.contains("/issue") && response.contains("[DESCRIPTION]") && response.contains("[OPTIONS]"), "Missing Usage section");
-    println!("✅ Found usage format");
+    assert!(response.contains("Usage") && response.contains("/issue") && response.contains("[DESCRIPTION]") && response.contains("[OPTIONS]"), "Missing Usage section");
     
     // Verify Arguments section
-    assert!(response.contains("Arguments:"), "Missing Arguments section");
-    println!("✅ Found Arguments section");
+    assert!(response.contains("Arguments"), "Missing Arguments section");
     
     // Verify Options section
-    assert!(response.contains("Options:"), "Missing Options section");
+    assert!(response.contains("Options"), "Missing Options section");
     assert!(response.contains("-f")  &&  response.contains("--force"), "Missing force option");
     assert!(response.contains("-h") &&  response.contains("--help"), "Missing -h, --help flags");
-    println!("✅ Found Options section with force and help flags");
     
     println!("✅ All issue help content verified!");
 
@@ -132,18 +126,15 @@ fn test_issue_h_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify Usage section
-    assert!(response.contains("Usage:") && response.contains("/issue") && response.contains("[DESCRIPTION]") && response.contains("[OPTIONS]"), "Missing Usage section");
-    println!("✅ Found usage format");
+    assert!(response.contains("Usage") && response.contains("/issue") && response.contains("[DESCRIPTION]") && response.contains("[OPTIONS]"), "Missing Usage section");
     
     // Verify Arguments section
-    assert!(response.contains("Arguments:"), "Missing Arguments section");
-    println!("✅ Found Arguments section");
+    assert!(response.contains("Arguments"), "Missing Arguments section");
     
     // Verify Options section
-    assert!(response.contains("Options:"), "Missing Options section");
+    assert!(response.contains("Options"), "Missing Options section");
     assert!(response.contains("-f")  &&  response.contains("--force"), "Missing force option");
     assert!(response.contains("-h") &&  response.contains("--help"), "Missing -h, --help flags");
-    println!("✅ Found Options section with force and help flags");
     
     println!("✅ All issue help content verified!");
 

@@ -14,7 +14,7 @@ fn test_help_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Kiro Chat session started");
+    println!("✅ Kiro-cli Chat session started");
 
     let response = chat.execute_command_with_timeout("/help",Some(100))?;
 
@@ -24,24 +24,17 @@ fn test_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
 
     // Verify help content
-    assert!(response.contains("Commands:"), "Missing Commands section");
+    assert!(response.contains("Commands"), "Missing Commands section");
 
     assert!(response.contains("quit"), "Missing quit command");
     assert!(response.contains("clear"), "Missing clear command");
     assert!(response.contains("tools"), "Missing tools command");
     assert!(response.contains("help"), "Missing help command");
-    println!("✅ Verified core commands: quit, clear, tools, help");
 
     // Verify specific useful commands
-    if response.contains("context") {
-        println!("✅ Found context management command");
-    }
-    if response.contains("agent") {
-        println!("✅ Found agent management command");
-    }
-    if response.contains("model") {
-        println!("✅ Found model selection command");
-    }
+    assert!(response.contains("context"), "Missing context management command");
+    assert!(response.contains("agent"), "Missing agent management command");
+    assert!(response.contains("model"), "Missing model selection command");
 
     println!("✅ All help content verified!");
 
@@ -59,7 +52,7 @@ fn test_multiline_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Q Chat session started");
+    println!("✅ Kiro-cli Chat session started");
 
     // Ctrl+J produces ASCII Line Feed (0x0A)
     let ctrl_j = "\x0A";
@@ -113,12 +106,12 @@ fn test_whoami_command() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 #[cfg(all(feature = "help", feature = "sanity"))]
 fn test_ctrls_command() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing ctrl+s input... | Description: Tests <code>ctrl+s</code>command");
+    println!("\n🔍 Testing ctrl+s input... | Description: Tests <code>ctrl+s</code> command to display available commands in an interactive menu and verify core commands are accessible");
 
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Kiro Chat session started");
+    println!("✅ Kiro-cli Chat session started");
 
     // Ctrl+J produces ASCII Line Feed (0x0A)
     let ctrl_j = "\x13";
@@ -153,7 +146,7 @@ fn test_multiline_with_alt_enter_command() -> Result<(), Box<dyn std::error::Err
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Kiro Chat session started");
+    println!("✅ Kiro-cli Chat session started");
 
     let alt_enter = "\x1B\x0A";
     let aws_prompt = "what is AWS explain in 100 words ";

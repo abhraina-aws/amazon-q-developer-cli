@@ -10,10 +10,10 @@ fn test_introspect_command() -> Result<(), Box<dyn std::error::Error>> {
 
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
-    println!("✅ Kiro Chat session started");
+    println!("✅ Kiro-cli Chat session started");
     
-    let response = chat.execute_command("introspect")?;
-    println!("📝 Help response: {} bytes", response);
+    let response = q_chat_helper::execute_q_subcommand("introspect")?;
+    println!("📝 Response: {} bytes", response);
     println!("📝 FULL OUTPUT:");
     println!("{}", response);
     println!("📝 END OUTPUT");

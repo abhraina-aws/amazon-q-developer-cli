@@ -101,8 +101,9 @@ fn test_model_dynamic_command() -> Result<(), Box<dyn std::error::Error>> {
     // Verify selection with dynamic model name
     assert!(confirm_response.contains(&format!("Using {}", selected_model)), 
            "Missing confirmation for selected model: {}", selected_model);
-    println!("✅ Confirmed selection of: {}", selected_model);
-    
+
+    println!("✅ Model dynamic selection functionality verified for model: {}", selected_model);
+
     drop(chat);
 
     Ok(())
@@ -127,15 +128,12 @@ fn test_model_help_command() -> Result<(), Box<dyn std::error::Error>> {
     // Verify Usage section
     assert!(response.contains("Usage:"), "Missing Usage section");
     assert!(response.contains("/model"), "Missing /model command in usage section");
-    println!("✅ Found Usage section with /model command");
     
     // Verify Options section
     assert!(response.contains("Options:"), "Missing Options section");
-    println!("✅ Found Options section");
     
     // Verify help flags
     assert!(response.contains("-h") &&  response.contains("--help"), "Missing -h, --help flags");
-    println!("✅ Found help flags: -h, --help with Print help description");
     
     println!("✅ All model help content verified!");
     
@@ -162,15 +160,12 @@ fn test_model_h_command() -> Result<(), Box<dyn std::error::Error>> {
     // Verify Usage section
     assert!(response.contains("Usage:"), "Missing Usage section");
     assert!(response.contains("/model"), "Missing /model command in usage section");
-    println!("✅ Found Usage section with /model command");
     
     // Verify Options section
     assert!(response.contains("Options:"), "Missing Options section");
-    println!("✅ Found Options section");
     
     // Verify help flags
     assert!(response.contains("-h") &&  response.contains("--help"), "Missing -h, --help flags");
-    println!("✅ Found help flags: -h, --help with Print help description");
     
     println!("✅ All model help content verified!");
     

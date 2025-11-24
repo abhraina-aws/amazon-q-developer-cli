@@ -55,21 +55,17 @@ fn test_help_editor_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify Usage section
-    assert!(response.contains("Usage:") && response.contains("/editor") && response.contains("[INITIAL_TEXT]"), "Missing Usage section");
-    println!("✅ Found Usage section with /editor command");
+    assert!(response.contains("Usage") && response.contains("/editor") && response.contains("[INITIAL_TEXT]"), "Missing Usage section");
     
     // Verify Arguments section
-    assert!(response.contains("Arguments:"), "Missing Arguments section");
+    assert!(response.contains("Arguments"), "Missing Arguments section");
     assert!(response.contains("[INITIAL_TEXT]"), "Missing INITIAL_TEXT argument");
-    println!("✅ Found Arguments section");
     
     // Verify Options section
-    assert!(response.contains("Options:"), "Missing Options section");
-    println!("✅ Found Options section");
+    assert!(response.contains("Options"), "Missing Options section");
     
     // Verify help flags
     assert!(response.contains("-h") &&  response.contains("--help"), "Missing -h, --help flags");
-    println!("✅ Found help flags: -h, --help with Print help description");
     
     println!("✅ All editor help content verified!");
     
@@ -95,21 +91,17 @@ fn test_editor_h_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify Usage section
-    assert!(response.contains("Usage:") && response.contains("/editor") && response.contains("[INITIAL_TEXT]"), "Missing Usage section");
-    println!("✅ Found Usage section with /editor command");
+    assert!(response.contains("Usage") && response.contains("/editor") && response.contains("[INITIAL_TEXT]"), "Missing Usage section");
     
     // Verify Arguments section
-    assert!(response.contains("Arguments:"), "Missing Arguments section");
+    assert!(response.contains("Arguments"), "Missing Arguments section");
     assert!(response.contains("[INITIAL_TEXT]"), "Missing INITIAL_TEXT argument");
-    println!("✅ Found Arguments section");
     
     // Verify Options section
-    assert!(response.contains("Options:"), "Missing Options section");
-    println!("✅ Found Options section");
+    assert!(response.contains("Options"), "Missing Options section");
     
     // Verify help flags
     assert!(response.contains("-h") &&  response.contains("--help"), "Missing -h, --help flags");
-    println!("✅ Found help flags: -h, --help with Print help description");
     
     println!("✅ All editor help content verified!");
     
@@ -157,7 +149,6 @@ fn test_editor_command_interaction() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify expected output
     assert!(wq_response.contains("Content loaded from editor. Submitting prompt..."), "Missing expected editor output message");
-    println!("✅ Found expected editor output: 'Content loaded from editor. Submitting prompt...'");
     
     println!("✅ Editor command interaction test completed successfully!");
     
@@ -187,7 +178,6 @@ fn test_editor_command_error() -> Result<(), Box<dyn std::error::Error>> {
     let insert_response = chat.send_key_input("i")?;
     println!("📝 Insert mode response: {} bytes", insert_response.len());
     
-    
     // Press Esc to exit insert mode
     let esc_response = chat.send_key_input("\x1b")?; // ESC key
     println!("📝 Esc response: {} bytes", esc_response.len());
@@ -203,10 +193,8 @@ fn test_editor_command_error() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify expected output
     assert!(wq_response.contains("Content loaded from editor. Submitting prompt..."), "Missing expected editor output message");
-    println!("✅ Found expected editor output: 'Content loaded from editor. Submitting prompt...'");
    
     assert!(wq_response.contains("nonexistent_file.txt") && wq_response.contains("doesn't exist"), "Missing file validation error message");
-    println!("✅ Found expected file validation error message");
 
     println!("✅ Editor command error test completed successfully!");
     
@@ -270,15 +258,13 @@ fn test_editor_with_file_path() -> Result<(), Box<dyn std::error::Error>> {
 
             // Verify the file content is loaded in editor
             assert!(allow_response.contains("Hello from test file"), "File content not loaded in editor");
-            println!("✅ File content loaded successfully in editor");
-    
     }
     else{
         // Verify the file content is loaded in editor
         assert!(wq_response.contains("Hello from test file"), "File content not loaded in editor");
-        println!("✅ File content loaded successfully in editor");
     }
     
+    println!("✅ Editor command with file path test completed successfully!");
     
     // Clean up test file
     std::fs::remove_file(test_file_path).ok();

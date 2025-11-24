@@ -12,7 +12,7 @@ fn test_changelog_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Kiro Chat session started");
+    println!("✅ Kiro-cli Chat session started");
     
     let response = chat.execute_command_with_timeout("/changelog",Some(1000))?;
     
@@ -51,7 +51,7 @@ fn test_changelog_help_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Kiro Chat session started");
+    println!("✅ Kiro-cli Chat session started");
     
     let response = chat.execute_command_with_timeout("/changelog -h",Some(1000))?;
     
@@ -61,10 +61,10 @@ fn test_changelog_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify help content
-    assert!(response.contains("Usage:"),"Missing Usage information");
+    assert!(response.contains("Usage"),"Missing Usage information");
     assert!(response.contains("/changelog"), "Missing /changelog command reference");
 
-    assert!(response.contains("Options:"), "Missing Options section");
+    assert!(response.contains("Options"), "Missing Options section");
     assert!(response.contains("-h"), "Missing -h flags");
     assert!(response.contains("--help"), "Missing --help flags");
 

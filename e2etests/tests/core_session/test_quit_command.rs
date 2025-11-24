@@ -8,7 +8,7 @@ fn test_quit_command() -> Result<(), Box<dyn std::error::Error>> {
     
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
-    println!("✅ Kiro Chat session started");
+    println!("✅ Kiro-cli Chat session started");
     
     chat.execute_command_with_timeout("/quit",Some(1000))?;
     

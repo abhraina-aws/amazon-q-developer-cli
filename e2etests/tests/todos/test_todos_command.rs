@@ -256,10 +256,6 @@ fn test_todos_resume_command() -> Result<(), Box<dyn std::error::Error>> {
 fn test_todos_delete_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing /todos delete command... | Description: Tests the <code> /todos delete</code> command to delete a specific to-do list");
 
-    // Use a new isolated session to avoid context contamination from previous tests
-    let session = q_chat_helper::get_new_chat_session()?;
-    let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
-
     println!("Executing 'kiro-cli settings chat.enableTodoList true' to enable todos feature...");
     q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", "chat.enableTodoList", "true"])?;
 
@@ -283,7 +279,7 @@ fn test_todos_delete_command() -> Result<(), Box<dyn std::error::Error>> {
     let create_response = chat.execute_command_with_timeout("create a todo_list with 2 tasks: 1. Review code changes 2. Update documentation", Some(3000))?;
     println!("create_response: {}", create_response);
     
- // Verify help content
+    // Verify help content
     assert!(create_response.contains("TODO"), "Expecting 'TODO' in response.");
     assert!(create_response.contains("list"), "Expecting 'list' in response");
     
@@ -348,7 +344,6 @@ fn test_todos_clear_finished_command() -> Result<(), Box<dyn std::error::Error>>
 
     println!("📝 Mark complete response: {} bytes", mark_response.len());
     println!("📝 Mark complete response: {}", mark_response);
-    println!("✅ Found Task completion response.");
 
     // Test clear-finished command
     println!("\n🔍 Testing clear-finished command...");

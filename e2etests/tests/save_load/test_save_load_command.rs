@@ -29,7 +29,6 @@ fn test_save_command() -> Result<(), Box<dyn std::error::Error>> {
     // Create actual conversation content
     let _help_response = chat.execute_command_with_timeout("/help",Some(2000))?;
     let _tools_response = chat.execute_command_with_timeout("/tools",Some(2000))?;
-    println!("✅ Created conversation content with /help and /tools commands");
     
     // Execute /save command
     let response = chat.execute_command_with_timeout(&format!("/save {}", save_path),Some(2000))?;
@@ -41,16 +40,14 @@ fn test_save_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify "Exported conversation state to [file path]" message
     assert!(response.contains("Exported") && response.contains(save_path), "Missing export confirmation message");
-    println!("✅ Found expected export message with file path");
     
     // Verify file was created and contains expected data
     assert!(std::path::Path::new(save_path).exists(), "Save file was not created");
-    println!("✅ Save file created at {}", save_path);
     
     let file_content = std::fs::read_to_string(save_path)?;
     assert!(file_content.contains("help") || file_content.contains("tools"), "File missing expected conversation data");
-    println!("✅ File contains expected conversation data");
     
+    println!("✅ Save command executed successfully and file created with conversation data");
     // Release the lock
     drop(chat);
     
@@ -74,15 +71,12 @@ fn test_save_command_argument_validation() -> Result<(), Box<dyn std::error::Err
     
     // Verify save error message
     assert!(response.contains("error"), "Missing save error message");
-    println!("✅ Found save error message");
     
     assert!(response.contains("Usage"), "Missing Usage section");
     assert!(response.contains("/save"), "Missing /save command in usage");
-    println!("✅ Found Usage section with /save command");
     
     assert!(response.contains("Arguments"), "Missing Arguments section");
     assert!(response.contains("<PATH>"), "Missing PATH argument");
-    println!("✅ Found Arguments section with PATH parameter");
     
     println!("✅ All help content verified!");
     
@@ -109,18 +103,14 @@ fn test_save_help_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify save command help content
     assert!(response.contains("Save"), "Missing save command description");
-    println!("✅ Found save command description");
     
     assert!(response.contains("Usage"), "Missing Usage section");
     assert!(response.contains("/save"), "Missing /save command in usage");
-    println!("✅ Found Usage section with /save command");
     
     assert!(response.contains("Arguments"), "Missing Arguments section");
     assert!(response.contains("<PATH>"), "Missing PATH argument");
-    println!("✅ Found Arguments section with PATH parameter");
     
     assert!(response.contains("Options"), "Missing Options section");
-    println!("✅ Found Options section");
     
     println!("✅ All help content verified!");
     
@@ -147,18 +137,14 @@ fn test_save_h_flag_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify save command help content
     assert!(response.contains("Save"), "Missing save command description");
-    println!("✅ Found save command description");
     
     assert!(response.contains("Usage"), "Missing Usage section");
     assert!(response.contains("/save"), "Missing /save command in usage");
-    println!("✅ Found Usage section with /save command");
     
     assert!(response.contains("Arguments"), "Missing Arguments section");
     assert!(response.contains("<PATH>"), "Missing PATH argument");
-    println!("✅ Found Arguments section with PATH parameter");
     
     assert!(response.contains("Options"), "Missing Options section");
-    println!("✅ Found Options section");
     
     println!("✅ All help content verified!");
     
@@ -182,7 +168,6 @@ fn test_save_force_command() -> Result<(), Box<dyn std::error::Error>> {
     // Create actual conversation content
     let _help_response = chat.execute_command_with_timeout("/help",Some(2000))?;
     let _tools_response = chat.execute_command_with_timeout("/tools",Some(2000))?;
-    println!("✅ Created conversation content with /help and /tools commands");
 
     // Execute /save command first
     let response = chat.execute_command_with_timeout(&format!("/save {}", save_path),Some(2000))?;
@@ -190,11 +175,9 @@ fn test_save_force_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", response);
     println!("📝 END OUTPUT");
     assert!(response.contains("Exported"), "Initial save should succeed");
-    println!("✅ Initial save completed");
 
     // Add more conversation content after initial save
     let _prompt_response = chat.execute_command("/context show")?;
-    println!("✅ Added more conversation content after initial save");
 
     // Execute /save --force command to overwrite with new content
     let force_response = chat.execute_command(&format!("/save --force {}", save_path))?;
@@ -206,17 +189,15 @@ fn test_save_force_command() -> Result<(), Box<dyn std::error::Error>> {
 
     // Verify force save message
     assert!(force_response.contains("Exported") && force_response.contains(save_path), "Missing export confirmation message");
-    println!("✅ Found expected export message with file path");
 
     // Verify file exists and contains data
     assert!(std::path::Path::new(save_path).exists(), "Save file was not created");
-    println!("✅ Save file created at {}", save_path);
 
     let file_content = std::fs::read_to_string(save_path)?;
     assert!(file_content.contains("help") || file_content.contains("tools"), "File missing initial conversation data");
     assert!(file_content.contains("context"), "File missing additional conversation data");
-    println!("✅ File contains expected conversation data including additional content");
 
+    println!("✅ Save --force command executed successfully and file overwritten with conversation data");
     // Release the lock
     drop(chat);
 
@@ -237,7 +218,6 @@ fn test_save_f_flag_command() -> Result<(), Box<dyn std::error::Error>> {
     // Create actual conversation content
     let _help_response = chat.execute_command_with_timeout("/help",Some(2000))?;
     let _tools_response = chat.execute_command_with_timeout("/tools",Some(2000))?;
-    println!("✅ Created conversation content with /help and /tools commands");
 
     // Execute /save command first
     let response = chat.execute_command_with_timeout(&format!("/save {}", save_path),Some(2000))?;
@@ -245,11 +225,9 @@ fn test_save_f_flag_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", response);
     println!("📝 END OUTPUT");
     assert!(response.contains("Exported"), "Initial save should succeed");
-    println!("✅ Initial save completed");
 
     // Add more conversation content after initial save
     let _prompt_response = chat.execute_command_with_timeout("/context show",Some(2000))?;
-    println!("✅ Added more conversation content after initial save");
 
     // Execute /save -f command to overwrite with new content
     let force_response = chat.execute_command_with_timeout(&format!("/save -f {}", save_path),Some(2000))?;
@@ -261,16 +239,15 @@ fn test_save_f_flag_command() -> Result<(), Box<dyn std::error::Error>> {
 
     // Verify force save message
     assert!(force_response.contains("Exported") && force_response.contains(save_path), "Missing export confirmation message");
-    println!("✅ Found expected export message with file path");
 
     // Verify file exists and contains data
     assert!(std::path::Path::new(save_path).exists(), "Save file was not created");
-    println!("✅ Save file created at {}", save_path);
 
     let file_content = std::fs::read_to_string(save_path)?;
     assert!(file_content.contains("help") || file_content.contains("tools"), "File missing initial conversation data");
     assert!(file_content.contains("context"), "File missing additional conversation data");
-    println!("✅ File contains expected conversation data including additional content");
+
+    println!("✅ Save -f command executed successfully and file overwritten with conversation data");
 
     // Release the lock
     drop(chat);
@@ -295,18 +272,14 @@ fn test_load_help_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify load command help content
     assert!(response.contains("Load"), "Missing load command description");
-    println!("✅ Found load command description");
     
     assert!(response.contains("Usage"), "Missing Usage section");
     assert!(response.contains("/load"), "Missing /load command in usage");
-    println!("✅ Found Usage section with /load command");
     
     assert!(response.contains("Arguments"), "Missing Arguments section");
     assert!(response.contains("<PATH>"), "Missing PATH argument");
-    println!("✅ Found Arguments section with PATH parameter");
     
     assert!(response.contains("Options"), "Missing Options section");
-    println!("✅ Found Options section");
     
     println!("✅ All help content verified!");
     
@@ -333,18 +306,14 @@ fn test_load_h_flag_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify load command help content
     assert!(response.contains("Load"), "Missing load command description");
-    println!("✅ Found load command description");
     
     assert!(response.contains("Usage"), "Missing Usage section");
     assert!(response.contains("/load"), "Missing /load command in usage");
-    println!("✅ Found Usage section with /load command");
     
     assert!(response.contains("Arguments"), "Missing Arguments section");
     assert!(response.contains("<PATH>"), "Missing PATH argument");
-    println!("✅ Found Arguments section with PATH parameter");
     
     assert!(response.contains("Options"), "Missing Options section");
-    println!("✅ Found Options section");
     
     println!("✅ All help content verified!");
     
@@ -368,7 +337,6 @@ fn test_load_command() -> Result<(), Box<dyn std::error::Error>> {
     // Create actual conversation content
     let _help_response = chat.execute_command_with_timeout("/help",Some(2000))?;
     let _tools_response = chat.execute_command_with_timeout("/tools",Some(2000))?;
-    println!("✅ Created conversation content with /help and /tools commands");
     
     // Execute /save command to create a file to load
     let save_response = chat.execute_command_with_timeout(&format!("/save {}", save_path),Some(2000))?;
@@ -380,11 +348,9 @@ fn test_load_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify save was successful
     assert!(save_response.contains("Exported") && save_response.contains(save_path), "Missing export confirmation message");
-    println!("✅ Save completed successfully");
     
     // Verify file was created
     assert!(std::path::Path::new(save_path).exists(), "Save file was not created");
-    println!("✅ Save file created at {}", save_path);
     
     // Execute /load command to load the saved conversation
     let load_response = chat.execute_command_with_timeout(&format!("/load {}", save_path),Some(2000))?;
@@ -422,18 +388,14 @@ fn test_load_command_argument_validation() -> Result<(), Box<dyn std::error::Err
     
     // Verify load error message
     assert!(response.contains("error"), "Missing load error message");
-    println!("✅ Found load error message");
     
     assert!(response.contains("Usage"), "Missing Usage section");
     assert!(response.contains("/load"), "Missing /load command in usage");
-    println!("✅ Found Usage section with /load command");
     
     assert!(response.contains("Arguments"), "Missing Arguments section");
     assert!(response.contains("<PATH>"), "Missing PATH argument");
-    println!("✅ Found Arguments section with PATH parameter");
     
     assert!(response.contains("Options"), "Missing Options section");
-    println!("✅ Found Options section");
     
     println!("✅ All help content verified!");
     

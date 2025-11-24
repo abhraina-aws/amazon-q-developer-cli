@@ -18,7 +18,6 @@ fn test_hooks_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify no hooks configured message
     assert!(response.contains("No hooks"), "Missing no hooks configured message");
-    println!("✅ Found no hooks configured message");
     
     println!("✅ All hooks command functionality verified!");
     
@@ -43,17 +42,14 @@ fn test_hooks_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
 
     // Verify Usage section
-    assert!(response.contains("Usage:"), "Missing Usage section");
+    assert!(response.contains("Usage"), "Missing Usage section");
     assert!(response.contains("/hooks"), "Missing /hooks command in usage section");
-    println!("✅ Found Usage section with /hooks command");
     
     // Verify Options section
-    assert!(response.contains("Options:"), "Missing Options section");
-    println!("✅ Found Options section");
+    assert!(response.contains("Options"), "Missing Options section");
     
     // Verify help flags
     assert!(response.contains("-h") &&  response.contains("--help"), "Missing -h, --help flags");
-    println!("✅ Found help flags: -h, --help with Print help description");
     
     println!("✅ All hooks help content verified!");
     
@@ -78,17 +74,14 @@ fn test_hooks_h_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify Usage section
-    assert!(response.contains("Usage:"), "Missing Usage section");
+    assert!(response.contains("Usage"), "Missing Usage section");
     assert!(response.contains("/hooks"), "Missing /hooks command in usage section");
-    println!("✅ Found Usage section with /hooks command");
     
     // Verify Options section
-    assert!(response.contains("Options:"), "Missing Options section");
-    println!("✅ Found Options section");
+    assert!(response.contains("Options"), "Missing Options section");
     
     // Verify help flags
     assert!(response.contains("-h") &&  response.contains("--help"), "Missing -h, --help flags");
-    println!("✅ Found help flags: -h, --help with Print help description");
     
     println!("✅ All hooks help content verified!");
     

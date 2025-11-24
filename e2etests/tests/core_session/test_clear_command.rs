@@ -9,7 +9,7 @@ fn test_clear_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Kiro Chat session started");
+    println!("✅ Kiro-cli Chat session started");
     
     // Send initial message
     println!("\n🔍 Sending prompt: 'My name is TestUser'");
@@ -22,10 +22,13 @@ fn test_clear_command() -> Result<(), Box<dyn std::error::Error>> {
     // Execute clear command
     println!("\n🔍 Executing command: '/clear'");
     let _clear_response = chat.execute_command_with_timeout("/clear",Some(1000))?;
+    println!("📝 INITIAL RESPONSE OUTPUT:");
+    println!("{}", _initial_response);
+    println!("📝 END INITIAL RESPONSE");
     
     // Check if AI remembers previous conversation
     println!("\n🔍 Sending prompt: 'What is my name?'");
-    let test_response = chat.execute_command_with_timeout("What is my name?",Some(1000))?;
+    let test_response = chat.execute_command_with_timeout("What is my name?",Some(2000))?;
     println!("📝 Test response: {} bytes", test_response.len());
     println!("📝 TEST RESPONSE OUTPUT:");
     println!("{}", test_response);

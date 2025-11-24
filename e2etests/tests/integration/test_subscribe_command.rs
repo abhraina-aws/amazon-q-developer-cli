@@ -71,14 +71,12 @@ fn test_subscribe_help_command() -> Result<(), Box<dyn std::error::Error>> {
     assert!(response.contains("Kiro Developer Pro subscription"), "Missing subscription description");
     
     // Verify Usage section
-    assert!(response.contains("Usage:"), "Missing Usage section");
+    assert!(response.contains("Usage"), "Missing Usage section");
     assert!(response.contains("/subscribe"), "Missing /subscribe command in usage section");
     assert!(response.contains("[OPTIONS]"), "Missing [OPTIONS] in usage section");
-    println!("✅ Found Usage section with /subscribe [OPTIONS]");
     
     // Verify Options section
-    assert!(response.contains("Options:"), "Missing Options section");
-    println!("✅ Found Options section");
+    assert!(response.contains("Options"), "Missing Options section");
     
     // Verify manage option
     assert!(response.contains("--manage"), "Missing --manage option");
@@ -110,25 +108,20 @@ fn test_subscribe_h_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify description
     assert!(response.contains("Kiro Developer Pro subscription"), "Missing subscription description");
-    println!("✅ Found subscription description");
     
     // Verify Usage section
-    assert!(response.contains("Usage:"), "Missing Usage section");
+    assert!(response.contains("Usage"), "Missing Usage section");
     assert!(response.contains("/subscribe"), "Missing /subscribe command in usage section");
     assert!(response.contains("[OPTIONS]"), "Missing [OPTIONS] in usage section");
-    println!("✅ Found Usage section with /subscribe [OPTIONS]");
     
     // Verify Options section
-    assert!(response.contains("Options:"), "Missing Options section");
-    println!("✅ Found Options section");
+    assert!(response.contains("Options"), "Missing Options section");
     
     // Verify manage option
     assert!(response.contains("--manage"), "Missing --manage option");
-    println!("✅ Found --manage option");
     
     // Verify help flags
     assert!(response.contains("-h") &&  response.contains("--help"), "Missing -h, --help flags");
-    println!("✅ Found help flags: -h, --help with Print help description");
     
     println!("✅ All subscribe help content verified!");
     

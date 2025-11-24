@@ -21,6 +21,7 @@ fn test_tangent_command() -> Result<(), Box<dyn std::error::Error>> {
 
     assert!(!response.is_empty(), "Expected non-empty response");
     assert!(response.contains("checkpoint"),"Missing conversation checkpoint message.");
+    assert!(response.contains("/tangent"),"Missing /tangent command.");
 
     println!("Tangent command executed successfully.");
     drop(chat);

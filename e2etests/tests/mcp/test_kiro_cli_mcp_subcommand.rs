@@ -343,7 +343,7 @@ fn test_kiro_cli_mcp_status_subcommand() -> Result<(), Box<dyn std::error::Error
     // Verify successful removal
     assert!(response.contains("Removed") && response.contains("'aws-documentation'"), "Missing removal success message");
 
-    println!("kiro-cli mcp status command verified successfully");
+    println!("✅ kiro-cli mcp status command verified successfully");
     
     Ok(())
 }

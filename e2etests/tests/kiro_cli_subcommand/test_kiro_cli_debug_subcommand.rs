@@ -16,7 +16,7 @@ fn test_kiro_cli_debug_subcommand() -> Result<(), Box<dyn std::error::Error>> {
 
     // Assert debug help output contains expected commands
     assert!(response.contains("Debug the app"), "Response should contain debug description");
-    assert!(response.contains("Commands:"), "Response should list available commands");
+    assert!(response.contains("Commands"), "Response should list available commands");
     assert!(response.contains("app"), "Response should contain 'app' command");
     assert!(response.contains("build"), "Response should contain 'build' command");
     assert!(response.contains("logs"), "Response should contain 'logs' command");

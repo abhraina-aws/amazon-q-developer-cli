@@ -155,11 +155,7 @@ fn test_kiro_cli_inline_status_subcommand() -> Result<(), Box<dyn std::error::Er
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    if response.contains("inline.enabled") {
-        println!("✅ Verified: inline_enabled is set to true");
-    } else {
-        println!("❌ Verification failed: inline_enabled is not set to true");
-    }
+    assert!(response.contains("inline.enabled"), "inline.enabled setting should be present in configuration");
 
     let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", "inline.enabled", "--delete"])?;
 
@@ -205,14 +201,10 @@ fn test_kiro_cli_inline_show_customizations_subcommand() -> Result<(), Box<dyn s
 
     // Assert that kiro-cli inline show-customizations shows available customizations
     if(response.contains("No customizations found")){
-
         assert!(response.contains("No customizations found"), "'No customizations found' message should be displayed");
-
-    }else{
-
-   
-    assert!(response.contains("Amazon-Internal-V1"), "Response should contain 'Amazon-Internal-V1'");
-    assert!(response.contains("Amazon-Aladdin-V1"), "Response should contain 'Amazon-Aladdin-V1'");
+    } else{
+        assert!(response.contains("Amazon-Internal-V1"), "Response should contain 'Amazon-Internal-V1'");
+        assert!(response.contains("Amazon-Aladdin-V1"), "Response should contain 'Amazon-Aladdin-V1'");
     }
     println!("✅ kiro-cli inline show-customizations subcommand executed successfully!");
     
@@ -245,7 +237,6 @@ fn test_kiro_cli_inline_show_customizations_help_subcommand() -> Result<(), Box<
 fn test_kiro_cli_inline_set_customization_subcommand() -> Result<(), Box<dyn std::error::Error>> {
    println!("\n🔍 Testing kiro-cli inline set-customization subcommand... | Description: Tests the <code> kiro-cli inline set-customization</code> interactive menu for selecting customizations");
     
-
     let response1 = q_chat_helper::execute_q_subcommand("kiro-cli", &["inline", "set-customization"])?;
 
     println!("📝 Debug response: {} bytes", response1.len());
@@ -270,8 +261,6 @@ fn test_kiro_cli_inline_set_customization_subcommand() -> Result<(), Box<dyn std
         assert!(response.contains("Customization")  && response.contains("selected"), "Should show selection confirmation");
         println!("✅ kiro-cli inline set-customization subcommand executed successfully!");
     }
-    
-
     
     Ok(())
 }

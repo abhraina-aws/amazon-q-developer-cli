@@ -25,8 +25,6 @@ fn test_prompts_command() -> Result<(), Box<dyn std::error::Error>> {
     assert!(response.contains("@"),"Missing @");
     assert!(response.contains("<prompt name>"),"Missing <prompt name>");
     assert!(response.contains("[...args]"),"Missing [...args]");
-    
-    println!("✅ Found usage instruction");
 
     // Verify table headers
     assert!(response.contains("Prompt"), "Missing Prompt header");
@@ -37,7 +35,7 @@ fn test_prompts_command() -> Result<(), Box<dyn std::error::Error>> {
     // Verify command executed successfully
     assert!(!response.is_empty(), "Empty response from prompts command");
 
-    println!("✅ All prompts command functionality verified!");
+    println!("✅ /prompts command functionality verified!");
 
     // Release the lock before cleanup
     drop(chat);
@@ -88,7 +86,7 @@ fn test_prompts_help_command() -> Result<(), Box<dyn std::error::Error>> {
     assert!(response.contains("Options"), "Missing Options section");
     assert!(response.contains("-h") && response.contains("--help"), "Missing help flags");
 
-    println!("✅ All prompts help content verified!");
+    println!("✅ /prompts --help command functionality verified!");
 
     // Release the lock before cleanup
     drop(chat);
@@ -126,7 +124,7 @@ fn test_prompts_list_command() -> Result<(), Box<dyn std::error::Error>> {
     // Verify command executed successfully
     assert!(!response.is_empty(), "Empty response from prompts list command");
 
-    println!("✅ All prompts list command functionality verified!");
+    println!("✅ /prompts list command functionality verified!");
 
     // Release the lock before cleanup
     drop(chat);
@@ -143,76 +141,29 @@ fn test_prompts_get_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    // First, check if any prompts exist
-    let response = chat.execute_command_with_timeout("/prompts list",Some(2000))?;
-    println!("📝 Prompts list response: {}", response);
-    
-    // Look for prompt names in the table output (skip header lines)
-    let first_prompt_opt = response
-        .lines()
-        .skip_while(|line| !line.contains("▔") && !line.contains("─")) // Skip until we find the table separator
-        .skip(1) // Skip the separator line itself
-        .find(|line| {
-            let trimmed = line.trim();
-            // Skip empty lines, lines starting with >, lines with Usage, and lines that only contain special chars
-            !trimmed.is_empty() 
-                && !trimmed.starts_with(">") 
-                && !line.contains("Usage:")
-                && !trimmed.chars().all(|c| c == '▔' || c == '─' || c.is_whitespace())
-                && trimmed.chars().any(|c| c.is_alphanumeric())
-        })
-        .and_then(|line| {
-            // Extract the first word (prompt name) from the table row
-            let first_word = line.trim().split_whitespace().next()?;
-            // Validate it's a reasonable prompt name (alphanumeric with hyphens/underscores)
-            if first_word.chars().all(|c| c.is_alphanumeric() || c == '-' || c == '_') {
-                Some(first_word)
-            } else {
-                None
-            }
-        });
-
+    // Setup - create a test prompt file
     let prompts_dir = PathBuf::from(".kiro/prompts");
     let test_prompt_path = prompts_dir.join("test-e2e-prompt.md");
-    let mut created_prompt = false;
-    let prompt_name: String;
+    fs::create_dir_all(&prompts_dir)?;
+    let prompt_content = r#"---
+            name: test-e2e-prompt
+            ---
+            What is AWS? Explain in 10 words.
+            "#;
+    fs::write(&test_prompt_path, prompt_content)?;
+    let prompt_name = "test-e2e-prompt";
 
-    // If no prompts found, create one
-    if first_prompt_opt.is_none() {
-        println!("📝 No prompts found, creating temporary test prompt");
-        fs::create_dir_all(&prompts_dir)?;
-        let prompt_content = r#"---
-name: test-e2e-prompt
----
-What is AWS? Explain in 10 words.
-"#;
-        fs::write(&test_prompt_path, prompt_content)?;
-        created_prompt = true;
-        prompt_name = "test-e2e-prompt".to_string();
-        println!("📝 Created temporary test prompt: {}", prompt_name);
-        
-        // Re-run list command to verify prompt was created
-        let new_response = chat.execute_command_with_timeout("/prompts list",Some(2000))?;
-        println!("📝 Updated prompts list response: {}", new_response);
-    } else {
-        prompt_name = first_prompt_opt.unwrap().to_string();
-        println!("📝 Found existing prompt: {}", prompt_name);
-    }
-
-    // Test the get command
     let get_response = chat.execute_command_with_timeout(&format!("/prompts get {}", prompt_name),Some(2000))?;
     println!("📝 Get response: {}", get_response);
 
     assert!(!get_response.is_empty(), "Prompt get command should return content");
-    println!("✅ Prompt get command executed successfully");
+    assert!(get_response.contains("What is AWS? Explain in 10 words."), "Expected prompt content not found in get response");
+    println!("✅ /prompt get command functionality verified!");
     
     drop(chat);
 
-    // Cleanup: Remove the test prompt if we created it
-    if created_prompt && test_prompt_path.exists() {
-        fs::remove_file(&test_prompt_path)?;
-        println!("📝 Cleaned up temporary test prompt");
-    }
+    // Cleanup - remove the test prompt file
+    fs::remove_file(&test_prompt_path)?;
 
     Ok(())
 }
@@ -260,6 +211,8 @@ fn test_create_prompt_command() -> Result<(), Box<dyn std::error::Error>> {
     assert!(response.contains("testprompt"), "Missing testprompt");
     assert!(response.contains("testprompt.md"), "Missing testprompt.md");
 
+    println!("✅ /prompts create command functionality verified!");
+
     // Release the lock before cleanup
     drop(chat);
 
@@ -289,7 +242,7 @@ fn test_prompts_details_command() -> Result<(), Box<dyn std::error::Error>> {
     assert!(response.contains("testprompt"), "Missing testprompt");
     assert!(response.contains("This is a test prompt for e2e testing."), "Missing prompt content");
 
-    println!("✅ All prompts details command functionality verified!");
+    println!("✅ /prompts details command functionality verified!");
 
     // Release the lock before cleanup
     drop(chat);

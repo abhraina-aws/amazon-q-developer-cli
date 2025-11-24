@@ -298,7 +298,6 @@ fn test_tools_trust_command() -> Result<(), Box<dyn std::error::Error>> {
             untrust_response.contains(&tool_name) && !untrust_response.contains("does not exist"),
             "Missing untrust confirmation message or tool does not exist"
         );
-        println!("✅ Found untrust confirmation message for tool: {}", tool_name);
 
     } else {
         println!("ℹ️ No untrusted tools found to test trust command");
@@ -545,6 +544,9 @@ fn test_fs_write_and_fs_read_tools() -> Result<(), Box<dyn std::error::Error>> {
     assert!(read_response.contains("Hello World"), "Missing Hello World content reference");
     
     println!("✅ fs_write and fs_read tool executed and verified successfully!");
+
+    // Clear context to avoid contamination for subsequent tests
+    chat.execute_command_with_timeout("/context clear", Some(2000))?;
     
     drop(chat);
 
@@ -553,26 +555,26 @@ fn test_fs_write_and_fs_read_tools() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 #[cfg(all(feature = "tools", feature = "sanity"))]
-fn test_execute_bash_tool() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing `execute_bash` tool ... | Description: Tests the <code>execute_bash</code> tool by running the 'pwd' command and verifying proper command execution and output");
+fn test_shell_tool() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing `shell` tool ... | Description: Tests the <code>shell</code> tool by running the 'pwd' command and verifying proper command execution and output");
     
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
     println!("✅ Kiro CLI chat session started");
 
-    // Test execute_bash tool by asking to run pwd command
+    // Test shell tool by asking to run pwd command
     let mut response = chat.execute_command_with_timeout("Run pwd",Some(3000))?;
 
-    println!("📝 execute_bash response: {} bytes", response.len());
+    println!("📝 shell response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
     println!("{}", response);
     println!("📝 END OUTPUT");
     
     // If approval is required, send 't' to trust the tool for the session
-    if response.contains("Allow this action?") && response.contains("[y/n/t]:") {
+    if response.contains("Allow this action?") {
         println!("📝 Tool approval required, sending 't' to trust");
-       let grant_permission = chat.send_key_input_with_timeout("t\n", Some(2000))?;
+        let grant_permission = chat.send_key_input_with_timeout("t\n", Some(3000))?;
         println!("📝 Response after approval: {}", grant_permission);
     }
     
@@ -582,7 +584,7 @@ fn test_execute_bash_tool() -> Result<(), Box<dyn std::error::Error>> {
     // Verify success indication or directory path
     assert!(response.contains("e2etests") || response.contains("/"), "Missing directory output");
     
-    println!("✅ execute_bash tool executed and verified successfully!");
+    println!("✅ shell tool executed and verified successfully!");
     
     drop(chat);
 

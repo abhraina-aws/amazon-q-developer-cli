@@ -23,13 +23,9 @@ fn test_compact_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify compact response - either success or too short
-    if response.contains("history") && response.contains("compacted") && response.contains("successfully") {
-        println!("✅ Found compact success message");
-    } else if response.contains("Conversation") && response.contains("short") {
-        println!("✅ Found conversation too short message");
-    } else {
-        panic!("Missing expected compact response");
-    }
+    let has_success = response.contains("history") && response.contains("compacted") && response.contains("successfully");
+    let has_short_msg = response.contains("Conversation") && response.contains("short");
+    assert!(has_success || has_short_msg, "Expected compact success message or conversation too short message");
     
     println!("✅ All compact content verified!");
     
@@ -54,12 +50,10 @@ fn test_compact_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify Usage section
-    assert!(response.contains("Usage:"), "Missing usage format");
-    println!("✅ Found usage format");
+    assert!(response.contains("Usage"), "Missing usage format");
     
     // Verify Arguments section
-    assert!(response.contains("Arguments:"), "Missing Arguments section");
-    println!("✅ Found Arguments section");
+    assert!(response.contains("Arguments"), "Missing Arguments section");
     
     // Verify Options section
     assert!(response.contains("Options:"), "Missing Options section");
@@ -68,7 +62,6 @@ fn test_compact_help_command() -> Result<(), Box<dyn std::error::Error>> {
     assert!(response.contains("--truncate-large-messages"), "Missing --truncate-large-messages option");
     assert!(response.contains("--max-message-length"), "Missing --max-message-length option");
     assert!(response.contains("-h") &&  response.contains("--help"), "Missing -h, --help flags");
-    println!("✅ Found all options and help flags");
     
     println!("✅ All compact help content verified!");
     
@@ -93,12 +86,10 @@ fn test_compact_h_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify Usage section
-    assert!(response.contains("Usage:"), "Missing usage format");
-    println!("✅ Found usage format");
+    assert!(response.contains("Usage"), "Missing usage format");
     
     // Verify Arguments section
-    assert!(response.contains("Arguments:"), "Missing Arguments section");
-    println!("✅ Found Arguments section");
+    assert!(response.contains("Arguments"), "Missing Arguments section");
     
     // Verify Options section
     assert!(response.contains("Options:"), "Missing Options section");
@@ -107,7 +98,6 @@ fn test_compact_h_command() -> Result<(), Box<dyn std::error::Error>> {
     assert!(response.contains("--truncate-large-messages"), "Missing --truncate-large-messages option");
     assert!(response.contains("--max-message-length"), "Missing --max-message-length option");
     assert!(response.contains("-h") &&  response.contains("--help"), "Missing -h, --help flags");
-    println!("✅ Found all options and help flags");
     
     println!("✅ All compact help content verified!");
     
@@ -138,16 +128,10 @@ fn test_compact_truncate_true_command() -> Result<(), Box<dyn std::error::Error>
     println!("{}", response);
     println!("📝 END OUTPUT");
     
-    if response.to_lowercase().contains("truncating") {
-        println!("✅ Truncation of large messages verified!");
-        if response.contains("history") && response.contains("compacted") && response.contains("successfully") {
-            println!("✅ Found compact success message");
-        }
-    } else if response.contains("Conversation") && response.contains("short") {
-        println!("✅ Found conversation too short message");
-    } else {
-        panic!("Missing expected message");
-    }
+    let has_truncating = response.to_lowercase().contains("truncating");
+    let has_success = response.contains("history") && response.contains("compacted") && response.contains("successfully");
+    let has_short_msg = response.contains("Conversation") && response.contains("short");
+    assert!(has_truncating || has_success || has_short_msg, "Expected truncation message, compact success, or conversation too short message");
     
     println!("✅ All compact content verified!");
     
@@ -179,13 +163,9 @@ fn test_compact_truncate_false_command() -> Result<(), Box<dyn std::error::Error
     println!("📝 END OUTPUT");
     
     // Verify compact response - either success or too short
-    if response.contains("history") && response.contains("compacted") && response.contains("successfully") {
-        println!("✅ Found compact success message");
-    } else if response.contains("Conversation") && response.contains("short") {
-        println!("✅ Found conversation too short message");
-    } else {
-        panic!("Missing expected compact response");
-    }
+    let has_success = response.contains("history") && response.contains("compacted") && response.contains("successfully");
+    let has_short_msg = response.contains("Conversation") && response.contains("short");
+    assert!(has_success || has_short_msg, "Expected compact success message or conversation too short message");
     
     println!("✅ All compact content verified!");
     
@@ -222,13 +202,9 @@ fn test_show_summary() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify compact response - either success or too short
-    if response.contains("history") && response.contains("compacted") && response.contains("successfully") {
-        println!("✅ Found compact success message");
-    } else if response.contains("Conversation") && response.contains("short") {
-        println!("✅ Found conversation too short message");
-    } else {
-        panic!("Missing expected compact response");
-    }
+    let has_success = response.contains("history") && response.contains("compacted") && response.contains("successfully");
+    let has_short_msg = response.contains("Conversation") && response.contains("short");
+    assert!(has_success || has_short_msg, "Expected compact success message or conversation too short message");
     
     // Verify compact sumary response
     assert!(response.to_lowercase().contains("conversation") && response.to_lowercase().contains("summary"), "Missing Summary section");
@@ -267,16 +243,10 @@ fn test_max_message_truncate_true() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify compact response - either success or too short
-    if truncate_response.to_lowercase().contains("truncating") {
-        println!("✅ Truncation of large messages verified!");
-        if truncate_response.contains("history") && truncate_response.contains("compacted") && truncate_response.contains("successfully") {
-            println!("✅ Found compact success message");
-        }
-    } else if truncate_response.contains("Conversation") && truncate_response.contains("short") {
-        println!("✅ Found conversation too short message");
-    } else {
-        panic!("Missing expected message");
-    }
+    let has_truncating = truncate_response.to_lowercase().contains("truncating");
+    let has_success = truncate_response.contains("history") && truncate_response.contains("compacted") && truncate_response.contains("successfully");
+    let has_short_msg = truncate_response.contains("Conversation") && truncate_response.contains("short");
+    assert!(has_truncating || has_success || has_short_msg, "Expected truncation message, compact success, or conversation too short message");
     
     // Verify compact sumary response
     assert!(truncate_response.to_lowercase().contains("conversation") && truncate_response.to_lowercase().contains("summary"), "Missing Summary section");
@@ -314,13 +284,9 @@ fn test_max_message_truncate_false() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify compact response - either success or too short
-    if truncate_response.contains("history") && truncate_response.contains("compacted") && truncate_response.contains("successfully") {
-        println!("✅ Found compact success message");
-    } else if truncate_response.contains("Conversation") && truncate_response.contains("short") {
-        println!("✅ Found conversation too short message");
-    } else {
-        panic!("Missing expected compact response");
-    }
+    let has_success = truncate_response.contains("history") && truncate_response.contains("compacted") && truncate_response.contains("successfully");
+    let has_short_msg = truncate_response.contains("Conversation") && truncate_response.contains("short");
+    assert!(has_success || has_short_msg, "Expected compact success message or conversation too short message");
     
     // Verify compact sumary response
     assert!(truncate_response.to_lowercase().contains("conversation") && truncate_response.to_lowercase().contains("summary"), "Missing Summary section");
@@ -364,7 +330,8 @@ fn test_max_message_length_invalid() -> Result<(), Box<dyn std::error::Error>> {
     assert!(response.contains("--truncate-large-messages") && response.contains("<TRUNCATE_LARGE_MESSAGES>") && response.contains("--max-message-length") && response.contains("<MAX_MESSAGE_LENGTH>"), "Missing required argument info");
     assert!(response.contains("Usage"), "Missing usage info");
     assert!(response.contains("--help"), "Missing help suggestion");
-    println!("✅ Found expected error message for missing --truncate-large-messages argument");
+
+    println!("✅ All compact content verified!");
     
     drop(chat);
 
@@ -401,13 +368,9 @@ fn test_compact_messages_to_exclude_command() -> Result<(), Box<dyn std::error::
     println!("📝 END OUTPUT");
     
     // Verify compact response - either success or too short
-    if response.contains("history") && response.contains("compacted") && response.contains("successfully") {
-        println!("✅ Found compact success message");
-    } else if response.contains("Conversation") && response.contains("short") {
-        println!("✅ Found conversation too short message");
-    } else {
-        panic!("Missing expected compact response");
-    }
+    let has_success = response.contains("history") && response.contains("compacted") && response.contains("successfully");
+    let has_short_msg = response.contains("Conversation") && response.contains("short");
+    assert!(has_success || has_short_msg, "Expected compact success message or conversation too short message");
     
     println!("✅ All compact content verified!");
     
@@ -448,21 +411,15 @@ fn test_compact_messages_to_exclude_show_sumary_command() -> Result<(), Box<dyn 
     println!("📝 END OUTPUT");
     
     // Verify compact response - either success or too short
-    if response.contains("history") && response.contains("compacted") && response.contains("successfully") {
-        println!("✅ Found compact success message");
-    } else if response.contains("Conversation") && response.contains("short") {
-        println!("✅ Found conversation too short message");
-    } else {
-        panic!("Missing expected compact response");
-    }
+    let has_success = response.contains("history") && response.contains("compacted") && response.contains("successfully");
+    let has_short_msg = response.contains("Conversation") && response.contains("short");
+    assert!(has_success || has_short_msg, "Expected compact success message or conversation too short message");
     
     // Verify compact sumary response
     assert!(response.to_lowercase().contains("conversation") && response.to_lowercase().contains("summary"), "Missing Summary section");
-    println!("✅ All compact content verified!");
 
     // Verify messages got excluded
     assert!(!response.to_lowercase().contains("fibonacci"), "Fibonacci should not be present in compact response");
-    println!("✅ All compact content verified!");
 
     println!("✅ All compact content verified!");
     

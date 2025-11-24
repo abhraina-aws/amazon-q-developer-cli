@@ -87,7 +87,8 @@ fn test_agent_create_command() -> Result<(), Box<dyn std::error::Error>> {
         .expect("Expected output 'username' is missing in whoami response")
         .trim();
 
-    let agent_path = format!("/Users/{}/.kiro/agents/{}.json", username, agent_name);
+    let home_dir = std::env::var("HOME").unwrap_or_else(|_| format!("/home/{}", username));
+    let agent_path = format!("{}/.kiro/agents/{}.json", home_dir, agent_name);
 
     if std::path::Path::new(&agent_path).exists() {
         std::fs::remove_file(&agent_path)?;
@@ -159,7 +160,9 @@ fn test_agent_edit_command() -> Result<(), Box<dyn std::error::Error>> {
         .expect("Expected output 'username' is missing in whoami response")
         .trim();
 
-    let agent_path = format!("/Users/{}/.kiro/agents/{}.json", username, agent_name);
+    let home_dir = std::env::var("HOME").unwrap_or_else(|_| format!("/home/{}", username));
+    let agent_path = format!("{}/.kiro/agents/{}.json", home_dir, agent_name);
+
     if std::path::Path::new(&agent_path).exists() {
         std::fs::remove_file(&agent_path)?;
     } else {
@@ -282,7 +285,7 @@ fn test_agent_invalid_command() -> Result<(), Box<dyn std::error::Error>> {
     assert!(response.contains("help"), "Expected output 'help' is missing in response");
     assert!(response.contains("Options"), "Expected output 'Options' is missing in response");
 
-    println!("✅ /agent invalidcommand executed successfully with expected error");
+    println!("✅ /agent invalid command executed successfully with expected error");
 
     // Release the lock before cleanup
     drop(chat);
@@ -444,22 +447,20 @@ fn test_agent_generate_command() -> Result<(), Box<dyn std::error::Error>> {
     // Enter agent name
     chat.send_key_input("test-agent\r")?;
     std::thread::sleep(std::time::Duration::from_secs(2));
+    println!("{}", response);
 
     // Enter description
     chat.send_key_input("Test agent description\r")?;
     std::thread::sleep(std::time::Duration::from_secs(2));
+    println!("{}", response);
 
     // Select scope (Enter for default)
     chat.send_key_input("\r")?;
     std::thread::sleep(std::time::Duration::from_secs(2));
+    println!("{}", response);
 
     // Wait for MCP menu, then confirm (Enter)
     let _final_response = chat.send_key_input("\r")?;
-
-    println!("📝 FULL OUTPUT:");
-    println!("{}", _final_response);
-    println!("📝 END OUTPUT");
-    std::thread::sleep(std::time::Duration::from_secs(2));
 
     // Handle vi editor opening - enter insert mode and add content
     chat.send_key_input("i")?; // Enter insert mode

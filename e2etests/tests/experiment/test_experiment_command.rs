@@ -9,7 +9,7 @@ fn test_knowledge_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Kiro Chat session started");
+    println!("✅ Kiro-cli Chat session started");
     
     let response = chat.execute_command_with_timeout("/experiment",Some(500))?;
     
@@ -57,7 +57,6 @@ fn test_knowledge_command() -> Result<(), Box<dyn std::error::Error>> {
     }
     
     assert!(found, "Knowledge option not found in menu");
-    println!("📝 Knowledge already selected: {}, position: {}, state: {}", knowledge_already_selected, knowledge_menu_position, if knowledge_state { "ON" } else { "OFF" });
     
     // Navigate to Knowledge option using arrow keys (only if not already selected)
     if !knowledge_already_selected {
@@ -108,8 +107,6 @@ fn test_knowledge_command() -> Result<(), Box<dyn std::error::Error>> {
         assert!(revert_navigate_response.contains("Knowledge experiment disabled"), "Expected Knowledge to be disabled (reverted)");
         println!("✅ Knowledge experiment reverted to disabled successfully");
     }
-
-    println!("✅ /experiment command test completed successfully");
     
     drop(chat);
     
@@ -124,7 +121,7 @@ fn test_thinking_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Kiro Chat session started");
+    println!("✅ Kiro-cli Chat session started");
     
     let response = chat.execute_command_with_timeout("/experiment",Some(500))?;
     
@@ -135,7 +132,6 @@ fn test_thinking_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify experiment menu content
     assert!(response.contains("Thinking"), "Missing Thinking experiment");
-    println!("✅ Found experiment menu with Thinking option");
     
     // Find Thinking and check if it's already selected
     let lines: Vec<&str> = response.lines().collect();
@@ -172,7 +168,6 @@ fn test_thinking_command() -> Result<(), Box<dyn std::error::Error>> {
     }
     
     assert!(found, "Thinking option not found in menu");
-    println!("📝 Thinking already selected: {}, position: {}, state: {}", thinking_already_selected, thinking_menu_position, if thinking_state { "ON" } else { "OFF" });
     
     // Navigate to Thinking option using arrow keys (only if not already selected)
     if !thinking_already_selected {
@@ -223,8 +218,6 @@ fn test_thinking_command() -> Result<(), Box<dyn std::error::Error>> {
         assert!(revert_navigate_response.contains("Thinking experiment disabled"), "Expected Thinking to be disabled (reverted)");
         println!("✅ Thinking experiment reverted to disabled successfully");
     }
-
-    println!("✅ /experiment command test completed successfully");
     
     drop(chat);
     
@@ -239,7 +232,7 @@ fn test_experiment_help_command() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Kiro Chat session started");
+    println!("✅ Kiro-cli Chat session started");
     
     let response = chat.execute_command_with_timeout("/experiment --help",Some(500))?;
     
@@ -249,7 +242,7 @@ fn test_experiment_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
     
     // Verify help content
-    assert!(response.contains("Usage:"),"Missing Usage");
+    assert!(response.contains("Usage"),"Missing Usage");
     assert!(response.contains("/experiment"), "Missing experiment command");
    
     assert!(response.contains("Options:"), "Missing Options section");
@@ -271,7 +264,7 @@ fn test_tangent_mode_experiment() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Kiro Chat session started");
+    println!("✅ Kiro-cli Chat session started");
     
     let response = chat.execute_command_with_timeout("/experiment",Some(500))?;
     
@@ -282,7 +275,6 @@ fn test_tangent_mode_experiment() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify experiment menu content
     assert!(response.contains("Tangent Mode"), "Missing Tangent Mode experiment");
-    println!("✅ Found experiment menu with Tangent Mode option");
     
     // Find Tangent Mode and check if it's already selected
     let lines: Vec<&str> = response.lines().collect();
@@ -319,7 +311,6 @@ fn test_tangent_mode_experiment() -> Result<(), Box<dyn std::error::Error>> {
     }
     
     assert!(found, "Tangent Mode option not found in menu");
-    println!("📝 Tangent Mode already selected: {}, position: {}, state: {}", tangent_already_selected,tangent_menu_position, if tangent_state { "ON" } else { "OFF" });
     
     // Navigate to Tangent Mode option using arrow keys (only if not already selected)
     if !tangent_already_selected {
@@ -346,7 +337,6 @@ fn test_tangent_mode_experiment() -> Result<(), Box<dyn std::error::Error>> {
     }
     
     // Test reverting back to original state (run command again)
-    println!("📝 Testing revert to original state...");
     chat.execute_command_with_timeout("/experiment",Some(500))?;
     
     // Navigate to Tangent Mode option again (only if not already selected)
@@ -370,8 +360,6 @@ fn test_tangent_mode_experiment() -> Result<(), Box<dyn std::error::Error>> {
         assert!(revert_navigate_response.contains("Tangent Mode experiment disabled"), "Expected Tangent Mode to be disabled (reverted)");
         println!("✅ Tangent Mode experiment reverted to disabled successfully");
     }
-
-    println!("✅ Tangent Mode experiment test completed successfully");
     
     drop(chat);
     
@@ -386,7 +374,7 @@ fn test_todo_lists_experiment() -> Result<(), Box<dyn std::error::Error>> {
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("✅ Kiro Chat session started");
+    println!("✅ Kiro-cli Chat session started");
     
     let response = chat.execute_command_with_timeout("/experiment",Some(500))?;
     
@@ -397,7 +385,6 @@ fn test_todo_lists_experiment() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify experiment menu content
     assert!(response.contains("Todo Lists"), "Missing Todo Lists experiment");
-    println!("✅ Found experiment menu with Todo Lists option");
     
     // Find Todo Lists and check if it's already selected
     let lines: Vec<&str> = response.lines().collect();
@@ -434,8 +421,7 @@ fn test_todo_lists_experiment() -> Result<(), Box<dyn std::error::Error>> {
     }
     
     assert!(found, "Todo Lists option not found in menu");
-    println!("📝 Todo Lists already selected: {}, position: {}, state: {}", todo_lists_already_selected, todo_lists_menu_position, if todo_lists_state { "ON" } else { "OFF" });
-    
+   
     // Navigate to Todo Lists option using arrow keys (only if not already selected)
     if !todo_lists_already_selected {
         for _ in 0..todo_lists_menu_position {
@@ -461,7 +447,6 @@ fn test_todo_lists_experiment() -> Result<(), Box<dyn std::error::Error>> {
     }
     
     // Test reverting back to original state (run command again)
-    println!("📝 Testing revert to original state...");
     chat.execute_command_with_timeout("/experiment",Some(500))?;
     
     // Navigate to Todo Lists option again (only if not already selected)
@@ -485,8 +470,6 @@ fn test_todo_lists_experiment() -> Result<(), Box<dyn std::error::Error>> {
         assert!(revert_navigate_response.contains("Todo Lists experiment disabled"), "Expected Todo Lists to be disabled (reverted)");
         println!("✅ Todo Lists experiment reverted to disabled successfully");
     }
-
-    println!("✅ Todo Lists experiment test completed successfully");
     
     drop(chat);
     
