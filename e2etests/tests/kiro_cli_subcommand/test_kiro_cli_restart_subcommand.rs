@@ -1,7 +1,7 @@
 #[allow(unused_imports)]
 use q_cli_e2e_tests::q_chat_helper;
 
-/// Tests the q restart subcommand
+/// Tests the kiro-cli restart subcommand
 #[test]
 #[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
 fn test_kiro_cli_restart_subcommand() -> Result<(), Box<dyn std::error::Error>> {

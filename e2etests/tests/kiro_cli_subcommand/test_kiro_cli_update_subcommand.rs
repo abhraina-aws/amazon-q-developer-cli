@@ -3,14 +3,14 @@ use q_cli_e2e_tests::q_chat_helper;
 #[allow(unused_imports)]
 use regex::Regex;
 
-/// Tests the q update subcommand
+/// Tests the kiro-cli update subcommand
 #[test]
 #[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
 fn test_kiro_cli_update_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro update subcommand... | Description: Tests the <code> kiro update </code> subcommand to check for updates.");
     
-    println!("\n🛠️ Running 'q update' subcommand...");
-    let response = q_chat_helper::execute_q_subcommand("q", &["update"])?;
+    println!("\n🛠️ Running 'kiro-cli update' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["update"])?;
 
     println!("📝 Update response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
@@ -29,7 +29,7 @@ fn test_kiro_cli_update_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-/// Tests the q update -h help flag
+/// Tests the kiro-cli update -h help flag
 #[test]
 #[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
 fn test_kiro_cli_update_help_flag() -> Result<(), Box<dyn std::error::Error>> {

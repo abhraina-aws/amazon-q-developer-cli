@@ -1,7 +1,7 @@
 #[allow(unused_imports)]
 use q_cli_e2e_tests::q_chat_helper;
 
-/// Tests the q settings --help subcommand
+/// Tests the kiro-cli settings --help subcommand
 #[test]
 #[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
 fn test_kiro_cli_setting_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
@@ -21,7 +21,7 @@ fn test_kiro_cli_setting_help_subcommand() -> Result<(), Box<dyn std::error::Err
     assert!(response.contains("Commands:"), 
             "Help should contain commands section");
     assert!(response.contains("open") && response.contains("list") && response.contains("help"), 
-            "Help should contain all  subcommands related to q setting subcommand");
+            "Help should contain all  subcommands related to kiro-cli setting subcommand");
     assert!(response.contains("Arguments:"), 
             "Help should contain Arguments section");
     assert!(response.contains("Options:"), 
@@ -39,7 +39,7 @@ fn test_kiro_cli_setting_help_subcommand() -> Result<(), Box<dyn std::error::Err
     Ok(())
 }
 
-/// Tests the q setting all subcommand
+/// Tests the kiro-cli setting all subcommand
 #[test]
 #[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
 fn test_kiro_cli_settings_all_subcommand() -> Result<(), Box<dyn std::error::Error>> {
@@ -62,7 +62,7 @@ fn test_kiro_cli_settings_all_subcommand() -> Result<(), Box<dyn std::error::Err
     Ok(())
 }
 
-/// Tests the q settings help subcommand
+/// Tests the kiro-cli settings help subcommand
 #[test]
 #[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
 fn test_kiro_cli_settings_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
@@ -82,7 +82,7 @@ fn test_kiro_cli_settings_help_subcommand() -> Result<(), Box<dyn std::error::Er
     assert!(response.contains("Commands:"), 
             "Help should contain commands section");
     assert!(response.contains("open") && response.contains("list") && response.contains("help"), 
-            "Help should contain all subcommands related to q setting subcommand");
+            "Help should contain all subcommands related to kiro-cli setting subcommand");
     assert!(response.contains("Arguments:"), 
             "Help should contain Arguments section");
     assert!(response.contains("Options:"), 

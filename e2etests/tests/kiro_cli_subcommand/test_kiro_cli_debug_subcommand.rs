@@ -39,7 +39,7 @@ fn test_kiro_cli_debug_app_subcommand() -> Result<(), Box<dyn std::error::Error>
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    // Assert that q debug app launches the Amazon Q interface
+    // Assert that kiro-cli debug app launches the Amazon kiro-cli interface
     assert!(response.contains("Kiro CLI"), "Response should contain 'Kiro CLI'");
     assert!(response.contains("Running the Kiro CLI.app"), "Missing Running Kiro CLI confrmation");
     

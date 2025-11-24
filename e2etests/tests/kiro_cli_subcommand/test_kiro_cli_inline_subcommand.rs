@@ -38,7 +38,7 @@ fn test_kiro_cli_inline_help_subcommand() -> Result<(), Box<dyn std::error::Erro
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    // Assert that q inline shows inline shell completions help
+    // Assert that kiro-cli inline shows inline shell completions help
     assert!(response.contains("Inline shell completions"), "Response should contain 'Inline shell completions'");
     assert!(response.contains("enable"), "Response should show 'enable' command");
     assert!(response.contains("disable"), "Response should show 'disable' command");
@@ -62,7 +62,7 @@ fn test_kiro_cli_inline_disable_subcommand() -> Result<(), Box<dyn std::error::E
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    // Assert that q inline disable shows success message
+    // Assert that kiro-cli inline disable shows success message
     assert!(response.contains("Inline disabled"), "Response should contain 'Inline disabled'");
     
     println!("✅ kiro-cli inline disable subcommand executed successfully!");
@@ -144,7 +144,7 @@ fn test_kiro_cli_inline_status_subcommand() -> Result<(), Box<dyn std::error::Er
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    // Assert that q inline status shows available customizations
+    // Assert that kiro-cli inline status shows available customizations
     assert!(response.contains("Inline is enabled"), "Response should contain 'Inline is enabled'");
 
     println!("\n🔍 Executing 'kiro-cli setting all' subcommand to verify settings...");
@@ -291,7 +291,7 @@ fn test_kiro_cli_inline_set_customization_help_subcommand() -> Result<(), Box<dy
     println!("{}", response);
     println!("📝 END OUTPUT");
     
-    // Assert that q inline set-customization --help shows available customizations
+    // Assert that kiro-cli inline set-customization --help shows available customizations
     assert!(response.contains("kiro-cli inline set-customization"), "Response should contain 'set-customization'");
     
     println!("✅ kiro-cli inline set-customization --help subcommand executed successfully!");

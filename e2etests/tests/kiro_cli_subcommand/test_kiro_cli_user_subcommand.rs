@@ -1,14 +1,14 @@
 #[allow(unused_imports)]
 use q_cli_e2e_tests::q_chat_helper;
 
-/// Tests the q user subcommand
+/// Tests the kiro-cli user subcommand
 #[test]
 #[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
 fn test_kiro_cli_user_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro-cli user subcommand... | Description: Tests the <code> kiro-cli user </code> subcommand to display user management help.");
     
     println!("\n🛠️ Running 'kiro-cli user' subcommand...");
-    let response = q_chat_helper::execute_q_subcommand("q", &["user"])?;
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["user"])?;
 
     println!("📝 User response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
@@ -31,7 +31,7 @@ fn test_kiro_cli_user_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-/// Tests the q user -h help flag
+/// Tests the kiro-cli user -h help flag
 #[test]
 #[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
 fn test_kiro_cli_user_help_flag() -> Result<(), Box<dyn std::error::Error>> {

@@ -1,7 +1,7 @@
 #[allow(unused_imports)]
 use q_cli_e2e_tests::q_chat_helper;
 
-/// Tests the 'q settings --format' subcommand with the following:
+/// Tests the 'kiro-cli settings --format' subcommand with the following:
 /// - Verifies that the command returns a non-empty response
 /// - Checks that the response contains the expected JSON-formatted setting value
 /// - Validates that the setting name is referenced in the output
