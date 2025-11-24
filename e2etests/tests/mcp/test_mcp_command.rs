@@ -18,20 +18,16 @@ fn test_mcp_help_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify description
     assert!(response.contains("See mcp server loaded"), "Missing mcp server description");
-    println!("✅ Found mcp server description");
     
     // Verify Usage section
     assert!(response.contains("Usage"), "Missing Usage section");
-    assert!(response.contains("/mcp"), "Missing /mcp command in usage section");
-    println!("✅ Found Usage section with /mcp command");
+    assert!(response.contains("/mcp"), "Missing /mcp command in usage section");;
     
     // Verify Options section
     assert!(response.contains("Options"), "Missing Options section");
-    println!("✅ Found Options section");
     
     // Verify help flags
     assert!(response.contains("-h") &&  response.contains("--help") && response.contains("Print help"), "Missing -h, --help flags");
-    println!("✅ Found help flags: -h, --help with Print help description");
     
     println!("✅ All mcp help content verified!");
     
@@ -66,7 +62,7 @@ fn test_mcp_loading_command() -> Result<(), Box<dyn std::error::Error>> {
     } else if response.contains("loading") {
         println!("✅ MCPs are still loading");
     } else {
-        println!("ℹ️ MCP status unclear - may be in different state");
+        println!("No MCP servers installed");
     }
     
     println!("✅ All MCP loading content verified!");

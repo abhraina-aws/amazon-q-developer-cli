@@ -100,7 +100,6 @@ fn test_kiro_cli_mcp_import_help_subcommand() -> Result<(), Box<dyn std::error::
     assert!(response.contains("--force"), "Missing --force option");
     assert!(response.contains("-v") && response.contains("--verbose"), "Missing --verbose option");
     assert!(response.contains("-h") && response.contains("--help"), "Missing --help option");
-    println!("✅ Found all options with descriptions");
     
     println!("✅ All kiro-cli mcp import --help content verified successfully");
     
@@ -178,7 +177,6 @@ fn test_kiro_cli_mcp_status_help_subcommand() -> Result<(), Box<dyn std::error::
     assert!(response.contains("--name"), "Missing --name option");
     assert!(response.contains("-v") && response.contains("--verbose") , "Missing --verbose option");
     assert!(response.contains("-h") && response.contains("--help"), "Missing --help option");
-    println!("✅ Found all options with descriptions");
     
     println!("✅ All kiro-cli mcp status --help content verified successfully");
     
@@ -254,7 +252,8 @@ fn test_add_and_remove_mcp_subcommand() -> Result<(), Box<dyn std::error::Error>
     
     // Verify successful removal
     assert!(remove_response.contains("Removed") && remove_response.contains("'aws-documentation'"), "Missing removal success message");
-    println!("✅ Found successful removal message");
+    
+    println!("kiro-cli mcp add and remove subcommands verified successfully");
 
     Ok(())
 }
@@ -316,7 +315,6 @@ fn test_kiro_cli_mcp_status_subcommand() -> Result<(), Box<dyn std::error::Error
     
     // Verify successful addition
     assert!(response.contains("Added") && response.contains("'aws-documentation'"), "Missing success message");
-    println!("✅ Found successful addition message");
 
     // Allow the tool execution
     let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["mcp", "status", "--name", "aws-documentation"])?;
@@ -344,7 +342,8 @@ fn test_kiro_cli_mcp_status_subcommand() -> Result<(), Box<dyn std::error::Error
     
     // Verify successful removal
     assert!(response.contains("Removed") && response.contains("'aws-documentation'"), "Missing removal success message");
-    println!("✅ Found successful removal message");
+
+    println!("kiro-cli mcp status command verified successfully");
     
     Ok(())
 }
