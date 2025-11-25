@@ -390,9 +390,11 @@ def generate_report(results, features, test_suites, binary_path="kiro-cli"):
         features_str = "-".join(features[:3]) + ("_more" if len(features) > 3 else "")
         features_str += "_" + "-".join(test_suites)
     
+    # Get OS label
+    os_label = "Mac" if platform.system() == "Darwin" else "Linux" if platform.system() == "Linux" else platform.system()
     datetime_str = datetime.now().strftime("%m%d%y%H%M%S")
     filename_prefix = "kiro_cli_test_summary" if "kiro" in binary_path else "qcli_test_summary"
-    filename = reports_dir / f"{filename_prefix}_{features_str}_{datetime_str}.json"
+    filename = reports_dir / f"{filename_prefix}_{features_str}_{os_label}_{datetime_str}.json"
     
     # Save JSON report
     with open(filename, "w") as f:
