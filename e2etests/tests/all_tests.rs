@@ -12,6 +12,7 @@ mod session_mgmt;
 mod tools;
 mod todos;
 mod experiment;
+mod kiro_steering;
 
 use q_cli_e2e_tests::q_chat_helper;
 

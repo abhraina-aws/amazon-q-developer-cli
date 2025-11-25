@@ -177,7 +177,9 @@ fn test_kiro_cli_debug_build_autocomplete_switch() -> Result<(), Box<dyn std::er
     println!("{}", switch_response);
     println!("📝 END OUTPUT");
 
-    assert!(switch_response.contains("Kiro CLI") && switch_response.contains(other_build) && switch_response.contains("autocomplete"));
+    assert!(switch_response.contains("Kiro CLI"), "Expected output 'Kiro CLI' is missing in response");
+    assert!(switch_response.contains(other_build), "Expected output '{}' is missing in response", other_build);
+    assert!(switch_response.contains("autocomplete"), "Expected output 'autocomplete' is missing in response");
 
     // Switch back to original build
     println!("\n🔍 Switching back to {} build...", current_build);
@@ -188,7 +190,9 @@ fn test_kiro_cli_debug_build_autocomplete_switch() -> Result<(), Box<dyn std::er
     println!("{}", revert_response);
     println!("📝 END OUTPUT");
 
-    assert!(revert_response.contains("Kiro CLI") && revert_response.contains(current_build) && revert_response.contains("autocomplete"));
+    assert!(revert_response.contains("Kiro CLI"), "Expected output 'Kiro CLI' is missing in response");
+    assert!(revert_response.contains(current_build), "Expected output '{}' is missing in response", current_build);
+    assert!(revert_response.contains("autocomplete"), "Expected output 'autocomplete' is missing in response");
 
     println!("✅ Build switching test completed successfully!");
     

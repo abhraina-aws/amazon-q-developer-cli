@@ -30,8 +30,9 @@ fn test_kiro_cli_settings_delete_subcommand() -> Result<(), Box<dyn std::error::
                 println!("📝 Delete response: {}", delete_response);
 
                 // Verify deletion
-                let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", "--", "--list", key])?;
+                let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", key])?;
                 println!("📝 Response: {}", response);
+                assert!(response.contains("No value associated with chat.defaultAgent"), "Expected No value associated with chat.defaultAgent message in response");
                 
                 // Restore the setting
                 let restore_response = q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", key, value])?;
