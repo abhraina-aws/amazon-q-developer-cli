@@ -10,6 +10,8 @@ use std::path::PathBuf;
 #[test]
 #[cfg(all(feature = "kiro_steering", feature = "sanity"))]
 fn test_kiro_local_steering() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli local steering... | Description: Tests local steering prompt functionality by creating a local_prompt.md file in .kiro/steering and verifying it appears in /context show output.");
+    
     let steering_dir = PathBuf::from(".kiro/steering");
     let steering_file = steering_dir.join("local_prompt.md");
     

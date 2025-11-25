@@ -10,6 +10,8 @@ use std::path::PathBuf;
 #[test]
 #[cfg(all(feature = "kiro_steering", feature = "sanity"))]
 fn test_kiro_global_steering() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli global steering... | Description: Tests global steering prompt functionality by creating a global_prompt.md file in ~/.kiro/steering and verifying it appears in /context show output.");
+
     let original_dir = env::current_dir()?;
     let home_dir = PathBuf::from(env::var("HOME").or_else(|_| env::var("USERPROFILE"))?); 
     let steering_dir = home_dir.join(".kiro/steering");
