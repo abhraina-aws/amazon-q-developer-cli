@@ -287,3 +287,41 @@ fn test_prompts_remove_command() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+#[cfg(all(feature = "ai_prompts", feature = "sanity"))]
+fn test_create_prompt_with_content_command() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing /prompts create --name promptname --content command... | Description: Tests the <code> /prompts create --name promptname --content prompt-content</code>  command create a new local prompt with prompt content.");
+
+    let session = q_chat_helper::get_chat_session();
+    let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+
+    let response = chat.execute_command_with_timeout("/prompts create --name promptlocaltest --content 'What is java'",Some(2000))?;
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
+    assert!(response.contains("Created local prompt"), "Expected 'Created local prompt' in response.");
+    assert!(response.contains("✓"), "Expected '✓' in response.");
+
+   
+
+    //delete created prompt
+    let remove_response = chat.execute_command_with_timeout("/prompts remove promptlocaltest",Some(2000))?;
+    println!("Remove Response: {}", remove_response);
+    if remove_response.contains("Are you sure you want to remove this prompt? (y/n):") {
+         let acknowledge_response = chat.send_key_input("y")?;
+        println!("Now removing the created prompt");
+         let enter_response = chat.send_key_input("\r")?;
+         if enter_response.contains("Removed") || enter_response.contains("successfully") {
+             println!("📝 Created prompt removed successfully!");
+         } else {
+            println!("📝 Unable to remove the created prompt.");
+         }
+    }
+     println!("✅ /prompts create --name --content command functionality verified!");
+    // Release the lock before cleanup
+    drop(chat);
+
+    Ok(())
+}
