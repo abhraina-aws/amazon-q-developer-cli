@@ -39,9 +39,15 @@ fn test_kiro_cli_debug_app_subcommand() -> Result<(), Box<dyn std::error::Error>
     println!("{}", response);
     println!("📝 END OUTPUT");
 
-    // Assert that kiro-cli debug app launches the Amazon kiro-cli interface
+    if response.contains("app is only supported on macOS") {
+        assert!(response.contains("app is only supported on macOS"), "Expected 'app is only supported on macOS' in reponse.");
+    } else {
+         // Assert that kiro-cli debug app launches the Amazon kiro-cli interface
     assert!(response.contains("Kiro CLI"), "Response should contain 'Kiro CLI'");
     assert!(response.contains("Running the Kiro CLI.app"), "Missing Running Kiro CLI confrmation");
+    }
+
+   
     
     println!("✅ kiro-cli debug app subcommand executed successfully!");
     

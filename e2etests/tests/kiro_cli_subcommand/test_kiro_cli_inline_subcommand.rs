@@ -200,7 +200,7 @@ fn test_kiro_cli_inline_show_customizations_subcommand() -> Result<(), Box<dyn s
     println!("📝 END OUTPUT");
 
     // Assert that kiro-cli inline show-customizations shows available customizations
-    if(response.contains("No customizations found")){
+    if response.contains("No customizations found") {
         assert!(response.contains("No customizations found"), "'No customizations found' message should be displayed");
     } else{
         assert!(response.contains("Amazon-Internal-V1"), "Response should contain 'Amazon-Internal-V1'");
