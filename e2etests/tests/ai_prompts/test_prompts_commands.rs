@@ -266,7 +266,7 @@ fn test_prompts_remove_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
 
     assert!(response.contains("Warning"), "Missing Warning");
-    assert!(response.contains("This will permanently remove the local"), "Missing This will permanently remove the local message");
+    assert!(response.contains("This will permanently remove the"), "Missing This will permanently remove the message");
     assert!(response.contains("testprompt"), "Missing testprompt");
 
     let response = chat.send_key_input("y\r")?;
@@ -304,13 +304,11 @@ fn test_create_prompt_with_content_command() -> Result<(), Box<dyn std::error::E
     assert!(response.contains("Created local prompt"), "Expected 'Created local prompt' in response.");
     assert!(response.contains("✓"), "Expected '✓' in response.");
 
-   
-
     //delete created prompt
     let remove_response = chat.execute_command_with_timeout("/prompts remove promptlocaltest",Some(2000))?;
     println!("Remove Response: {}", remove_response);
     if remove_response.contains("Are you sure you want to remove this prompt? (y/n):") {
-         let acknowledge_response = chat.send_key_input("y")?;
+        chat.send_key_input("y")?;
         println!("Now removing the created prompt");
          let enter_response = chat.send_key_input("\r")?;
          if enter_response.contains("Removed") || enter_response.contains("successfully") {

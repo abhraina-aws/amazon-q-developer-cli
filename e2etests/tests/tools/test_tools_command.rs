@@ -564,7 +564,7 @@ fn test_shell_tool() -> Result<(), Box<dyn std::error::Error>> {
     println!("✅ Kiro CLI chat session started");
 
     // Test shell tool by asking to run pwd command
-    let mut response = chat.execute_command_with_timeout("Run pwd",Some(3000))?;
+    let response = chat.execute_command_with_timeout("Run pwd",Some(3000))?;
 
     println!("📝 shell response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");

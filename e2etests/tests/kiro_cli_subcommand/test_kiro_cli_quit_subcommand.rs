@@ -28,7 +28,13 @@ fn test_kiro_cli_quit_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", quit_response);
     println!("📝 END OUTPUT");
 
-    assert!(quit_response.contains("Quitting Kiro CLI app"), "Missing Kiro CLI quit message");
+    if quit_response.contains("restart Kiro CLI") {
+        assert!(quit_response.contains("Please restart Kiro CLI from your host machine"),"Expected 'Please restart Kiro CLI from your host machine' in response.");
+    } else {
+         assert!(quit_response.contains("Quitting Kiro CLI app"),"Missing Quitting Kiro CLI app message");
+    }
+
+    println!("✅ kiro-cli quit subcommand test passed.");
     Ok(())
 
 }

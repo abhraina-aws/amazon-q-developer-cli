@@ -1,8 +1,10 @@
 #[allow(unused_imports)]
 use q_cli_e2e_tests::q_chat_helper;
+#[allow(unused_imports)]
 use std::fs;
 #[allow(unused_imports)]
 use std::env;
+#[allow(unused_imports)]
 use std::path::PathBuf;
 
 #[test]

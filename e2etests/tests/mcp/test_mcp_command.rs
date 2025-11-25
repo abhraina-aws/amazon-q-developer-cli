@@ -21,7 +21,7 @@ fn test_mcp_help_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Verify Usage section
     assert!(response.contains("Usage"), "Missing Usage section");
-    assert!(response.contains("/mcp"), "Missing /mcp command in usage section");;
+    assert!(response.contains("/mcp"), "Missing /mcp command in usage section");
     
     // Verify Options section
     assert!(response.contains("Options"), "Missing Options section");
