@@ -2,7 +2,7 @@
 use q_cli_e2e_tests::q_chat_helper;
 
 #[test]
-#[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
+#[cfg(all(feature = "integrations", feature = "sanity"))]
 fn test_kiro_cli_integrations_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro-cli integrations --help subcommand... | Description: Tests the <code> kiro-cli integrations --help  </code> subcommand to verify different help commands.");
 
