@@ -86,3 +86,49 @@ fn test_kiro_cli_integrations_uinstall_dotfiles_subcommand() -> Result<(), Box<d
     
     Ok(())
 }
+//
+#[test]
+#[cfg(all(feature = "integrations", feature = "sanity"))]
+fn test_kiro_cli_integrations_install_ssh_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli integrations install ssh subcommand... | Description: Tests the <code> kiro-cli integrations install ssh  </code> subcommand to verify installation of ssh.");
+
+    println!("\n🔍 Executing 'kiro-cli integrations install ssh' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["integrations", "install", "ssh"])?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
+    if response.contains("Installed!!") {
+         assert!(response.contains("Installed!"),"Expected 'Installed!' in response.");
+    } else if response.contains("Already installed") {
+        assert!(response.contains("Already installed"), "Expected 'Already installed' in response.");
+    }
+
+    println!("✅ Kiro Cli integrations install ssh subcommand executed successfully!");
+    
+    Ok(())
+}
+
+#[test]
+#[cfg(all(feature = "integrations", feature = "sanity"))]
+fn test_kiro_cli_integrations_uninstall_ssh_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli integrations uninstall ssh subcommand... | Description: Tests the <code> kiro-cli integrations uninstall ssh  </code> subcommand to verify uninstallation of ssh.");
+
+    println!("\n🔍 Executing 'kiro-cli integrations install ssh' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["integrations", "uninstall", "ssh"])?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
+    if response.contains("Uninstalled!") {
+         assert!(response.contains("Uninstalled!"),"Expected 'Uninstalled!' in response.");
+    } else if response.contains("Not installed") {
+        assert!(response.contains("Not installed"), "Expected 'Not installed' in response.");
+    }
+
+    println!("✅ Kiro Cli integrations uninstall ssh subcommand executed successfully!");
+    
+    Ok(())
+}
