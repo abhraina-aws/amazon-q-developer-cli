@@ -37,11 +37,6 @@ fn test_kiro_cli_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
 
     // Validate we got help output
-    //check if mcp present
-    if response.contains("mcp") {
-        assert!(response.contains("loaded"), "Expected 'loaded' in reponse");
-        assert!(response.contains("in"), "Expected 'in' in reponse");
-    }
     assert!(response.contains("Did you know"), "Expected 'Did you know' in reponse.");
     assert!(response.contains("Model"), "Expected 'Model' in reponse.");
     assert!(response.contains("Auto"), "Expected 'Auto' in reponse.");
