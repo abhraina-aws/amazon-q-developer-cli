@@ -49,4 +49,4 @@ regression = [] # Regression Tests
 sanity = [] # Sanity Tests - Quick smoke tests for basic functionality
 deprecated = [] # Deprecated Tests
 kiro_steering = [] # Kiro Steering Tests
-integrations = [] # Kiro-Cli integrations subcommand
+sub_integrations = [] # Kiro-Cli integrations subcommand

@@ -13,7 +13,7 @@ mod tools;
 mod todos;
 mod experiment;
 mod kiro_steering;
-mod integrations;
+mod sub_integrations;
 
 use q_cli_e2e_tests::q_chat_helper;
 

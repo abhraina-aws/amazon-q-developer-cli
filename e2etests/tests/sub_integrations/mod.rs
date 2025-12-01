@@ -1,0 +1,2 @@
+pub mod test_kiro_cli_sub_integrations_subcommand;
+pub mod test_kiro_cli_sub_integrations_install_subcommand;
