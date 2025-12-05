@@ -50,3 +50,4 @@ sanity = [] # Sanity Tests - Quick smoke tests for basic functionality
 deprecated = [] # Deprecated Tests
 kiro_steering = [] # Kiro Steering Tests
 sub_integrations = [] # Kiro-Cli integrations subcommand
+setup_subcommands = [] # KIRO-CLI setup subcommand
