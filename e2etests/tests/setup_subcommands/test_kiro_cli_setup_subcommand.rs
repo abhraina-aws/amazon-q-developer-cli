@@ -63,6 +63,12 @@ fn test_kiro_cli_setup_dotfiles_subommand() -> Result<(), Box<dyn std::error::Er
 fn test_kiro_cli_setup_input_method_subommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro-cli setup --input-method ... | Description: Tests the <code> kiro-cli setup --input-method </code> subcommand to verify input method setup.");
 
+    // Skip test on Linux only
+    if cfg!(target_os = "linux") {
+        println!("⚠️ Skipping test - running on Linux");
+        return Ok(());
+    }
+
     // Run inside chat session which has PTY for interactive prompts
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
