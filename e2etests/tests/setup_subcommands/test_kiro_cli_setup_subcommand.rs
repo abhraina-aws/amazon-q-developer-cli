@@ -1,8 +1,9 @@
+#[allow(unused_imports)]
 use q_cli_e2e_tests::q_chat_helper;
 
 #[test]
 #[cfg(all(feature = "setup_subcommands", feature = "sanity"))]
-fn test_kiro_cli_setup_help__subommand() -> Result<(), Box<dyn std::error::Error>> {
+fn test_kiro_cli_setup_help_subommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro-cli setup --dotfiles ... | Description: Tests the <code> kiro-cli setup --help  </code> subcommand to verify help options.");
 
     println!("\n🔍 Executing 'kiro-cli setup --help' subcommand...");
@@ -23,5 +24,68 @@ fn test_kiro_cli_setup_help__subommand() -> Result<(), Box<dyn std::error::Error
 
     println!("✅ Kiro Cli setup --help subcommand executed successfully!");
     
+    Ok(())
+}
+
+#[test]
+#[cfg(all(feature = "setup_subcommands", feature = "sanity"))]
+fn test_kiro_cli_setup_dotfiles_subommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli setup --dotfiles ... | Description: Tests the <code> kiro-cli setup --dotfiles </code> subcommand to verify dotfiles setup.");
+
+    // Run inside chat session which has PTY for interactive prompts
+    let session = q_chat_helper::get_chat_session();
+    let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+
+    println!("\n🔍 Executing 'kiro-cli setup --dotfiles' subcommand in chat session...");
+    let response = chat.execute_command_with_timeout("!kiro-cli setup --dotfiles", Some(500))?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+    
+    let select_response = chat.send_key_input("\r")?;
+    std::thread::sleep(std::time::Duration::from_secs(2));
+    
+    println!("📝 SELECT RESPONSE:");
+    println!("{}", select_response);
+    println!("📝 END SELECT RESPONSE");
+    
+    assert!(response.contains("shell config"), "Expected 'shell config' in response.");
+
+    println!("✅ Kiro Cli setup --dotfiles subcommand executed successfully!");
+    
+    drop(chat);
+    Ok(())
+}
+
+#[test]
+#[cfg(all(feature = "setup_subcommands", feature = "sanity"))]
+fn test_kiro_cli_setup_input_method_subommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli setup --input-method ... | Description: Tests the <code> kiro-cli setup --input-method </code> subcommand to verify input method setup.");
+
+    // Run inside chat session which has PTY for interactive prompts
+    let session = q_chat_helper::get_chat_session();
+    let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+
+    println!("\n🔍 Executing 'kiro-cli setup --dotfiles' subcommand in chat session...");
+    let response = chat.execute_command_with_timeout("!kiro-cli setup --input-method", Some(500))?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+    
+    let select_response = chat.send_key_input("\r")?;
+    std::thread::sleep(std::time::Duration::from_secs(2));
+    
+    println!("📝 SELECT RESPONSE:");
+    println!("{}", select_response);
+    println!("📝 END SELECT RESPONSE");
+    
+    assert!(response.contains("input"), "Expected 'input' in response.");
+    assert!(response.contains("enable support"), "Expected 'enable support' in response.");
+
+    println!("✅ Kiro Cli setup --input-method subcommand executed successfully!");
+    
+    drop(chat);
     Ok(())
 }
