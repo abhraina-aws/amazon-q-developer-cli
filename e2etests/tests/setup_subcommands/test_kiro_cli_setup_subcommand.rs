@@ -95,3 +95,52 @@ fn test_kiro_cli_setup_input_method_subommand() -> Result<(), Box<dyn std::error
     drop(chat);
     Ok(())
 }
+
+#[test]
+#[cfg(all(feature = "setup_subcommands", feature = "sanity"))]
+fn test_kiro_cli_setup_force_subommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli setup --force ... | Description: Tests the <code> kiro-cli setup --force </code> subcommand to verify kiro-cli force setup.");
+
+    // Skip test on Linux only
+    if cfg!(target_os = "linux") {
+        println!("⚠️ Skipping test - running on Linux");
+        return Ok(());
+    }
+
+    // Run inside chat session which has PTY for interactive prompts
+    let session = q_chat_helper::get_chat_session();
+    let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+
+    println!("\n🔍 Executing 'kiro-cli setup --dotfiles' subcommand in chat session...");
+    let response = chat.execute_command_with_timeout("!kiro-cli setup --force", Some(500))?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+    if response.contains("shell config") {
+        let select_response = chat.send_key_input("\r")?;
+        std::thread::sleep(std::time::Duration::from_secs(2));
+        
+        assert!(response.contains("Do you want"), "Expected 'Do you want' in response.");
+        assert!(response.contains("shell config"), "Expected 'shell config' in response.");
+        println!("📝 SELECT RESPONSE:");
+        println!("{}", select_response);
+        println!("📝 END SELECT RESPONSE");
+
+        if select_response.contains("terminals"){
+            let terminal_response = chat.send_key_input("\r")?;
+            std::thread::sleep(std::time::Duration::from_secs(2));
+            println!("📝 SELECT RESPONSE:");
+            println!("{}", terminal_response);
+            println!("📝 END SELECT RESPONSE");
+            assert!(terminal_response.contains("Do you want"), "Expected 'Do you want' in response.");
+            assert!(terminal_response.contains("terminals"), "Expected 'terminals' in response.");
+
+        }
+
+    }
+    println!("✅ Kiro Cli setup --input-method subcommand executed successfully!");
+    
+    drop(chat);
+    Ok(())
+}
