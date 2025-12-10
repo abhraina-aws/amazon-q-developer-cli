@@ -5,9 +5,6 @@ use q_cli_e2e_tests::q_chat_helper;
 #[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
 fn test_kiro_cli_translate_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro-cli translate subcommand... | Description: Tests the <code> kiro-cli translate </code> subcommand for Natural Language to Shell translation");
-    
-    let session = q_chat_helper::get_chat_session();
-    let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
     println!("\n🔍 Executing 'kiro-cli translate' subcommand with input 'hello'...");
     
