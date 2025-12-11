@@ -51,3 +51,4 @@ deprecated = [] # Deprecated Tests
 kiro_steering = [] # Kiro Steering Tests
 sub_integrations = [] # Kiro-Cli integrations subcommand
 setup_subcommands = [] # KIRO-CLI setup subcommand
+diagnostics = [] # KIRO-CLI diagnostics subcommand
