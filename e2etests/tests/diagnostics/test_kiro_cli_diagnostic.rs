@@ -75,3 +75,25 @@ fn test_kiro_cli_diagnostics_json_subommand() -> Result<(), Box<dyn std::error::
     
     Ok(())
 }
+
+#[test]
+#[cfg(all(feature = "diagnostics", feature = "sanity"))]
+fn test_kiro_cli_diagnostics_json_pretty_subommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli diagnostics --format json_pretty ... | Description: Tests the <code> kiro-cli diagnostics --format json-pretty  </code> subcommand to verify json format.");
+
+    println!("\n🔍 Executing 'kiro-cli diagnostics --format json-pretty' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["diagnostics","--format", "json-pretty"])?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
+    assert!(response.contains("{"), "Expected `{{` in the output");
+    assert!(response.contains("}"), "Expected `}}`in the output");
+    assert!(response.contains("env-vars"), "Expected 'env-vars' in the output");
+    assert!(response.contains("system-info"), "Expected 'system-info' in the output");
+
+    println!("✅ Kiro Cli diagnostics --format json-pretty subcommand executed successfully!");
+    
+    Ok(())
+}
