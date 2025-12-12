@@ -97,3 +97,96 @@ fn test_kiro_cli_diagnostics_json_pretty_subommand() -> Result<(), Box<dyn std::
     
     Ok(())
 }
+
+#[test]
+#[cfg(all(feature = "diagnostics", feature = "sanity"))]
+fn test_kiro_cli_diagnostics_verbose_subommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli diagnostics --verbose ... | Description: Tests the <code> kiro-cli diagnostics --verbose  </code> subcommand to verify verbose command output.");
+
+    println!("\n🔍 Executing 'kiro-cli diagnostics --format --verbose' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["diagnostics","--verbose"])?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
+    assert!(response.contains("system-info"), "Expected 'system-info' in the output");
+    assert!(response.contains("environment"), "Expected 'environment' in the output");
+    assert!(response.contains("env-vars"), "Expected 'env-vars' in the output");
+
+    println!("✅ Kiro Cli diagnostics --verbose subcommand executed successfully!");
+    
+    Ok(())
+}
+
+#[test]
+#[cfg(all(feature = "diagnostics", feature = "sanity"))]
+fn test_kiro_cli_diagnostics_force_subommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli diagnostics --force ... | Description: Tests the <code> kiro-cli diagnostics --force  </code> subcommand to verify force command output.");
+
+    println!("\n🔍 Executing 'kiro-cli diagnostics --format force' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["diagnostics","--force"])?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
+    assert!(response.contains("system-info"), "Expected 'system-info' in the output");
+    assert!(response.contains("environment"), "Expected 'environment' in the output");
+    assert!(response.contains("env-vars"), "Expected 'env-vars' in the output");
+
+    println!("✅ Kiro Cli diagnostics --force subcommand executed successfully!");
+    
+    Ok(())
+}
+
+#[test]
+#[cfg(all(feature = "diagnostics", feature = "sanity"))]
+fn test_kiro_cli_diagnostics_verbose_shorthand_subommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli diagnostics -v ... | Description: Tests the <code> kiro-cli diagnostics -v </code> subcommand to verify -v command output.");
+
+    println!("\n🔍 Executing 'kiro-cli diagnostics -v' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["diagnostics","-v"])?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
+    assert!(response.contains("system-info"), "Expected 'system-info' in the output");
+    assert!(response.contains("environment"), "Expected 'environment' in the output");
+    assert!(response.contains("env-vars"), "Expected 'env-vars' in the output");
+
+    println!("✅ Kiro Cli diagnostics -v subcommand executed successfully!");
+    
+    Ok(())
+}
+
+#[test]
+#[cfg(all(feature = "diagnostics", feature = "sanity"))]
+fn test_kiro_cli_diagnostics_help_shorthand_subommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli diagnostics -h ... | Description: Tests the <code> kiro-cli diagnostics -h </code> subcommand to verify -h command output.");
+
+    println!("\n🔍 Executing 'kiro-cli diagnostics -h' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["diagnostics","-h"])?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
+    assert!(response.contains("Options:"), "Expected 'Options:' in the output");
+    assert!(response.contains("-f"), "Expected '-f' in the output");
+    assert!(response.contains("--format"), "Expected '--format' in the output");
+    assert!(response.contains("<FORMAT>"), "Expected '<FORMAT>' in the output");
+  
+    assert!(response.contains("--force"), "Expected '--force' in the output");
+
+    assert!(response.contains("-v"), "Expected '-v' in the output");
+    assert!(response.contains("--verbose"), "Expected '--verbose' in the output");
+
+    assert!(response.contains("-h"), "Expected '-h' in the output");
+    assert!(response.contains("--help"), "Expected '--help' in the output");
+
+    println!("✅ Kiro Cli diagnostics -h subcommand executed successfully!");
+    
+    Ok(())
+}
