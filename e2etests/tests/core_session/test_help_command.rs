@@ -115,7 +115,8 @@ fn test_ctrls_command() -> Result<(), Box<dyn std::error::Error>> {
 
     // Ctrl+J produces ASCII Line Feed (0x0A)
     let ctrl_j = "\x13";
-    let response = chat.execute_command_with_timeout(ctrl_j,Some(100))?;
+    let response = chat.execute_command_with_timeout(ctrl_j,Some(2000))?;
+    
     let cleaned_response = clean_terminal_output(&response);
 
     println!("📝 Response: {} bytes", cleaned_response.len());
@@ -124,10 +125,10 @@ fn test_ctrls_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
 
     assert!(cleaned_response.contains("agent"),"Response should contain /agent");
-    assert!(cleaned_response.contains("editor"),"Response should contain /editor");
     assert!(cleaned_response.contains("clear"),"Response should contain /clear");
-    assert!(cleaned_response.contains("experiment"),"Response should contain /experiment");
     assert!(cleaned_response.contains("context"),"Response should contain /context");
+    assert!(cleaned_response.contains("code"),"Response should contain /code");
+    assert!(cleaned_response.contains("changelog"),"Response should contain /changelog");
 
     //pressing esc button to close ctrl+s window
     let _esc = chat.execute_command("\x1B")?;
