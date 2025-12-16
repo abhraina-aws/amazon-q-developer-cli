@@ -389,3 +389,61 @@ fn test_kiro_cli_init_verbose_zsh_post_subommand() -> Result<(), Box<dyn std::er
     
     Ok(())
 }
+
+#[test]
+#[cfg(all(feature = "init", feature = "sanity"))]
+fn test_kiro_cli_init_verbose_fish_pre_subommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli init --verbose fish pre ... | Description: Tests the <code> kiro-cli init --verbose fish pre  </code> subcommand to verify verbose fish pre response.");
+
+    println!("\n🔍 Executing 'kiro-cli init --verbose fish pre' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["init","--verbose","fish","pre"])?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
+    assert!(response.contains("SHOULD_QTERM_LAUNCH"), "Expected 'SHOULD_QTERM_LAUNCH' in the output");
+    assert!(response.contains("command mkdir -p"), "Expected 'command mkdir -p' in the output");
+    assert!(response.contains("Q_NEW_SESSION"), "Expected 'Q_NEW_SESSION' in the output");
+    
+    assert!(response.contains("Q_PARENT"), "Expected 'Q_PARENT' in the output");
+    assert!(response.contains("kiro-cli-term"), "Expected 'kiro-cli-term' in the output");
+    assert!(response.contains("Q_SHELL"), "Expected 'Q_SHELL' in the output");
+    
+    assert!(response.contains("exec bash -c"), "Expected 'exec bash -c' in the output");
+    assert!(response.contains("Q_IS_LOGIN_SHELL"), "Expected 'Q_IS_LOGIN_SHELL' in the output");
+    assert!(!response.contains("fig_preexec"), "fish pre should not contain fig_preexec hooks");
+    
+    println!("✅ Kiro Cli init --verbose fish pre subcommand executed successfully!");
+    
+    Ok(())
+}
+
+#[test]
+#[cfg(all(feature = "init", feature = "sanity"))]
+fn test_kiro_cli_init_verbose_fish_post_subommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli init --verbose fish post ... | Description: Tests the <code> kiro-cli init --verbose fish post  </code> subcommand to verify verbose fish post response.");
+
+    println!("\n🔍 Executing 'kiro-cli init --verbose fish post' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["init","--verbose","fish","post"])?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
+    assert!(response.contains("fig_preexec"), "Expected 'fig_preexec' in the output");
+    assert!(response.contains("fig_precmd"), "Expected 'fig_precmd' in the output");
+    assert!(response.contains("fig_wrap_prompt"), "Expected 'fig_wrap_prompt' in the output");
+    
+    assert!(response.contains("fig_copy_fn"), "Expected 'fig_copy_fn' in the output");
+    assert!(response.contains("StartPrompt"), "Expected 'StartPrompt' in the output");
+    assert!(response.contains("EndPrompt"), "Expected 'EndPrompt' in the output");
+    
+    assert!(response.contains("fish_prompt"), "Expected 'fish_prompt' in the output");
+    assert!(response.contains("QTERM_SESSION_ID"), "Expected 'QTERM_SESSION_ID' in the output");
+    assert!(!response.contains("SHOULD_QTERM_LAUNCH"), "fish post should not contain terminal launch logic");
+    
+    println!("✅ Kiro Cli init --verbose fish post subcommand executed successfully!");
+    
+    Ok(())
+}
