@@ -447,3 +447,44 @@ fn test_kiro_cli_init_verbose_fish_post_subommand() -> Result<(), Box<dyn std::e
     
     Ok(())
 }
+
+#[test]
+#[cfg(all(feature = "init", feature = "sanity"))]
+fn test_kiro_cli_init_v_bash_pre_subommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli init -v bash pre ... | Description: Tests the <code> kiro-cli init -v bash pre  </code> subcommand to verify verbose bash pre response.");
+
+    println!("\n🔍 Executing 'kiro-cli init -v bash pre' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["init","-v","bash","pre"])?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
+    assert!(response.contains("Q_SHELL="));
+    assert!(response.contains("SHOULD_QTERM_LAUNCH="));
+    assert!(response.contains("__fig_source_bash_preexec"));
+    assert!(!response.contains("__fig_pre_prompt"));
+    println!("✅ Kiro Cli init -v bash pre subcommand executed successfully!");
+    
+    Ok(())
+}
+
+#[test]
+#[cfg(all(feature = "init", feature = "sanity"))]
+fn test_kiro_cli_init_v_bash_post_subommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli init -v bash post ... | Description: Tests the <code> kiro-cli init -v bash post  </code> subcommand to verify verbose bash post response.");
+
+    println!("\n🔍 Executing 'kiro-cli init -v bash post' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["init","-v","bash","post"])?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
+    assert!(response.contains("__fig_pre_prompt"));
+    assert!(response.contains("__fig_post_prompt"));
+    assert!(response.contains("fig_osc"));
+    assert!(response.contains("kiro-cli _ pre-cmd"));
+    println!("✅ Kiro Cli init -v bash post subcommand executed successfully!");
+    Ok(())
+}
