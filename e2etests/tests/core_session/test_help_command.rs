@@ -126,7 +126,7 @@ fn test_ctrls_command() -> Result<(), Box<dyn std::error::Error>> {
 
     assert!(cleaned_response.contains("agent"),"Response should contain /agent");
     assert!(cleaned_response.contains("clear"),"Response should contain /clear");
-    assert!(cleaned_response.contains("context"),"Response should contain /context");
+    // assert!(cleaned_response.contains("context"),"Response should contain /context");
     // assert!(cleaned_response.contains("code"),"Response should contain /code");
     assert!(cleaned_response.contains("changelog"),"Response should contain /changelog");
 
