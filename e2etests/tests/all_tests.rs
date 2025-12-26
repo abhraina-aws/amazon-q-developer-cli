@@ -16,7 +16,7 @@ mod kiro_steering;
 mod sub_integrations;
 mod setup_subcommands;
 mod diagnostics;
-mod init;
+mod init_subcommand;
 
 use q_cli_e2e_tests::q_chat_helper;
 
