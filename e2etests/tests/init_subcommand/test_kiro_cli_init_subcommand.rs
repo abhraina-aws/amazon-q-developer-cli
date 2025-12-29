@@ -104,11 +104,13 @@ fn test_kiro_cli_init_zsh_pre_subommand() -> Result<(), Box<dyn std::error::Erro
 
     assert!(response.contains("Q_SHELL"), "Expected 'Q_SHELL' in the output");
     assert!(response.contains("SHOULD_QTERM_LAUNCH"), "Expected 'SHOULD_QTERM_LAUNCH' in the output");
-
-    assert!(response.contains("mkdir"), "Expected 'mkdir' in the output");
-    assert!(response.contains("add"), "Expected 'add' in the output");
-
-    assert!(response.contains("#"), "Expected '#' in the output");
+    assert!(response.contains("#!/usr/bin/env bash"), "Expected shebang in the output");
+    assert!(response.contains("mkdir -p"), "Expected 'mkdir -p' in the output");
+    assert!(response.contains("~/.local/bin"), "Expected '~/.local/bin' in the output");
+    assert!(response.contains("Q_NEW_SESSION"), "Expected 'Q_NEW_SESSION' in the output");
+    assert!(response.contains("Q_SET_PARENT_CHECK"), "Expected 'Q_SET_PARENT_CHECK' in the output");
+    assert!(response.contains("kiro-cli-term"), "Expected 'kiro-cli-term' in the output");
+    assert!(response.contains("Q_IS_LOGIN_SHELL"), "Expected 'Q_IS_LOGIN_SHELL' in the output");
 
     println!("✅ Kiro Cli init zsh pre subcommand executed successfully!");
     
@@ -543,6 +545,118 @@ fn test_kiro_cli_init_verbose_nu_post_subommand() -> Result<(), Box<dyn std::err
     assert!(!response.contains("should_launch"), "nu post should not contain terminal launch logic");
     
     println!("✅ Kiro Cli init --verbose nu post subcommand executed successfully!");
+    
+    Ok(())
+}
+
+#[test]
+#[cfg(all(feature = "init_subcommand", feature = "sanity"))]
+fn test_kiro_cli_init_v_zsh_post_subommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli init -v zsh post ... | Description: Tests the <code> kiro-cli init -v zsh post  </code> subcommand to verify verbose zsh -v post response.");
+
+    println!("\n🔍 Executing 'kiro-cli init -v zsh post' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["init","-v","zsh","post"])?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
+    assert!(response.contains("Q_SHELL"), "Expected 'Q_SHELL' in the output");
+    assert!(response.contains("Q_DOTFILES_SOURCED"), "Expected 'Q_DOTFILES_SOURCED' in the output");
+    assert!(response.contains("KIRO_CLI_AUTOSUGGEST"), "Expected 'KIRO_CLI_AUTOSUGGEST' in the output");
+    assert!(response.contains("_zsh_autosuggest_accept"), "Expected '_zsh_autosuggest_accept' in the output");
+    assert!(response.contains("fig_preexec"), "Expected 'fig_preexec' in the output");
+    assert!(response.contains("fig_precmd"), "Expected 'fig_precmd' in the output");
+    assert!(response.contains("fig_osc"), "Expected 'fig_osc' in the output");
+    assert!(response.contains("QTERM_SESSION_ID"), "Expected 'QTERM_SESSION_ID' in the output");
+    assert!(response.contains("inline-shell-completion"), "Expected 'inline-shell-completion' in the output");
+    assert!(!response.contains("mkdir -p"), "zsh post should not contain directory creation");
+    
+    println!("✅ Kiro Cli init -v zsh post subcommand executed successfully!");
+    
+    Ok(())
+}
+
+#[test]
+#[cfg(all(feature = "init_subcommand", feature = "sanity"))]
+fn test_kiro_cli_init_v_zsh_pre_subommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli init -v zsh pre ... | Description: Tests the <code> kiro-cli init -v zsh pre  </code> subcommand to verify verbose zsh -v pre response.");
+
+    println!("\n🔍 Executing 'kiro-cli init -v zsh pre' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["init","-v","zsh","pre"])?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
+    assert!(response.contains("Q_SHELL"), "Expected 'Q_SHELL' in the output");
+    assert!(response.contains("SHOULD_QTERM_LAUNCH"), "Expected 'SHOULD_QTERM_LAUNCH' in the output");
+    assert!(response.contains("#!/usr/bin/env bash"), "Expected shebang in the output");
+    assert!(response.contains("mkdir -p"), "Expected 'mkdir -p' in the output");
+    assert!(response.contains("~/.local/bin"), "Expected '~/.local/bin' in the output");
+    assert!(response.contains("Q_NEW_SESSION"), "Expected 'Q_NEW_SESSION' in the output");
+    assert!(response.contains("Q_SET_PARENT_CHECK"), "Expected 'Q_SET_PARENT_CHECK' in the output");
+    assert!(response.contains("kiro-cli-term"), "Expected 'kiro-cli-term' in the output");
+    assert!(response.contains("Q_IS_LOGIN_SHELL"), "Expected 'Q_IS_LOGIN_SHELL' in the output");
+    assert!(!response.contains("Q_DOTFILES_SOURCED"), "zsh pre should not contain dotfiles sourced check");
+    
+    println!("✅ Kiro Cli init -v zsh pre subcommand executed successfully!");
+    
+    Ok(())
+}
+
+#[test]
+#[cfg(all(feature = "init_subcommand", feature = "sanity"))]
+fn test_kiro_cli_init_v_fish_pre_subommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli init -v fish pre ... | Description: Tests the <code> kiro-cli init -v fish pre  </code> subcommand to verify verbose fish -v pre response.");
+
+    println!("\n🔍 Executing 'kiro-cli init -v fish pre' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["init","-v","fish","pre"])?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
+    assert!(response.contains("set -g Q_SHELL"), "Expected 'set -g Q_SHELL' in the output");
+    assert!(response.contains("SHOULD_QTERM_LAUNCH"), "Expected 'SHOULD_QTERM_LAUNCH' in the output");
+    assert!(response.contains("command mkdir -p"), "Expected 'command mkdir -p' in the output");
+    assert!(response.contains("builtin contains"), "Expected 'builtin contains' in the output");
+    assert!(response.contains("Q_NEW_SESSION"), "Expected 'Q_NEW_SESSION' in the output");
+    assert!(response.contains("Q_PARENT"), "Expected 'Q_PARENT' in the output");
+    assert!(response.contains("kiro-cli-term"), "Expected 'kiro-cli-term' in the output");
+    assert!(response.contains("Q_IS_LOGIN_SHELL"), "Expected 'Q_IS_LOGIN_SHELL' in the output");
+    assert!(response.contains("exec bash -c"), "Expected 'exec bash -c' in the output");
+    assert!(!response.contains("fig_preexec"), "fish pre should not contain fig_preexec hooks");
+    
+    println!("✅ Kiro Cli init -v fish pre subcommand executed successfully!");
+    
+    Ok(())
+}
+
+#[test]
+#[cfg(all(feature = "init_subcommand", feature = "sanity"))]
+fn test_kiro_cli_init_v_fish_post_subommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli init -v fish post ... | Description: Tests the <code> kiro-cli init -v fish post  </code> subcommand to verify verbose fish -v post response.");
+
+    println!("\n🔍 Executing 'kiro-cli init -v fish post' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["init","-v","fish","post"])?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
+    assert!(response.contains("set -g Q_SHELL"), "Expected 'set -g Q_SHELL' in the output");
+    assert!(response.contains("function fig_osc"), "Expected 'function fig_osc' in the output");
+    assert!(response.contains("function fig_copy_fn"), "Expected 'function fig_copy_fn' in the output");
+    assert!(response.contains("function fig_wrap_prompt"), "Expected 'function fig_wrap_prompt' in the output");
+    assert!(response.contains("function fig_preexec"), "Expected 'function fig_preexec' in the output");
+    assert!(response.contains("function fig_precmd"), "Expected 'function fig_precmd' in the output");
+    assert!(response.contains("--on-event fish_preexec"), "Expected '--on-event fish_preexec' in the output");
+    assert!(response.contains("--on-event fish_prompt"), "Expected '--on-event fish_prompt' in the output");
+    assert!(response.contains("QTERM_SESSION_ID"), "Expected 'QTERM_SESSION_ID' in the output");
+    assert!(!response.contains("SHOULD_QTERM_LAUNCH"), "fish post should not contain terminal launch logic");
+    
+    println!("✅ Kiro Cli init -v fish post subcommand executed successfully!");
     
     Ok(())
 }

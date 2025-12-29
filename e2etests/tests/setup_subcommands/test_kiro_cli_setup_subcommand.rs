@@ -73,8 +73,8 @@ fn test_kiro_cli_setup_input_method_subommand() -> Result<(), Box<dyn std::error
     let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    println!("\n🔍 Executing 'kiro-cli setup --dotfiles' subcommand in chat session...");
-    let response = chat.execute_command_with_timeout("!kiro-cli setup --input-method", Some(500))?;
+    println!("\n🔍 Executing 'kiro-cli setup --input-method' subcommand in chat session...");
+    let response = chat.execute_command_with_timeout("!kiro-cli setup --input-method", Some(1000))?;
     
     println!("📝 FULL OUTPUT:");
     println!("{}", response);
