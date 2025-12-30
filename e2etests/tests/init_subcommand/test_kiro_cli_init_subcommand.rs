@@ -660,3 +660,60 @@ fn test_kiro_cli_init_v_fish_post_subommand() -> Result<(), Box<dyn std::error::
     
     Ok(())
 }
+
+#[test]
+#[cfg(all(feature = "init_subcommand", feature = "sanity"))]
+fn test_kiro_cli_init_v_nu_post_subommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli init -v nu post ... | Description: Tests the <code> kiro-cli init -v nu post  </code> subcommand to verify verbose nu -v post response.");
+
+    println!("\n🔍 Executing 'kiro-cli init -v nu post' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["init","-v","nu","post"])?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
+    assert!(response.contains("let-env Q_SHELL"), "Expected 'let-env Q_SHELL' in the output");
+    assert!(response.contains("def-env fig_osc"), "Expected 'def-env fig_osc' in the output");
+    assert!(response.contains("def-env print_fig_osc"), "Expected 'def-env print_fig_osc' in the output");
+    assert!(response.contains("def-env fig_reset_hooks"), "Expected 'def-env fig_reset_hooks' in the output");
+    assert!(response.contains("def-env fig_pre_execution_hook"), "Expected 'def-env fig_pre_execution_hook' in the output");
+    assert!(response.contains("def-env fig_pre_prompt_hook"), "Expected 'def-env fig_pre_prompt_hook' in the output");
+    assert!(response.contains("def-env fig_set_prompt"), "Expected 'def-env fig_set_prompt' in the output");
+    assert!(response.contains("StartPrompt"), "Expected 'StartPrompt' in the output");
+    assert!(response.contains("EndPrompt"), "Expected 'EndPrompt' in the output");
+    assert!(response.contains("DoneSourcing"), "Expected 'DoneSourcing' in the output");
+    assert!(!response.contains("should_launch"), "nu post should not contain terminal launch logic");
+    
+    println!("✅ Kiro Cli init -v nu post subcommand executed successfully!");
+    
+    Ok(())
+}
+
+#[test]
+#[cfg(all(feature = "init_subcommand", feature = "sanity"))]
+fn test_kiro_cli_init_v_nu_pre_subommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli init -v nu pre ... | Description: Tests the <code> kiro-cli init -v nu pre  </code> subcommand to verify verbose nu -v pre response.");
+
+    println!("\n🔍 Executing 'kiro-cli init -v nu pre' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["init","-v","nu","pre"])?;
+    
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
+    assert!(response.contains("let-env Q_SHELL"), "Expected 'let-env Q_SHELL' in the output");
+    assert!(response.contains("SHOULD_QTERM_LAUNCH"), "Expected 'SHOULD_QTERM_LAUNCH' in the output");
+    assert!(response.contains("mkdir ~/.local/bin"), "Expected 'mkdir ~/.local/bin' in the output");
+    assert!(response.contains("def pathadd"), "Expected 'def pathadd' in the output");
+    assert!(response.contains("Q_NEW_SESSION"), "Expected 'Q_NEW_SESSION' in the output");
+    assert!(response.contains("Q_SET_PARENT_CHECK"), "Expected 'Q_SET_PARENT_CHECK' in the output");
+    assert!(response.contains("should-figterm-launch"), "Expected 'should-figterm-launch' in the output");
+    assert!(response.contains("figterm_path"), "Expected 'figterm_path' in the output");
+    assert!(response.contains("exec $figterm_path"), "Expected 'exec $figterm_path' in the output");
+    assert!(!response.contains("fig_pre_execution_hook"), "nu pre should not contain execution hooks");
+    
+    println!("✅ Kiro Cli init -v nu pre subcommand executed successfully!");
+    
+    Ok(())
+}
