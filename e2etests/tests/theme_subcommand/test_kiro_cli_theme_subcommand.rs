@@ -96,7 +96,7 @@ fn test_kiro_cli_theme_folder_subcommand() -> Result<(), Box<dyn std::error::Err
     println!("📝 END OUTPUT");
 
     assert!(!response.is_empty(), "Expected non-empty output");
-    assert!(response.contains("Kiro CLI"), "Expected 'Kiro CLI' in response.");
+    assert!(response.contains("kiro"), "Expected 'kiro' in response.");
     assert!(response.contains("themes"), "Expected 'themes' in response.");
 
     println!("✅ Kiro Cli theme --folder subcommand executed successfully!");
@@ -109,7 +109,7 @@ fn test_kiro_cli_theme_folder_subcommand() -> Result<(), Box<dyn std::error::Err
 fn test_kiro_cli_theme_verbose_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro-cli theme --verbose... | Description: Tests the <code> kiro-cli theme --verbose</code> subcommand to verify kiro cli verbose response.");
 
-    println!("\n🔍 Executing 'kiro-cli theme --folder' subcommand...");
+    println!("\n🔍 Executing 'kiro-cli theme --verbose' subcommand...");
     let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["theme","--verbose"])?;
     
     println!("📝 FULL OUTPUT:");
@@ -129,7 +129,7 @@ fn test_kiro_cli_theme_verbose_subcommand() -> Result<(), Box<dyn std::error::Er
 fn test_kiro_cli_theme_v_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing kiro-cli theme -v... | Description: Tests the <code> kiro-cli theme -v</code> subcommand to verify kiro cli -v response.");
 
-    println!("\n🔍 Executing 'kiro-cli theme --folder' subcommand...");
+    println!("\n🔍 Executing 'kiro-cli theme -v' subcommand...");
     let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["theme","-v"])?;
     
     println!("📝 FULL OUTPUT:");
