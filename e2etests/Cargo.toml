@@ -54,3 +54,4 @@ setup_subcommands = [] # KIRO-CLI setup subcommand
 diagnostics = [] # KIRO-CLI diagnostics subcommand
 init_subcommand = [] # KIRO-CLI init subcommand
 theme_subcommand = [] # KIRO-CLI thenme subcomnmand
+issue_subcommand = [] # KIRO-CLI issue subcommand

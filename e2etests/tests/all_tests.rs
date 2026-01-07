@@ -18,6 +18,7 @@ mod setup_subcommands;
 mod diagnostics;
 mod init_subcommand;
 mod theme_subcommand;
+mod issue_subcommand;
 
 use q_cli_e2e_tests::q_chat_helper;
 
