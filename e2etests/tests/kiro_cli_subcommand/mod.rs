@@ -1,0 +1,14 @@
+pub mod test_kiro_cli_chat_subcommand;
+pub mod test_kiro_cli_doctor_subcommand;
+pub mod test_kiro_cli_translate_subcommand;
+pub mod test_kiro_cli_setting_subcommand;
+pub mod test_kiro_cli_whoami_subcommand;
+pub mod test_kiro_cli_debug_subcommand;
+pub mod test_kiro_cli_inline_subcommand;
+pub mod test_kiro_cli_update_subcommand;
+pub mod test_kiro_cli_restart_subcommand;
+pub mod test_kiro_cli_user_subcommand;
+pub mod test_kiro_cli_settings_format_subcommand;
+pub mod test_kiro_cli_settings_delete_subcommand;
+pub mod test_kiro_cli_quit_subcommand;
+pub mod test_kiro_cli_dashboard_subcommand;

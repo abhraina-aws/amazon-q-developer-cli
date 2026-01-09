@@ -8,6 +8,9 @@ pub mod q_chat_helper {
     pub use std::time::Duration;
     pub use std::process::{Command, Stdio};
     pub use std::thread;
+    pub use std::sync::{Mutex, OnceLock};
+    
+    static GLOBAL_CHAT_SESSION: OnceLock<Mutex<QChatSession>> = OnceLock::new();
 
     pub struct QChatSession {
         session: expectrl::Session<expectrl::process::unix::UnixProcess, expectrl::process::unix::PtyStream>,
@@ -16,7 +19,7 @@ pub mod q_chat_helper {
     impl QChatSession {
         /// Start a new Q Chat session
         pub fn new() -> Result<Self, Error> {
-            let q_binary = std::env::var("Q_CLI_PATH").unwrap_or_else(|_| "q".to_string());
+            let q_binary = std::env::var("Q_CLI_PATH").unwrap_or_else(|_| "kiro-cli".to_string());
             let command = format!("{} chat", q_binary);
             let mut session = expectrl::spawn(&command)?;
             session.set_expect_timeout(Some(Duration::from_secs(60)));
@@ -29,6 +32,11 @@ pub mod q_chat_helper {
 
         /// Execute a command (like /help, /tools) and return the response
         pub fn execute_command(&mut self, command: &str) -> Result<String, Error> {
+            self.execute_command_with_timeout(command, None)
+        }
+        
+        /// Execute a command with custom timeout
+        pub fn execute_command_with_timeout(&mut self, command: &str, timeout_ms: Option<u64>) -> Result<String, Error> {
             // Type command character by character with delays (for autocomplete)
             for &byte in command.as_bytes() {
                 self.session.write_all(&[byte])?;
@@ -40,7 +48,7 @@ pub mod q_chat_helper {
             self.session.write_all(&[0x0D])?;
             self.session.flush()?;
             
-            self.read_response()
+            self.read_response(timeout_ms)
         }
         
         /// Send a regular chat prompt (like "What is AWS?") and return the response
@@ -92,7 +100,8 @@ pub mod q_chat_helper {
             Ok(combined)
         }
         
-        fn read_response(&mut self) -> Result<String, Error> {
+        fn read_response(&mut self, timeout_ms: Option<u64>) -> Result<String, Error> {
+            let timeout = timeout_ms.unwrap_or(6000);
             let mut total_content = String::new();
             
             for _ in 0..15 {
@@ -104,12 +113,12 @@ pub mod q_chat_helper {
                     },
                     Ok(_) => {
                         // No more data, but wait a bit more in case there's more coming
-                        std::thread::sleep(Duration::from_millis(10000));
+                        std::thread::sleep(Duration::from_millis(timeout));
                         if total_content.len() > 0 { break; }
                     },
                     Err(_) => break,
                 }
-                std::thread::sleep(Duration::from_millis(10000));
+                std::thread::sleep(Duration::from_millis(timeout));
             }
             
             Ok(total_content)
@@ -117,10 +126,15 @@ pub mod q_chat_helper {
         
         /// Send key input (like arrow keys, Enter, etc.)
         pub fn send_key_input(&mut self, key_sequence: &str) -> Result<String, Error> {
+            self.send_key_input_with_timeout(key_sequence, None)
+        }
+        
+        /// Send key input with custom timeout
+        pub fn send_key_input_with_timeout(&mut self, key_sequence: &str, timeout_ms: Option<u64>) -> Result<String, Error> {
             self.session.write_all(key_sequence.as_bytes())?;
             self.session.flush()?;
             std::thread::sleep(Duration::from_millis(200));
-            self.read_response()
+            self.read_response(timeout_ms)
         }
         
         /// Quit the Q Chat session
@@ -216,6 +230,31 @@ pub mod q_chat_helper {
         }
         
         Ok(response)
+    }
+    
+    /// Get or create the global shared chat session
+    pub fn get_chat_session() -> &'static Mutex<QChatSession> {
+        GLOBAL_CHAT_SESSION.get_or_init(|| {
+            let chat = QChatSession::new().expect("Failed to create chat session");
+            Mutex::new(chat)
+        })
+    }
+    
+    /// Create a new isolated chat session (not shared)
+    pub fn get_new_chat_session() -> Result<Mutex<QChatSession>, Error> {
+        let chat = QChatSession::new()?;
+        Ok(Mutex::new(chat))
+    }
+    
+    /// Close the global chat session
+    pub fn close_session() -> Result<(), Error> {
+        if let Some(session) = GLOBAL_CHAT_SESSION.get() {
+            if let Ok(mut chat) = session.lock() {
+                chat.quit()?;
+                println!("✅ Global chat session closed");
+            }
+        }
+        Ok(())
     }
 
 }

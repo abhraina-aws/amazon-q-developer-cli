@@ -9,6 +9,7 @@ import time
 import platform
 import re
 import threading
+import os
 from datetime import datetime
 from pathlib import Path
 
@@ -33,7 +34,7 @@ def parse_features():
     features = cargo_toml.get("features", {})
     
     # Features to always exclude from individual runs
-    excluded_features = {"default", "regression", "sanity"}
+    excluded_features = {"default", "regression", "sanity", "deprecated"}
     
     # Group features (features that contain other features)
     grouped_features = {}
@@ -64,10 +65,57 @@ def parse_features():
 # Default test suite - always required for cargo test
 DEFAULT_TESTSUITE = "sanity"
 
-def parse_test_results(stdout):
+def parse_stderr_by_test(stderr):
+    """Parse stderr and group panic messages by test name"""
+    test_errors = {}
+    if not stderr:
+        return test_errors
+    
+    lines = stderr.split('\n')
+    i = 0
+    
+    while i < len(lines):
+        line = lines[i]
+        
+        # Match panic lines like: thread 'todos::test_todos_command::test_todos_delete_command' panicked
+        if "thread '" in line and "' panicked" in line:
+            # Extract test name from thread name
+            start = line.find("thread '") + 8
+            end = line.find("' panicked")
+            
+            if start > 7 and end > start:
+                thread_name = line[start:end]
+                # Extract just the test function name (last part after ::)
+                test_name = thread_name.split('::')[-1] if '::' in thread_name else thread_name
+                
+                # Capture this panic line and the next line (assertion message)
+                error_lines = [line]
+                i += 1
+                
+                # Capture assertion message line (next line after panic)
+                if i < len(lines) and not lines[i].strip().startswith('note:'):
+                    error_lines.append('❌ ' + lines[i])
+                    i += 1
+                
+                # Capture note line if present
+                if i < len(lines) and lines[i].strip().startswith('note:'):
+                    error_lines.append(lines[i])
+                    i += 1
+                
+                test_errors[test_name] = '\n'.join(error_lines).strip()
+                continue
+        
+        i += 1
+    
+    return test_errors
+
+def parse_test_results(stdout, stderr=""):
     """Parse individual test results from cargo output with their outputs and descriptions"""
     tests = []
     lines = stdout.split('\n')
+    
+    # Parse stderr to get test-specific error messages
+    test_errors = parse_stderr_by_test(stderr)
     
     # Look for test lines followed by result lines
     for i, line in enumerate(lines):
@@ -76,7 +124,9 @@ def parse_test_results(stdout):
         # Look for test declaration lines
         if clean_line.startswith('test ') and ' ...' in clean_line:
             # Extract test name (everything between 'test ' and ' ... ')
-            test_name = clean_line.split(' ... ')[0].replace('test ', '').strip()
+            test_name_raw = clean_line.split(' ... ')[0].replace('test ', '').strip()
+            # Remove any trailing ' ...' if present
+            test_name = test_name_raw.rstrip(' .').strip()
             
             # Look ahead for the result (ok/FAILED) in the next few lines
             status = None
@@ -114,16 +164,24 @@ def parse_test_results(stdout):
                             description = line.split("| Description:")[1].strip()
                             break
                 
+                # For failed tests, append test-specific stderr content
+                full_output = strip_ansi('\n'.join(output_lines))
+                if status == "failed":
+                    # Extract just the test function name for matching
+                    test_func_name = test_name.split('::')[-1] if '::' in test_name else test_name
+                    if test_func_name in test_errors:
+                        full_output += "\n\n=== ASSERTION FAILURE ===\n" + strip_ansi(test_errors[test_func_name])
+                
                 tests.append({
                     "name": test_name,
                     "status": status,
-                    "output": strip_ansi('\n'.join(output_lines)),  # Full output
+                    "output": full_output,
                     "description": description
                 })
     
     return tests
 
-def run_single_cargo_test(feature, test_suite, binary_path="q", quiet=False):
+def run_single_cargo_test(feature, test_suite, binary_path="kiro-cli", quiet=False):
     """Run cargo test for a single feature with test suite"""
     feature_str = f"{feature},{test_suite}"
     cmd = ["cargo", "test", "--tests", "--features", feature_str, "--", "--nocapture", "--test-threads=1"]
@@ -133,14 +191,19 @@ def run_single_cargo_test(feature, test_suite, binary_path="q", quiet=False):
     else:
         print(f"🔄 Running: {feature} with {test_suite}")
         print(f"Command: {' '.join(cmd)}")
+        print(f"Binary: {binary_path}")
     
     # Start rotating animation
     stop_animation = threading.Event()
     animation_thread = threading.Thread(target=show_spinner, args=(stop_animation,))
     animation_thread.start()
     
+    # Set environment variable for the binary path
+    env = dict(os.environ)
+    env['Q_CLI_PATH'] = binary_path
+    
     start_time = time.time()
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    result = subprocess.run(cmd, capture_output=True, text=True, env=env)
     end_time = time.time()
     
     # Stop animation
@@ -149,12 +212,12 @@ def run_single_cargo_test(feature, test_suite, binary_path="q", quiet=False):
     print("\r", end="")  # Clear spinner line
     
     # Parse individual test results
-    individual_tests = parse_test_results(result.stdout)
+    individual_tests = parse_test_results(result.stdout, result.stderr)
     
     if not quiet:
-        print(result.stdout)
+        print(strip_ansi(result.stdout))
         if result.stderr:
-            print(result.stderr)
+            print(strip_ansi(result.stderr))
         
         # Show individual test results
         print(f"\n📋 Individual Test Results for {feature}:")
@@ -186,23 +249,25 @@ def validate_features(features):
     """Validate that all features exist in Cargo.toml"""
     grouped_features, standalone_features, child_features = parse_features()
     valid_features = set(grouped_features.keys()) | set(standalone_features) | child_features
-    invalid_features = [f for f in features if f not in valid_features and f not in {"sanity", "regression"}]
+    invalid_features = [f for f in features if f not in valid_features and f not in {"sanity", "regression", "deprecated"}]
     if invalid_features:
         print(f"❌ Error: Invalid feature(s): {', '.join(invalid_features)}")
         print(f"Available features: {', '.join(sorted(valid_features))}")
         sys.exit(1)
 
 def get_test_suites_from_features(features):
-    """Extract test suites (sanity/regression) from feature list"""
+    """Extract test suites (sanity/regression/deprecated) from feature list"""
     test_suites = []
     if "sanity" in features:
         test_suites.append("sanity")
     if "regression" in features:
         test_suites.append("regression")
+    if "deprecated" in features:
+        test_suites.append("deprecated")
     
-    # Check if both sanity and regression are specified
+    # Check if multiple test suites are specified
     if len(test_suites) > 1:
-        print("❌ Error: Only a single test suite is allowed. Cannot run both 'sanity' and 'regression' together.")
+        print("❌ Error: Only a single test suite is allowed. Cannot run multiple test suites together.")
         sys.exit(1)
     
     if not test_suites:
@@ -210,7 +275,7 @@ def get_test_suites_from_features(features):
     
     return test_suites
 
-def run_tests_with_suites(features, test_suites, binary_path="q", quiet=False):
+def run_tests_with_suites(features, test_suites, binary_path="kiro-cli", quiet=False):
     """Run tests for each feature with each test suite"""
     results = []
     
@@ -219,7 +284,7 @@ def run_tests_with_suites(features, test_suites, binary_path="q", quiet=False):
         print("=" * 40)
         
         for feature in features:
-            if feature not in {"sanity", "regression"}:
+            if feature not in {"sanity", "regression", "deprecated"}:
                 result = run_single_cargo_test(feature, test_suite, binary_path, quiet)
                 results.append(result)
                 
@@ -235,7 +300,7 @@ def run_tests_with_suites(features, test_suites, binary_path="q", quiet=False):
     
     return results
 
-def get_system_info(binary_path="q"):
+def get_system_info(binary_path="kiro-cli"):
     """Get Q binary version and system information"""
     system_info = {
         "os": platform.system(),
@@ -257,7 +322,7 @@ def get_system_info(binary_path="q"):
     
     return system_info
 
-def generate_report(results, features, test_suites, binary_path="q"):
+def generate_report(results, features, test_suites, binary_path="kiro-cli"):
     """Generate JSON report and console summary"""
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     system_info = get_system_info(binary_path)
@@ -325,8 +390,11 @@ def generate_report(results, features, test_suites, binary_path="q"):
         features_str = "-".join(features[:3]) + ("_more" if len(features) > 3 else "")
         features_str += "_" + "-".join(test_suites)
     
+    # Get OS label
+    os_label = "Mac" if platform.system() == "Darwin" else "Linux" if platform.system() == "Linux" else platform.system()
     datetime_str = datetime.now().strftime("%m%d%y%H%M%S")
-    filename = reports_dir / f"qcli_test_summary_{features_str}_{datetime_str}.json"
+    filename_prefix = "kiro_cli_test_summary" if "kiro" in binary_path else "qcli_test_summary"
+    filename = reports_dir / f"{filename_prefix}_{features_str}_{os_label}_{datetime_str}.json"
     
     # Save JSON report
     with open(filename, "w") as f:
@@ -420,6 +488,9 @@ def generate_html_report(json_filename):
     feature_total_tests = [stats['passed'] + stats['failed'] for _, stats in sorted_features]
     feature_passed_tests = [stats['passed'] for _, stats in sorted_features]
     
+    # Set title based on binary path
+    title = "🧪 KIRO CLI E2E Test Report" if "kiro" in report['system_info']['q_binary_path'] else "🧪 Q CLI E2E Test Report"
+    
     # Fill template with data
     html_content = html_template.format(
         timestamp=report['timestamp'],
@@ -435,6 +506,7 @@ def generate_html_report(json_filename):
         feature_names=json.dumps(feature_names),
         feature_total_tests=json.dumps(feature_total_tests),
         feature_passed_tests=json.dumps(feature_passed_tests),
+        title=title,
     )
     
     with open(html_filename, 'w') as f:
@@ -449,8 +521,8 @@ def print_summary(report, quiet=False):
         print("\n💻 System Information:")
         print(f"  Platform: {report['system_info']['platform']}")
         print(f"  OS: {report['system_info']['os']} {report['system_info']['os_version']}")
-        print(f"  Q Binary: {report['system_info']['q_binary_path']}")
-        print(f"  Q Version: {report['system_info']['q_version']}")
+        print(f"  Binary: {report['system_info']['q_binary_path']}")
+        print(f"  Version: {report['system_info']['q_version']}")
         
     print("\n📋 Feature Summary:")
     for feature, stats in report["features"].items():
@@ -593,7 +665,7 @@ Usage:
     
     # For backward compatibility
     parser.add_argument("--features", help="Comma-separated list of features")
-    parser.add_argument("--binary", default="q", help="Path to Q CLI binary")
+    parser.add_argument("--binary", default="kiro-cli", help="Path to Q CLI binary")
     parser.add_argument("--quiet", action="store_true", help="Quiet mode")
     
     args = parser.parse_args()
@@ -619,7 +691,7 @@ Usage:
         test_suites = get_test_suites_from_features(requested_features)
         
         # Remove test suites from feature list
-        features_only = [f for f in requested_features if f not in {"sanity", "regression"}]
+        features_only = [f for f in requested_features if f not in {"sanity", "regression", "deprecated"}]
         
         if not features_only:
             # Only sanity/regression specified - run all features
@@ -641,6 +713,9 @@ Usage:
     # Generate and display report
     report = generate_report(results, all_features, test_suites, args.binary)
     print_summary(report, args.quiet)
+    
+    # Disable mouse tracking that may have been enabled by cargo test
+    print("\033[?1000l\033[?1002l\033[?1015l\033[?1006l", end="", flush=True)
     
     # Exit with appropriate code
     sys.exit(0 if report["summary"]["failed"] == 0 else 1)

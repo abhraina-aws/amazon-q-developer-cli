@@ -1,61 +1,16 @@
 #[allow(unused_imports)]
 use q_cli_e2e_tests::q_chat_helper;
-use std::sync::{Mutex, Once, atomic::{AtomicUsize, Ordering}};
-#[allow(dead_code)]
-static INIT: Once = Once::new();
-#[allow(dead_code)]
-static mut CHAT_SESSION: Option<Mutex<q_chat_helper::QChatSession>> = None;
-
-#[allow(dead_code)]
-pub fn get_chat_session() -> &'static Mutex<q_chat_helper::QChatSession> {
-    unsafe {
-        INIT.call_once(|| {
-            let chat = q_chat_helper::QChatSession::new().expect("Failed to create chat session");
-            println!("✅ Q Chat session started");
-            CHAT_SESSION = Some(Mutex::new(chat));
-        });
-        (&raw const CHAT_SESSION).as_ref().unwrap().as_ref().unwrap()
-    }
-}
-
-#[allow(dead_code)]
-pub fn cleanup_if_last_test(test_count: &AtomicUsize, total_tests: usize) -> Result<usize, Box<dyn std::error::Error>> {
-    let count = test_count.fetch_add(1, Ordering::SeqCst) + 1;
-    if count == total_tests {
-        unsafe {
-            if let Some(session) = (&raw const CHAT_SESSION).as_ref().unwrap() {
-                if let Ok(mut chat) = session.lock() {
-                    chat.quit()?;
-                    println!("✅ Test completed successfully");
-                }
-            }
-        }
-    }
-  Ok(count)
-}
-#[allow(dead_code)]
-static TEST_COUNT: AtomicUsize = AtomicUsize::new(0);
-
-// List of covered tests
-#[allow(dead_code)]
-const TEST_NAMES: &[&str] = &[
-    "test_model_dynamic_command",
-    "test_model_help_command",
-    "test_model_h_command",
-];
-#[allow(dead_code)]
-const TOTAL_TESTS: usize = TEST_NAMES.len();
 
 #[test]
 #[cfg(all(feature = "model", feature = "sanity"))]
 fn test_model_dynamic_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing /model command with dynamic selection... | Description: Tests the <code> /model</code> command interactive selection interface to choose different models and verify selection confirmation");
     
-    let session = get_chat_session();
-    let mut chat = session.lock().unwrap();
+    let session = q_chat_helper::get_chat_session();
+    let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
     // Execute /model command to get list
-    let model_response = chat.execute_command("/model")?;
+    let model_response = chat.execute_command_with_timeout("/model",Some(2000))?;
     
     println!("📝 Model response: {} bytes", model_response.len());
     println!("📝 MODEL RESPONSE:");
@@ -80,36 +35,25 @@ fn test_model_dynamic_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Parse available models from response
     let mut models = Vec::new();
-    let mut found_prompt = false;
     
     for line in model_response.lines() {
         let trimmed_line = line.trim();
+        let cleaned_line = strip_ansi(trimmed_line);
         
-        // Look for the prompt line
-        if trimmed_line.contains("Select a model for this chat session") {
-            found_prompt = true;
-            continue;
-        }
-        
-        // After finding prompt, parse model lines
-        if found_prompt {
-            let cleaned_line = strip_ansi(trimmed_line);
-            println!("\n🔍 Row: '{}' -> Cleaned: '{}'", trimmed_line, cleaned_line);
+        // Parse model lines directly - look for lines with model names
+        if cleaned_line.contains("claude-") || cleaned_line.contains("qwen") || cleaned_line.contains("Auto") {
+            let model_name = cleaned_line
+                .split('|')
+                .next()
+                .unwrap_or(&cleaned_line)
+                .replace("❯", "")
+                .replace("(current)", "")
+                .trim()
+                .to_string();
             
-            if !trimmed_line.is_empty() {
-                // Check if line contains a model (starts with ❯, spaces, or contains model names)
-                if cleaned_line.starts_with("❯") || cleaned_line.starts_with(" ") || cleaned_line.contains("-") {
-                    let model_name = cleaned_line
-                        .replace("❯", "")
-                        .replace("(active)", "")
-                        .trim()
-                        .to_string();
-                    
-                    println!("\n🔍 Extracted model: '{}'", model_name);
-                    if !model_name.is_empty() {
-                        models.push(model_name);
-                    }
-                }
+            println!("\n🔍 Extracted model: '{}'", model_name);
+            if !model_name.is_empty() {
+                models.push(model_name);
             }
         }
     }
@@ -134,8 +78,11 @@ fn test_model_dynamic_command() -> Result<(), Box<dyn std::error::Error>> {
         .map(|line| {
             let cleaned = strip_ansi(line.trim());
             cleaned
+                .split('|')
+                .next()
+                .unwrap_or(&cleaned)
                 .replace("❯", "")
-                .replace("(active)", "")
+                .replace("(current)", "")
                 .trim()
                 .to_string()
         })
@@ -154,26 +101,24 @@ fn test_model_dynamic_command() -> Result<(), Box<dyn std::error::Error>> {
     // Verify selection with dynamic model name
     assert!(confirm_response.contains(&format!("Using {}", selected_model)), 
            "Missing confirmation for selected model: {}", selected_model);
-    println!("✅ Confirmed selection of: {}", selected_model);
-    
-    // Release the lock before cleanup
+
+    println!("✅ Model dynamic selection functionality verified for model: {}", selected_model);
+
     drop(chat);
-    
-    // Cleanup only if this is the last test
-    cleanup_if_last_test(&TEST_COUNT, TOTAL_TESTS)?;
 
     Ok(())
 }
+
 
 #[test]
 #[cfg(all(feature = "model", feature = "sanity"))]
 fn test_model_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing /model --help command... | Description: Tests the <code> /model --help</code> command to display help information for model selection functionality");
     
-    let session = get_chat_session();
-    let mut chat = session.lock().unwrap();
+    let session = q_chat_helper::get_chat_session();
+    let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    let response = chat.execute_command("/model --help")?;
+    let response = chat.execute_command_with_timeout("/model --help",Some(500))?;
     
     println!("📝 Model help response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
@@ -183,23 +128,16 @@ fn test_model_help_command() -> Result<(), Box<dyn std::error::Error>> {
     // Verify Usage section
     assert!(response.contains("Usage:"), "Missing Usage section");
     assert!(response.contains("/model"), "Missing /model command in usage section");
-    println!("✅ Found Usage section with /model command");
     
     // Verify Options section
     assert!(response.contains("Options:"), "Missing Options section");
-    println!("✅ Found Options section");
     
     // Verify help flags
     assert!(response.contains("-h") &&  response.contains("--help"), "Missing -h, --help flags");
-    println!("✅ Found help flags: -h, --help with Print help description");
     
     println!("✅ All model help content verified!");
     
-    // Release the lock before cleanup
     drop(chat);
-    
-    // Cleanup only if this is the last test
-    cleanup_if_last_test(&TEST_COUNT, TOTAL_TESTS)?;
 
     Ok(())
 }
@@ -209,10 +147,10 @@ fn test_model_help_command() -> Result<(), Box<dyn std::error::Error>> {
 fn test_model_h_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n🔍 Testing /model -h command... | Description: Tests the <code> /model -h</code> command (short form) to display help information for model selection functionality");
     
-    let session = get_chat_session();
-    let mut chat = session.lock().unwrap();
+    let session = q_chat_helper::get_chat_session();
+    let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
-    let response = chat.execute_command("/model -h")?;
+    let response = chat.execute_command_with_timeout("/model -h",Some(500))?;
     
     println!("📝 Model help response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
@@ -222,23 +160,41 @@ fn test_model_h_command() -> Result<(), Box<dyn std::error::Error>> {
     // Verify Usage section
     assert!(response.contains("Usage:"), "Missing Usage section");
     assert!(response.contains("/model"), "Missing /model command in usage section");
-    println!("✅ Found Usage section with /model command");
     
     // Verify Options section
     assert!(response.contains("Options:"), "Missing Options section");
-    println!("✅ Found Options section");
     
     // Verify help flags
     assert!(response.contains("-h") &&  response.contains("--help"), "Missing -h, --help flags");
-    println!("✅ Found help flags: -h, --help with Print help description");
     
     println!("✅ All model help content verified!");
     
-    // Release the lock before cleanup
     drop(chat);
+
+    Ok(())
+}
+
+#[test]
+#[cfg(all(feature = "model", feature = "sanity"))]
+fn test_model_command() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing /model command... | Description: Tests the <code> /model </code> command to check it shows the auto model select");
+
+    let session = q_chat_helper::get_new_chat_session()?;
+    let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+
+    let response = chat.execute_command_with_timeout("/model",Some(500))?;
     
-    // Cleanup only if this is the last test
-    cleanup_if_last_test(&TEST_COUNT, TOTAL_TESTS)?;
+    println!("📝 FULL OUTPUT:");
+    println!("{}", response);
+    println!("📝 END OUTPUT");
+
+    // Verify Usage section
+    assert!(response.contains("Press"), "Expected 'Press' in response.");
+    assert!(response.contains("Auto"), "Expected 'Auto' in response.");
+
+    println!("✅ Model content verified for Auto");
+    
+    drop(chat);
 
     Ok(())
 }

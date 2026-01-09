@@ -1,67 +1,16 @@
 #[allow(unused_imports)]
 use q_cli_e2e_tests::q_chat_helper;
-use std::sync::{Mutex, Once, atomic::{AtomicUsize, Ordering}};
-#[allow(dead_code)]
-static INIT: Once = Once::new();
-#[allow(dead_code)]
-static mut CHAT_SESSION: Option<Mutex<q_chat_helper::QChatSession>> = None;
-
-#[allow(dead_code)]
-pub fn get_chat_session() -> &'static Mutex<q_chat_helper::QChatSession> {
-    unsafe {
-        INIT.call_once(|| {
-            let chat = q_chat_helper::QChatSession::new().expect("Failed to create chat session");
-            println!("✅ Q Chat session started");
-            CHAT_SESSION = Some(Mutex::new(chat));
-        });
-        (&raw const CHAT_SESSION).as_ref().unwrap().as_ref().unwrap()
-    }
-}
-
-#[allow(dead_code)]
-pub fn cleanup_if_last_test(test_count: &AtomicUsize, total_tests: usize) -> Result<usize, Box<dyn std::error::Error>> {
-    let count = test_count.fetch_add(1, Ordering::SeqCst) + 1;
-    if count == total_tests {
-        unsafe {
-            if let Some(session) = (&raw const CHAT_SESSION).as_ref().unwrap() {
-                if let Ok(mut chat) = session.lock() {
-                    chat.quit()?;
-                    println!("✅ Test completed successfully");
-                }
-            }
-        }
-    }
-  Ok(count)
-}
-#[allow(dead_code)]
-static TEST_COUNT: AtomicUsize = AtomicUsize::new(0);
-
-// List of covered tests
-#[allow(dead_code)]
-const TEST_NAMES: &[&str] = &[
-    "test_mcp_remove_help_command",
-    "test_mcp_add_help_command",
-    "test_mcp_help_command",
-    "test_mcp_import_help_command",
-    "test_mcp_list_command",
-    "test_mcp_list_help_command",
-    "test_mcp_status_help_command",
-    "test_add_and_remove_mcp_command",
-    "test_mcp_status_command"
-];
-#[allow(dead_code)]
-const TOTAL_TESTS: usize = TEST_NAMES.len();
 
 #[test]
 #[cfg(all(feature = "mcp", feature = "regression"))]
 fn test_mcp_remove_help_command() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q mcp remove --help command... | Description: Tests the <code> q mcp remove --help</code> command to display help information for removing MCP servers");
+    println!("\n🔍 Testing kiro mcp remove --help command... | Description: Tests the <code> kiro mcp remove --help</code> command to display help information for removing MCP servers");
     
-    let session = get_chat_session();
+    let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
     
     // Execute q mcp remove --help command
-    let help_response = chat.execute_command("execute below bash command q mcp remove --help")?;
+    let help_response = chat.execute_command_with_timeout("execute below bash command q mcp remove --help",Some(1000))?;
     
     println!("📝 MCP remove help response: {} bytes", help_response.len());
     println!("📝 HELP RESPONSE:");
@@ -74,7 +23,7 @@ fn test_mcp_remove_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("✅ Found tool execution permission prompt");
     
     // Allow the tool execution
-    let allow_response = chat.execute_command("y")?;
+    let allow_response = chat.execute_command_with_timeout("y",Some(500))?;
 
     println!("📝 Allow response: {} bytes", allow_response.len());
     println!("📝 ALLOW RESPONSE:");
@@ -90,11 +39,7 @@ fn test_mcp_remove_help_command() -> Result<(), Box<dyn std::error::Error>> {
     assert!(allow_response.contains("-h, --help"), "Missing help option");
     println!("✅ Found all expected MCP remove help content and completion");
     
-    // Release the lock before cleanup
     drop(chat);
-    
-    // Cleanup only if this is the last test
-    cleanup_if_last_test(&TEST_COUNT, TOTAL_TESTS)?;
     
     Ok(())
 }
@@ -102,14 +47,14 @@ fn test_mcp_remove_help_command() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 #[cfg(all(feature = "mcp", feature = "regression"))]
 fn test_mcp_add_help_command() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q mcp add --help command... | Description: Tests the <code> q mcp add --help</code> command to display help information for adding new MCP servers");
+    println!("\n🔍 Testing kiro mcp add --help command... | Description: Tests the <code> kiro mcp add --help</code> command to display help information for adding new MCP servers");
     
-    let session = get_chat_session();
+    let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
     
     // Execute mcp add --help command
-    println!("\n🔍 Executing command: 'q mcp add --help'");
-    let response = chat.execute_command("execute below bash command q mcp add --help")?;
+    println!("\n🔍 Executing command: 'kiro mcp add --help'");
+    let response = chat.execute_command_with_timeout("execute below bash command q mcp add --help",Some(1000))?;
     
     println!("📝 Restart response: {} bytes", response.len());
     println!("📝 RESTART RESPONSE:");
@@ -127,7 +72,7 @@ fn test_mcp_add_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("✅ Found tool execution permission prompt");
     
     // Allow the tool execution
-    let allow_response = chat.execute_command("y")?;
+    let allow_response = chat.execute_command_with_timeout("y",Some(500))?;
     
     println!("📝 Allow response: {} bytes", allow_response.len());
     println!("📝 ALLOW RESPONSE:");
@@ -148,11 +93,7 @@ fn test_mcp_add_help_command() -> Result<(), Box<dyn std::error::Error>> {
     assert!(allow_response.contains("Optional"), "Missing Optional indicator");
     println!("✅ MCP add help command executed successfully");
     
-    // Release the lock before cleanup
     drop(chat);
-    
-    // Cleanup only if this is the last test
-    cleanup_if_last_test(&TEST_COUNT, TOTAL_TESTS)?;
     
     Ok(())
 }
@@ -160,13 +101,13 @@ fn test_mcp_add_help_command() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 #[cfg(all(feature = "mcp", feature = "regression"))]
 fn test_mcp_help_command() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q mcp --help command... | Description: Tests the <code> q mcp --help</code> command to display comprehensive MCP management help including all subcommands");
+    println!("\n🔍 Testing kiro mcp --help command... | Description: Tests the <code> kiro mcp --help</code> command to display comprehensive MCP management help including all subcommands");
     
-    let session = get_chat_session();
+    let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
     
     // Execute q mcp --help command
-    let help_response = chat.execute_command("execute below bash command q mcp --help")?;
+    let help_response = chat.execute_command_with_timeout("execute below bash command q mcp --help",Some(1000))?;
     
     println!("📝 MCP help response: {} bytes", help_response.len());
     println!("📝 HELP RESPONSE:");
@@ -179,7 +120,7 @@ fn test_mcp_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("✅ Found tool execution permission prompt");
     
     // Allow the tool execution
-    let allow_response = chat.execute_command("y")?;
+    let allow_response = chat.execute_command_with_timeout("y",Some(500))?;
 
     println!("📝 Allow response: {} bytes", allow_response.len());
     println!("📝 ALLOW RESPONSE:");
@@ -205,11 +146,7 @@ fn test_mcp_help_command() -> Result<(), Box<dyn std::error::Error>> {
     assert!(allow_response.contains("-h, --help"), "Missing help option");
     println!("✅ Found all expected MCP help content and completion");
     
-    // Release the lock before cleanup
     drop(chat);
-    
-    // Cleanup only if this is the last test
-    cleanup_if_last_test(&TEST_COUNT, TOTAL_TESTS)?;
     
     Ok(())
 }
@@ -217,14 +154,14 @@ fn test_mcp_help_command() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 #[cfg(all(feature = "mcp", feature = "regression"))]
 fn test_mcp_import_help_command() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q mcp import --help command... | Description: Tests the <code> q mcp import --help</code> command to display help information for importing MCP server configurations");
+    println!("\n🔍 Testing kiro mcp import --help command... | Description: Tests the <code> kiro mcp import --help</code> command to display help information for importing MCP server configurations");
     
-    let session = get_chat_session();
+    let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
     
     // Execute mcp import --help command
-    println!("\n🔍 Executing command: 'q mcp import --help'");
-    let response = chat.execute_command("execute below bash command q mcp import --help")?;
+    println!("\n🔍 Executing command: 'kiro mcp import --help'");
+    let response = chat.execute_command_with_timeout("execute below bash command q mcp import --help",Some(1000))?;
     
     println!("📝 Restart response: {} bytes", response.len());
     println!("📝 RESTART RESPONSE:");
@@ -242,7 +179,7 @@ fn test_mcp_import_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("✅ Found tool execution permission prompt");
     
     // Allow the tool execution
-    let allow_response = chat.execute_command("y")?;
+    let allow_response = chat.execute_command_with_timeout("y",Some(500))?;
     
     println!("📝 Allow response: {} bytes", allow_response.len());
     println!("📝 ALLOW RESPONSE:");
@@ -267,11 +204,7 @@ fn test_mcp_import_help_command() -> Result<(), Box<dyn std::error::Error>> {
     
     println!("✅ All q mcp import --help content verified successfully");
     
-    // Release the lock before cleanup
     drop(chat);
-    
-    // Cleanup only if this is the last test
-    cleanup_if_last_test(&TEST_COUNT, TOTAL_TESTS)?;
     
     Ok(())
 }
@@ -279,12 +212,12 @@ fn test_mcp_import_help_command() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 #[cfg(all(feature = "mcp", feature = "regression"))]
 fn test_mcp_list_command() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q mcp list command... | Description: Tests the <code> q mcp list</code> command to display all configured MCP servers and their status");
+    println!("\n🔍 Testing kiro mcp list command... | Description: Tests the <code> kiro mcp list</code> command to display all configured MCP servers and their status");
     
-    let session = get_chat_session();
+    let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
     
-    let response = chat.execute_command("execute below bash command q mcp list")?;
+    let response = chat.execute_command_with_timeout("execute below bash command q mcp list",Some(1000))?;
     
     println!("📝 MCP list response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
@@ -298,7 +231,7 @@ fn test_mcp_list_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("✅ Found tool execution permission prompt");
     
     // Allow the tool execution
-    let allow_response = chat.execute_command("y")?;
+    let allow_response = chat.execute_command_with_timeout("y",Some(500))?;
     
     println!("📝 Allow response: {} bytes", allow_response.len());
     println!("📝 ALLOW RESPONSE:");
@@ -310,11 +243,7 @@ fn test_mcp_list_command() -> Result<(), Box<dyn std::error::Error>> {
     assert!(allow_response.contains("q_cli_default"), "Missing q_cli_default server");
     println!("✅ Found MCP server listing with  servers and completion");
     
-    // Release the lock before cleanup
     drop(chat);
-    
-    // Cleanup only if this is the last test
-    cleanup_if_last_test(&TEST_COUNT, TOTAL_TESTS)?;
     
     Ok(())
 }
@@ -322,12 +251,12 @@ fn test_mcp_list_command() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 #[cfg(all(feature = "mcp", feature = "regression"))]
 fn test_mcp_list_help_command() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q mcp list --help command... | Description: Tests the <code> q mcp list --help</code> command to display help information for listing MCP servers");
+    println!("\n🔍 Testing kiro mcp list --help command... | Description: Tests the <code> kiro mcp list --help</code> command to display help information for listing MCP servers");
     
-    let session = get_chat_session();
+    let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
     
-    let response = chat.execute_command("execute below bash command q mcp list --help")?;
+    let response = chat.execute_command_with_timeout("execute below bash command q mcp list --help",Some(1000))?;
     
     println!("📝 MCP list help response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
@@ -341,7 +270,7 @@ fn test_mcp_list_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("✅ Found tool execution permission prompt");
     
     // Allow the tool execution
-    let allow_response = chat.execute_command("y")?;
+    let allow_response = chat.execute_command_with_timeout("y",Some(500))?;
     
     println!("📝 Allow response: {} bytes", allow_response.len());
     println!("📝 ALLOW RESPONSE:");
@@ -360,11 +289,7 @@ fn test_mcp_list_help_command() -> Result<(), Box<dyn std::error::Error>> {
     assert!(allow_response.contains("-v") && allow_response.contains("--verbose"), "Missing verbose option");
     assert!(allow_response.contains("-h") && allow_response.contains("--help"), "Missing help option");
     
-    // Release the lock before cleanup
     drop(chat);
-    
-    // Cleanup only if this is the last test
-    cleanup_if_last_test(&TEST_COUNT, TOTAL_TESTS)?;
     
     Ok(())
 }
@@ -372,14 +297,14 @@ fn test_mcp_list_help_command() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 #[cfg(all(feature = "mcp", feature = "regression"))]
 fn test_mcp_status_help_command() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q mcp status --help command... | Description: Tests the <code> q mcp status --help</code> command to display help information for checking MCP server status");
+    println!("\n🔍 Testing kiro mcp status --help command... | Description: Tests the <code> kiro mcp status --help</code> command to display help information for checking MCP server status");
     
-    let session = get_chat_session();
+    let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
     
     // Execute mcp status --help command
-    println!("\n🔍 Executing command: 'q mcp status --help'");
-    let response = chat.execute_command("execute below bash command q mcp status --help")?;
+    println!("\n🔍 Executing command: 'kiro mcp status --help'");
+    let response = chat.execute_command_with_timeout("execute below bash command q mcp status --help",Some(1000))?;
 
     println!("📝 Restart response: {} bytes", response.len());
     println!("📝 RESTART RESPONSE:");
@@ -396,7 +321,7 @@ fn test_mcp_status_help_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("✅ Found tool execution permission prompt");
     
     // Allow the tool execution
-    let allow_response = chat.execute_command("y")?;
+    let allow_response = chat.execute_command_with_timeout("y",Some(500))?;
     
     println!("📝 Allow response: {} bytes", allow_response.len());
     println!("📝 ALLOW RESPONSE:");
@@ -416,11 +341,7 @@ fn test_mcp_status_help_command() -> Result<(), Box<dyn std::error::Error>> {
     
     println!("✅ All q mcp status --help content verified successfully");
     
-    // Release the lock before cleanup
     drop(chat);
-    
-    // Cleanup only if this is the last test
-    cleanup_if_last_test(&TEST_COUNT, TOTAL_TESTS)?;
     
     Ok(())
 }
@@ -428,7 +349,7 @@ fn test_mcp_status_help_command() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 #[cfg(all(feature = "mcp", feature = "regression"))]
 fn test_add_and_remove_mcp_command() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q mcp add command... | Description: Tests the <code> q mcp add</code> and <code> q mcp remove</code> subcommands to add and remove MCP servers");
+    println!("\n🔍 Testing kiro mcp add command... | Description: Tests the <code> kiro mcp add</code> and <code> q mcp remove</code> subcommands to add and remove MCP servers");
 
     // First install uv dependency before starting Q Chat
     println!("\n🔍 Installing uv dependency...");
@@ -440,12 +361,12 @@ fn test_add_and_remove_mcp_command() -> Result<(), Box<dyn std::error::Error>> {
     
     println!("✅ uv dependency installed");
 
-    let session = get_chat_session();
+    let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
     // First check if MCP already exists using q mcp list
     println!("\n🔍 Checking if aws-documentation MCP already exists...");
-    let list_response = chat.execute_command("execute below bash command q mcp list")?;
+    let list_response = chat.execute_command_with_timeout("execute below bash command q mcp list",Some(1000))?;
     
     println!("📝 List response: {} bytes", list_response.len());
     println!("📝 LIST RESPONSE:");
@@ -453,7 +374,7 @@ fn test_add_and_remove_mcp_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END LIST RESPONSE");
     
     // Allow the list command
-    let list_allow_response = chat.execute_command("y")?;
+    let list_allow_response = chat.execute_command_with_timeout("y",Some(500))?;
     println!("📝 List allow response: {} bytes", list_allow_response.len());
     println!("📝 LIST ALLOW RESPONSE:");
     println!("{}", list_allow_response);
@@ -463,14 +384,14 @@ fn test_add_and_remove_mcp_command() -> Result<(), Box<dyn std::error::Error>> {
     if list_allow_response.contains("aws-documentation") {
         println!("\n🔍 aws-documentation MCP already exists, removing it first...");
         
-        let remove_response = chat.execute_command("execute below bash command q mcp remove --name aws-documentation")?;
+        let remove_response = chat.execute_command_with_timeout("execute below bash command q mcp remove --name aws-documentation",Some(1000))?;
         println!("📝 Remove response: {} bytes", remove_response.len());
         println!("📝 REMOVE RESPONSE:");
         println!("{}", remove_response);
         println!("📝 END REMOVE RESPONSE");
         
         // Allow the remove command
-        let remove_allow_response = chat.execute_command("y")?;
+        let remove_allow_response = chat.execute_command_with_timeout("y",Some(500))?;
         println!("📝 Remove allow response: {} bytes", remove_allow_response.len());
         println!("📝 REMOVE ALLOW RESPONSE:");
         println!("{}", remove_allow_response);
@@ -485,7 +406,7 @@ fn test_add_and_remove_mcp_command() -> Result<(), Box<dyn std::error::Error>> {
 
     // Now add the MCP server
     println!("\n🔍 Executing command: 'q mcp add --name aws-documentation --command uvx --args awslabs.aws-documentation-mcp-server@latest'");
-    let response = chat.execute_command("execute below bash command q mcp add --name aws-documentation --command uvx --args awslabs.aws-documentation-mcp-server@latest")?;
+    let response = chat.execute_command_with_timeout("execute below bash command q mcp add --name aws-documentation --command uvx --args awslabs.aws-documentation-mcp-server@latest",Some(2000))?;
     
     println!("📝 Response: {} bytes", response.len());
     println!("📝 RESPONSE:");
@@ -499,7 +420,7 @@ fn test_add_and_remove_mcp_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("✅ Found tool execution permission prompt");
     
     // Allow the tool execution
-    let allow_response = chat.execute_command("y")?;
+    let allow_response = chat.execute_command_with_timeout("y",Some(500))?;
     println!("📝 Allow response: {} bytes", allow_response.len());
     println!("📝 ALLOW RESPONSE:");
     println!("{}", allow_response);
@@ -512,7 +433,7 @@ fn test_add_and_remove_mcp_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Now test removing the MCP server
     println!("\n🔍 Executing remove command: 'q mcp remove --name aws-documentation'");
-    let remove_response = chat.execute_command("execute below bash command q mcp remove --name aws-documentation")?;
+    let remove_response = chat.execute_command_with_timeout("execute below bash command q mcp remove --name aws-documentation",Some(2000))?;
     println!("📝 Remove response: {} bytes", remove_response.len());
     println!("📝 REMOVE RESPONSE:");
     println!("{}", remove_response);
@@ -525,7 +446,7 @@ fn test_add_and_remove_mcp_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("✅ Found remove tool execution permission prompt");
     
     // Allow the remove tool execution
-    let remove_allow_response = chat.execute_command("y")?;
+    let remove_allow_response = chat.execute_command_with_timeout("y",Some(500))?;
     println!("📝 Remove allow response: {} bytes", remove_allow_response.len());
     println!("📝 REMOVE ALLOW RESPONSE:");
     println!("{}", remove_allow_response);
@@ -536,18 +457,14 @@ fn test_add_and_remove_mcp_command() -> Result<(), Box<dyn std::error::Error>> {
     assert!(remove_allow_response.contains("/Users/") && remove_allow_response.contains("/.aws/amazonq/mcp.json"), "Missing config file path in removal");
     println!("✅ Found successful removal message");
     
-    // Release the lock before cleanup
     drop(chat);
-    
-    // Cleanup only if this is the last test
-    cleanup_if_last_test(&TEST_COUNT, TOTAL_TESTS)?;
     Ok(())
 }
 
 #[test]
 #[cfg(all(feature = "mcp", feature = "regression"))]
 fn test_mcp_status_command() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q mcp status --name <server-name> command... | Description: Tests the <code> q mcp status</code> command with server name to display detailed status information for a specific MCP server");
+    println!("\n🔍 Testing kiro mcp status --name <server-name> command... | Description: Tests the <code> kiro mcp status</code> command with server name to display detailed status information for a specific MCP server");
 
     // First install uv dependency before starting Q Chat
     println!("\n🔍 Installing uv dependency...");
@@ -559,12 +476,12 @@ fn test_mcp_status_command() -> Result<(), Box<dyn std::error::Error>> {
     
     println!("✅ uv dependency installed");
 
-    let session = get_chat_session();
+    let session = q_chat_helper::get_chat_session();
     let mut chat = session.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
 
     // Execute mcp add command
     println!("\n🔍 Executing command: 'q mcp add --name aws-documentation --command uvx --args awslabs.aws-documentation-mcp-server@latest'");
-    let response = chat.execute_command("execute below bash command q mcp add --name aws-documentation --command uvx --args awslabs.aws-documentation-mcp-server@latest")?;
+    let response = chat.execute_command_with_timeout("execute below bash command q mcp add --name aws-documentation --command uvx --args awslabs.aws-documentation-mcp-server@latest",Some(2000))?;
     
     println!("📝 Response: {} bytes", response.len());
     println!("📝 RESPONSE:");
@@ -577,7 +494,7 @@ fn test_mcp_status_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("✅ Found tool execution permission prompt");
     
     // Allow the tool execution
-    let allow_response = chat.execute_command("y")?;
+    let allow_response = chat.execute_command_with_timeout("y",Some(500))?;
     println!("📝 Allow response: {} bytes", allow_response.len());
     println!("📝 ALLOW RESPONSE:");
     println!("{}", allow_response);
@@ -588,7 +505,7 @@ fn test_mcp_status_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("✅ Found successful addition message");
 
     // Allow the tool execution
-    let response = chat.execute_command("execute below bash command q mcp status --name aws-documentation")?;
+    let response = chat.execute_command_with_timeout("execute below bash command q mcp status --name aws-documentation",Some(2000))?;
     println!("📝 Allow response: {} bytes", response.len());
     println!("📝 ALLOW RESPONSE:");
     println!("{}", response);
@@ -600,7 +517,7 @@ fn test_mcp_status_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("✅ Found tool execution permission prompt");
 
      // Allow the tool execution
-    let show_response = chat.execute_command("y")?;
+    let show_response = chat.execute_command_with_timeout("y",Some(500))?;
     println!("📝 Allow response: {} bytes", show_response.len());
     println!("📝 ALLOW RESPONSE:");
     println!("{}", show_response);
@@ -616,7 +533,7 @@ fn test_mcp_status_command() -> Result<(), Box<dyn std::error::Error>> {
     
     // Now test removing the MCP server
     println!("\n🔍 Executing remove command: 'q mcp remove --name aws-documentation'");
-    let remove_response = chat.execute_command("execute below bash command q mcp remove --name aws-documentation")?;
+    let remove_response = chat.execute_command_with_timeout("execute below bash command q mcp remove --name aws-documentation",Some(2000))?;
     println!("📝 Remove response: {} bytes", remove_response.len());
     println!("📝 REMOVE RESPONSE:");
     println!("{}", remove_response);
@@ -629,7 +546,7 @@ fn test_mcp_status_command() -> Result<(), Box<dyn std::error::Error>> {
     println!("✅ Found remove tool execution permission prompt");
     
     // Allow the remove tool execution
-    let remove_allow_response = chat.execute_command("y")?;
+    let remove_allow_response = chat.execute_command_with_timeout("y",Some(500))?;
     println!("📝 Remove allow response: {} bytes", remove_allow_response.len());
     println!("📝 REMOVE ALLOW RESPONSE:");
     println!("{}", remove_allow_response);
@@ -640,10 +557,6 @@ fn test_mcp_status_command() -> Result<(), Box<dyn std::error::Error>> {
     assert!(remove_allow_response.contains("/Users/") && remove_allow_response.contains("/.aws/amazonq/mcp.json"), "Missing config file path in removal");
     println!("✅ Found successful removal message");
     
-    // Release the lock before cleanup
     drop(chat);
-    
-    // Cleanup only if this is the last test
-    cleanup_if_last_test(&TEST_COUNT, TOTAL_TESTS)?;
     Ok(())
 }

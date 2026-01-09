@@ -1,14 +1,14 @@
 #[allow(unused_imports)]
 use q_cli_e2e_tests::q_chat_helper;
 
-/// Tests the q settings --help subcommand
+/// Tests the kiro-cli settings --help subcommand
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_setting_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q settings --help subcommand... | Description: Tests the <code> q settings --help </code> subcommand to validate help output format and content.");
+#[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
+fn test_kiro_cli_setting_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli settings --help subcommand... | Description: Tests the <code> kiro-cli settings --help </code> subcommand to validate help output format and content.");
     
-    println!("\n🛠️ Running 'q settings --help' subcommand...");
-    let response = q_chat_helper::execute_q_subcommand("q", &["settings", "--help"])?;
+    println!("\n🛠️ Running 'kiro-cli settings --help' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", "--help"])?;
 
     println!("📝 Help response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
@@ -16,12 +16,12 @@ fn test_q_setting_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
 
     // Validate help output contains expected sections
-    assert!(response.contains("Usage:") && response.contains("q settings") && response.contains("[OPTIONS]") && response.contains("[KEY]") && response.contains("[VALUE]") && response.contains("<COMMAND>"), 
+    assert!(response.contains("Usage:") && response.contains("kiro-cli settings") && response.contains("[OPTIONS]") && response.contains("[KEY]") && response.contains("[VALUE]") && response.contains("<COMMAND>"), 
             "Help should contain usage line");
     assert!(response.contains("Commands:"), 
             "Help should contain commands section");
-    assert!(response.contains("open") && response.contains("all") && response.contains("help"), 
-            "Help should contain all  subcommands related to q setting subcommand");
+    assert!(response.contains("open") && response.contains("list") && response.contains("help"), 
+            "Help should contain all  subcommands related to kiro-cli setting subcommand");
     assert!(response.contains("Arguments:"), 
             "Help should contain Arguments section");
     assert!(response.contains("Options:"), 
@@ -39,14 +39,14 @@ fn test_q_setting_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-/// Tests the q setting all subcommand
+/// Tests the kiro-cli setting all subcommand
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_settings_all_subcommand() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q settings all subcommand... | Description: Tests the <code> q settings all </code> subcommand to display all settings.");
+#[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
+fn test_kiro_cli_settings_all_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli settings all subcommand... | Description: Tests the <code> kiro-cli settings all </code> subcommand to display all settings.");
     
-    println!("\n🛠️ Running 'q settings all' subcommand...");
-    let response = q_chat_helper::execute_q_subcommand("q", &["settings", "all"])?;
+    println!("\n🛠️ Running 'kiro-cli settings all' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", "all"])?;
 
     println!("📝 All settings response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
@@ -62,14 +62,14 @@ fn test_q_settings_all_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-/// Tests the q settings help subcommand
+/// Tests the kiro-cli settings help subcommand
 #[test]
-#[cfg(all(feature = "q_subcommand", feature = "sanity"))]
-fn test_q_settings_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n🔍 Testing q settings help subcommand... | Description: Tests the <code> q settings help </code> subcommand to validate help output format and content.");
+#[cfg(all(feature = "kiro_cli_subcommand", feature = "sanity"))]
+fn test_kiro_cli_settings_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
+    println!("\n🔍 Testing kiro-cli settings help subcommand... | Description: Tests the <code> kiro-cli settings help </code> subcommand to validate help output format and content.");
     
-    println!("\n🛠️ Running 'q settings help' subcommand...");
-    let response = q_chat_helper::execute_q_subcommand("q", &["settings", "help"])?;
+    println!("\n🛠️ Running 'kiro-cli settings help' subcommand...");
+    let response = q_chat_helper::execute_q_subcommand("kiro-cli", &["settings", "help"])?;
 
     println!("📝 Help response: {} bytes", response.len());
     println!("📝 FULL OUTPUT:");
@@ -77,12 +77,12 @@ fn test_q_settings_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
     println!("📝 END OUTPUT");
 
     // Validate help output contains expected sections
-    assert!(response.contains("Usage:") && response.contains("q settings") && response.contains("[OPTIONS]") && response.contains("[KEY]") && response.contains("[VALUE]") && response.contains("<COMMAND>"), 
+    assert!(response.contains("Usage:") && response.contains("kiro-cli settings") && response.contains("[OPTIONS]") && response.contains("[KEY]") && response.contains("[VALUE]") && response.contains("<COMMAND>"), 
             "Help should contain usage line");
     assert!(response.contains("Commands:"), 
             "Help should contain commands section");
-    assert!(response.contains("open") && response.contains("all") && response.contains("help"), 
-            "Help should contain all subcommands related to q setting subcommand");
+    assert!(response.contains("open") && response.contains("list") && response.contains("help"), 
+            "Help should contain all subcommands related to kiro-cli setting subcommand");
     assert!(response.contains("Arguments:"), 
             "Help should contain Arguments section");
     assert!(response.contains("Options:"), 
@@ -95,7 +95,8 @@ fn test_q_settings_help_subcommand() -> Result<(), Box<dyn std::error::Error>> {
             "Help should contain verbose option");
     assert!(response.contains("-h, --help"), 
             "Should contain help option");
-    println!("✅ Help output validated successfully!");
+
+    println!("✅ Kiro-cli help command executed successfully!");
     
     Ok(())
 }
